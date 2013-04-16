@@ -81,6 +81,7 @@ classdef JGit < handle
                     pathline = fgetl(fid);
                     while ~strcmp(pathline,jgitjar)
                         if feof(fid)
+                            copyfile(javapath,[javapath,'.JGitSaved'])
                             fprintf(2,'JGit not on static Java class path. Writing ...\n');
                             fprintf(fid,'# JGit package\n%s\n',jgitjar);
                             fclose(fid);
