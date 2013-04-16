@@ -10,7 +10,15 @@ classdef git < handle
             if nargin<1
                 gitDir = pwd;
             end
-            git.validateJavaClassPath
+            assert(git.validateJavaClassPath,'git:noJGit', ...
+                ['\n\t**Please restart MATLAB.**\n\n', ...
+                'JGit has been downloaded and added to the MATLAB Java static ', ...
+                'path.\nHowever, you must restart MATLAB for these changes to', ...
+                'take effect.\n\n', ...
+                'For more information see:\n', ...
+                '<a href="http://www.mathworks.com/help/matlab/matlab_external/', ...
+                'bringing-java-classes-and-methods-into-matlab-workspace.html#f111065">', ...
+                'Bringing Java Classes into MATLAB Workspace: The Java Class Path: The Static Path</a>'])
             gitDir = git.getGitDir(gitDir);
             assert(~isempty(gitDir),'git:notGitRepo', ...
                 ['fatal: Not a git repository (or any of the parent', ...
@@ -42,7 +50,7 @@ classdef git < handle
             gitDir = p.Results.gitDir;
             gitAPI = git.getGitAPI(gitDir);
             commitCMD = gitAPI.commit;
-            if p.Results.all                
+            if p.Results.all
                 commitCMD.setAll(true)
             end
             if ~isempty(p.Results.author)
@@ -196,19 +204,21 @@ classdef git < handle
                 s = dir(gitDir);
             end
         end
-        function validateJavaClassPath
+        function status = validateJavaClassPath
+            status = false;
             spath = javaclasspath('-static');
             githome =  fileparts(mfilename('fullpath'));
             jgitjar = fullfile(githome,[git.JGIT,'.jar']);
             if any(strcmp(spath,jgitjar))
+                status = true;
                 return
             end
-            fprintf(2,'JGit not detected.\n');
+            fprintf(2,'\n\t**JGit not detected.**\n\n');
             if exist(jgitjar,'file')~=2
                 fprintf(2,'JGit jar-file doesn''t exist. Downloading ...\n');
                 [f,status] = git.downloadJGitJar;
                 if status==1
-                    fprintf(2,'\t%s.\nDone.\n',f);
+                    fprintf(2,'Saved as:\n\t%s.\n... Done.\n\n',f);
                 else
                     error('git:validateJavaClassPath:downloadError',status)
                 end
@@ -221,7 +231,7 @@ classdef git < handle
                     fid = fopen(javapath,'wt');
                     fprintf(fid,'# JGit package\n%s\n',jgitjar);
                     fclose(fid);
-                    fprintf(2,'Done.\n\n\t**Please restart MATLAB.**\n\n');
+                    fprintf(2,'... Done.\n\n');
                 catch ME
                     fclose(fid);
                     throw(ME)
@@ -231,14 +241,14 @@ classdef git < handle
                     fid = fopen(javapath,'r+t');
                     pathline = fgetl(fid);
                     while ~strcmp(pathline,jgitjar)
-                        pathline = fgetl(fid);
                         if feof(fid)
-                            fprintf(2,'JGit not on "javaclasspath.txt". Writing ...\n');
+                            fprintf(2,'JGit not on static Java class path. Writing ...\n');
                             fprintf(fid,'# JGit package\n%s\n',jgitjar);
                             fclose(fid);
-                            fprintf(2,'Done.\n\n\t**Please restart MATLAB.**\n\n');
+                            fprintf(2,'... Done.\n\n');
                             break
                         end
+                        pathline = fgetl(fid);
                     end
                 catch ME
                     fclose(fid);
@@ -257,7 +267,7 @@ classdef git < handle
                 'Can''t read from jgit download page.')
             tokens = regexp(str,expr,'tokens');
             version = regexp(tokens{1}{1},ver,'match');
-            fprintf('\tVersion: %s\n',version)
+            fprintf('\tVersion: %s\n',version{1})
             [f,status] = urlwrite(tokens{1}{1},'org.eclipse.jgit.jar');
         end
     end
