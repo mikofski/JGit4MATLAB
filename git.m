@@ -51,15 +51,25 @@ classdef git < handle
             if ~isempty(p.Results.committer)
                 commitCMD.setCommitter(p.Results.committer{:})
             end
+            amendcommit = '';
+            if p.Results.amend
+                commitCMD.setAmend(true)
+                logCMD = gitAPI.log;
+                revCommit = logCMD.all.setMaxCount(1).call;
+                amendcommit = char(revCommit.next.getFullMessage);
+            end
             if ~isempty(p.Results.message)
                 commitCMD.setMessage(p.Results.message)
             else
                 COMMIT_MSG = tempname;
                 try
                     fid = fopen(COMMIT_MSG,'wt');
+                    if ~isempty(amendcommit)
+                        fprintf(fid,amendcommit);
+                    end
                     fprintf(fid,['\n# Please enter the commit message for your changes. Lines starting\n', ...
                         '# with ''#'' will be ignored, and an empty message aborts the commit.\n']);
-                    git.status(gitDir,fid)
+                    git.status(gitDir,fid,p.Results.amend)
                     fclose(fid);
                 catch ME
                     fclose(fid);
@@ -70,36 +80,41 @@ classdef git < handle
                     editor = git.EDITOR;
                 end
                 status = system([editor,' ',COMMIT_MSG]);
-                if status
+                if ~status
                     try
                         fid = fopen(COMMIT_MSG,'rt');
-                        COMMIT_MSG = fread(fid,'*char');
+                        msg = fread(fid,'*char')';
                         fclose(fid);
                         delete(COMMIT_MSG)
                     catch ME
                         fclose(fid);
                         throw(ME)
                     end
-                    commitCMD.setMessage(COMMIT_MSG)
+                    msglines = textscan(msg,'%s','Delimiter','\n','CommentStyle','#');
+                    msglines = [msglines{1},repmat({sprintf('\n')},3,1)]';
+                    msg = [msglines{:}];
+                    commitCMD.setMessage(msg)
                 end
             end
-            if ~isempty(p.Results.amend)
-                commitCMD.setAmend(true)
-            end
             commitCMD.call
-            
         end
-        function status(gitDir,fid)
+        function status(gitDir,fid,amend)
             if nargin<1
                 gitDir = pwd;
             end
             if nargin<2
                 fid = 1;
             end
+            if nargin<3
+                amend = false;
+            end
             gitAPI = git.getGitAPI(gitDir);
             statusCall = gitAPI.status.call;
             fmtStr = '# On branch %s\n';
             fprintf(fid,fmtStr,char(gitAPI.getRepository.getBranch));
+            if amend
+                fprintf(fid,'#\n# Initial commit\n#\n');
+            end
             if statusCall.isClean
                 fprintf('nothing to commit, working directory clean\n')
             else
@@ -163,7 +178,7 @@ classdef git < handle
                     if fid==2,fid = 1;end
                     fprintf(fid,'#\n');
                 end
-                fprintf(fid,'no changes added to commit (use "git add" and/or "git commit -a")\n');
+                fprintf(fid,'# no changes added to commit (use "git add" and/or "git commit -a")\n');
             end
         end
         function gitDir = getGitDir(path)
@@ -205,7 +220,7 @@ classdef git < handle
                     fid = fopen(javapath,'wt');
                     fprintf(fid,'# JGit package\n%s\n',jgitjar);
                     fclose(fid);
-                    fprintf(2,'Done.\n');
+                    fprintf(2,'Done.\n\n\t**Please restart MATLAB.**\n\n');
                 catch ME
                     fclose(fid);
                     throw(ME)
@@ -220,7 +235,7 @@ classdef git < handle
                             fprintf(2,'JGit not on "javaclasspath.txt". Writing ...\n');
                             fprintf(fid,'# JGit package\n%s\n',jgitjar);
                             fclose(fid);
-                            fprintf(2,'Done.\n');
+                            fprintf(2,'Done.\n\n\t**Please restart MATLAB.**\n\n');
                             break
                         end
                     end
@@ -240,6 +255,8 @@ classdef git < handle
             assert(~isempty(str),'git:downloadJGitJar:badURL', ...
                 'Can''t read from jgit download page.')
             tokens = regexp(str,expr,'tokens');
+            version = regexp(tokens{1}{1},ver,'match');
+            fprintf('\tVersion: %s\n',version)
             [f,status] = urlwrite(tokens{1}{1},'org.eclipse.jgit.jar');
         end
     end
