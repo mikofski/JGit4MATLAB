@@ -51,23 +51,23 @@ classdef git < handle
             gitAPI = git.getGitAPI(gitDir);
             commitCMD = gitAPI.commit;
             if p.Results.all
-                commitCMD.setAll(true)
+                commitCMD.setAll(true);
             end
             if ~isempty(p.Results.author)
-                commitCMD.setAuthor(p.Results.author{:})
+                commitCMD.setAuthor(p.Results.author{:});
             end
             if ~isempty(p.Results.committer)
-                commitCMD.setCommitter(p.Results.committer{:})
+                commitCMD.setCommitter(p.Results.committer{:});
             end
             amendcommit = '';
             if p.Results.amend
-                commitCMD.setAmend(true)
+                commitCMD.setAmend(true);
                 logCMD = gitAPI.log;
                 revCommit = logCMD.all.setMaxCount(1).call;
                 amendcommit = char(revCommit.next.getFullMessage);
             end
             if ~isempty(p.Results.message)
-                commitCMD.setMessage(p.Results.message)
+                commitCMD.setMessage(p.Results.message);
             else
                 COMMIT_MSG = tempname;
                 try
