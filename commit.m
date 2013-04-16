@@ -62,7 +62,11 @@ else
         msglines = msglines{1};
         msglines = [msglines,repmat({sprintf('\n')},numel(msglines),1)]';
         msg = [msglines{:}];
-        commitCMD.setMessage(msg)
+        if numel(msg)==1 && strcmp(msg,sprintf('\n'))
+            fprintf(2,'Aborting commit due to empty commit message.\n\n');
+        else
+            commitCMD.setMessage(msg)
+        end
     end
 end
 commitCMD.call

@@ -51,7 +51,7 @@ else
         if fid==1
             fmtStr = '#       <a href="matlab: edit(''%s'')">deleted:   %s</a>\n';
         else
-            fmtStr = '#       deleted:   %s\n';
+            fmtStr = '#       deleted:    %s\n';
         end
         iter = removed.iterator;
         for n = 1:removed.size
@@ -79,7 +79,7 @@ else
         for n = 1:modified.size
             fprintf(fid,fmtStr,iter.next);
         end
-        fmtStr = '#       deleted:   %s\n';
+        fmtStr = '#       deleted:    %s\n';
         iter = missing.iterator;
         for n = 1:missing.size
             fprintf(fid,fmtStr,iter.next);
