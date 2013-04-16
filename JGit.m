@@ -12,9 +12,8 @@ classdef JGit < handle
             end
             assert(JGit.validateJavaClassPath,'git:noJGit', ...
                 ['\n\t**Please restart MATLAB.**\n\n', ...
-                'JGit has been downloaded and added to the MATLAB Java static ', ...
-                'path.\nHowever, you must restart MATLAB for these changes to', ...
-                'take effect.\n\n', ...
+                'JGit has been downloaded and/or added to the MATLAB Java static path,\n', ...
+                'but you must restart MATLAB for the changes to take effect.\n\n', ...
                 'For more information see:\n', ...
                 '<a href="http://www.mathworks.com/help/matlab/matlab_external/', ...
                 'bringing-java-classes-and-methods-into-matlab-workspace.html#f111065">', ...
@@ -42,25 +41,27 @@ classdef JGit < handle
                 s = dir(gitDir);
             end
         end
-        function status = validateJavaClassPath
-            status = false;
-            spath = javaclasspath('-static');
+        function valid = validateJavaClassPath
+            valid = true;
             githome =  fileparts(mfilename('fullpath'));
             jgitjar = fullfile(githome,[JGit.JGIT,'.jar']);
-            if any(strcmp(spath,jgitjar))
-                status = true;
-                return
-            end
-            fprintf(2,'\n\t**JGit not detected.**\n\n');
             if exist(jgitjar,'file')~=2
+                valid = false;
                 fprintf(2,'JGit jar-file doesn''t exist. Downloading ...\n');
-                [f,status] = JGit.downloadJGitJar;
+                [f,status] = JGit.downloadJGitJar(jgitjar);
                 if status==1
                     fprintf(2,'Saved as:\n\t%s.\n... Done.\n\n',f);
                 else
                     error('git:validateJavaClassPath:downloadError',status)
                 end
             end
+            spath = javaclasspath('-static');
+            if any(strcmp(spath,jgitjar))
+                valid = valid && true;
+                return
+            end
+            valid = false;
+            fprintf(2,'\n\t**JGit not detected.**\n\n');
             workhome = userpath;workhome = workhome(1:end-1);
             javapath = fullfile(workhome,'javaclasspath.txt');
             if exist(javapath,'file')~=2
@@ -95,7 +96,7 @@ classdef JGit < handle
                 end
             end
         end
-        function [f,status] = downloadJGitJar
+        function [f,status] = downloadJGitJar(jgitjar)
             ver = '[0-9].[0-9].[0-9].[0-9]{12}';
             expr = ['<a href="(http://download.eclipse.org/jgit/maven/', ...
                 'org/eclipse/jgit/',JGit.JGIT,'/',ver,'-r/',JGit.JGIT,'-', ...
@@ -106,7 +107,7 @@ classdef JGit < handle
             tokens = regexp(str,expr,'tokens');
             version = regexp(tokens{1}{1},ver,'match');
             fprintf('\tVersion: %s\n',version{1})
-            [f,status] = urlwrite(tokens{1}{1},'org.eclipse.jgit.jar');
+            [f,status] = urlwrite(tokens{1}{1},jgitjar);
         end
     end
 end

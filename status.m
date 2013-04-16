@@ -88,7 +88,13 @@ else
         fprintf(fid,'#\n');
     end
     untracked = statusCall.getUntracked;
-    if ~untracked.isEmpty
+    ignored = statusCall.getIgnoredNotInIndex;
+    ignoreFlag = false(untracked.size,1);
+    iter = untracked.iterator;
+    for n = 1:untracked.size
+        ignoreFlag(n) = ignored.contains(iter.next);
+    end
+    if ~untracked.isEmpty && ~all(ignoreFlag)
         fprintf(fid,[ ...
             '# Untracked files:\n', ...
             '#   (use "git add <file>..." to include in what will be committed)\n', ...
@@ -97,7 +103,9 @@ else
         if fid==1,fid = 2;end
         iter = untracked.iterator;
         for n = 1:untracked.size
-            fprintf(2,fmtStr,iter.next);
+            if ~ignoreFlag
+                fprintf(2,fmtStr,iter.next);
+            end
         end
         if fid==2,fid = 1;end
         fprintf(fid,'#\n');
