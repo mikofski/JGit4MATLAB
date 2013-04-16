@@ -91,7 +91,8 @@ classdef git < handle
                         throw(ME)
                     end
                     msglines = textscan(msg,'%s','Delimiter','\n','CommentStyle','#');
-                    msglines = [msglines{1},repmat({sprintf('\n')},3,1)]';
+                    msglines = msglines{1};
+                    msglines = [msglines,repmat({sprintf('\n')},numel(msglines),1)]';
                     msg = [msglines{:}];
                     commitCMD.setMessage(msg)
                 end
