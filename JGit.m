@@ -26,6 +26,7 @@ classdef JGit < handle
         end
         add(pathlist,gitDir)
         commit(varargin)
+        log(varargin)
         status(gitDir,fid,amend)
         function gitDir = getGitDir(path)
             gitDir = fullfile(path,JGit.GIT_DIR);

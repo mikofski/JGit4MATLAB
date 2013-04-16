@@ -23,7 +23,12 @@ amendcommit = '';
 if p.Results.amend
     commitCMD.setAmend(true);
     logCMD = gitAPI.log;
-    revCommit = logCMD.all.setMaxCount(1).call;
+    repo = gitAPI.getRepository;
+    HEAD = repo.resolve('HEAD');
+    revCommit = logCMD.add(HEAD).setMaxCount(1).call;
+    % use `add()` instead of `all()` since it has problems with peeled tags
+    % see https://bugs.eclipse.org/bugs/show_bug.cgi?id=402025
+    % revCommit = logCMD.all.setMaxCount(1).call;
     amendcommit = char(revCommit.next.getFullMessage);
 end
 if ~isempty(p.Results.message)
