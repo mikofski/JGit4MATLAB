@@ -1,12 +1,79 @@
 classdef JGit < handle
+    %JGIT A JGit wrapper for MATLAB
+    %   JGIT, the first time it is called, downloads the latest version of
+    %   "org.eclipse.jgit.jar", adds it to the MATLAB static Java class
+    %   path and makes a backup of the existing "javaclasspath.txt" as
+    %   "javaclasspath.JGitSaved". MATLAB must then be restarted for the
+    %   changes to the MATLAB static Java class path to take effect.
+    %
+    %   For more information see also
+    %   <a href="http://www.mathworks.com/help/matlab/matlab_external/bringing-java-classes-and-methods-into-matlab-workspace.html#f111065">Bringing Java Classes into MATLAB Workspace: The Java Class Path: The Static Path</a>
+    %
+    %   JGIT has only class methods that call the corresponding command
+    %   methods of the Git class in the org.eclipse.jgit.api package.
+    %
+    %   For more information see also
+    %   <a href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/api/Git.html">Class Git in org.eclipse.jgit.api package</a>
+    %   <a href="http://eclipse.org/jgit/">JGit-eclipse</a>
+    %   <a href="https://www.kernel.org/pub/software/scm/git/docs/">Git Manual</a>
+    %   <a href="http://git-scm.com/">Git-SCM</a>
+    %
+    %   JGIT.ADD(PATHLIST) Stage file(s) in PATHLIST, a character string or
+    %   a cell string.
+    %   For more information see also
+    %   <a href="https://www.kernel.org/pub/software/scm/git/docs/git-add.html">Git Add Documentation</a>
+    %   <a href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/api/AddCommand.html">JGit Git API Class AddCommand</a>
+    %
+    %   JGIT.COMMIT(VARARGIN) Commit files to the repository. VARARGIN are
+    %   parameter-value pairs. Possible parameters are as follows:
+    %   'all' - <logical> Automatically stage files that have been modified or
+    %       deleted before commit.
+    %   'message' - <char> Commit message.
+    %   'amend' - <logical> Amend the commit message of HEAD.
+    %   For more information see also
+    %   <a href="https://www.kernel.org/pub/software/scm/git/docs/git-commit.html">Git Commit Documentation</a>
+    %   <a href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/api/CommitCommand.html">JGit Git API Class CommitCommand</a>
+    %   
+    %   JGIT.LOG Show the commit log.
+    %   For more information see also
+    %   <a href="https://www.kernel.org/pub/software/scm/git/docs/git-log.html">Git Log Documentation</a>
+    %   <a href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/api/LogCommand.html">JGit Git API Class LogCommand</a>
+    %
+    %   JGIT.STATUS Return the status of the repository.
+    %   For more information see also
+    %   <a href="https://www.kernel.org/pub/software/scm/git/docs/git-status.html">Git Status Documentation</a>
+    %   <a href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/api/StatusCommand.html">JGit Git API Class StatusCommand</a>
+    %
+    %   See also ADD, COMMIT, LOG, STATUS, GETGITAPI, GETGITDIR,
+    %   VALIDATEJAVACLASSPATH, DOWNLOADJGITJAR
+    %
+    %   Version 0.1 - Alpaca Release
+    %   2013-04-16 Mark Mikofski
+    %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
+    
     properties (Constant)
         EDITOR = 'notepad'
-        F = @(method,args)feval([JGit.JGIT,'.',method],args{:})
         GIT_DIR = '.git'
         JGIT = 'org.eclipse.jgit'
     end
     methods (Static)
         function gitAPI = getGitAPI(gitDir)
+            %GETGITAPI Get an instance of the JGit API Git Class.
+            %   GITAPIOBJ = GETGITAPI returns GITAPIOBJ, an instance of the
+            %   JGit API Git Class for the Git repository in the current
+            %   directory.
+            %   GITAPIOBJ = GETGITAPI(GITDIR) returns GITAPIOBJ for the Git
+            %   repository in which GITDIR is located. GITDIR can be any
+            %   folder in the repository.
+            %   Throws GIT:NOTGITREPO if there is no .git folder in GITDIR
+            %   or any of its parent folder.
+            %
+            %   See also: JGIT, GETGITDIR
+            %
+            %   Version 0.1 - Alpaca Release
+            %   2013-04-16 Mark Mikofski
+            %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
+            
             if nargin<1
                 gitDir = pwd;
             end
@@ -22,7 +89,7 @@ classdef JGit < handle
             assert(~isempty(gitDir),'git:notGitRepo', ...
                 ['fatal: Not a git repository (or any of the parent', ...
                 'directories): .git'])
-            gitAPI = JGit.F('api.Git.open',{java.io.File(gitDir)});
+            gitAPI = org.eclipse.jgit.api.Git.open(java.io.File(gitDir));
         end
         add(pathlist,gitDir)
         commit(varargin)
