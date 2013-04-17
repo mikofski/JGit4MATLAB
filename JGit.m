@@ -20,26 +20,37 @@ classdef JGit < handle
     %
     %   JGIT.ADD(PATHLIST) Stage file(s) in PATHLIST, a character string or
     %   a cell string.
+    %   JGIT.ADD(PATHLIST,GITDIR) Specify the folder in which Git Repo resides.
     %   For more information see also
     %   <a href="https://www.kernel.org/pub/software/scm/git/docs/git-add.html">Git Add Documentation</a>
     %   <a href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/api/AddCommand.html">JGit Git API Class AddCommand</a>
     %
     %   JGIT.COMMIT(VARARGIN) Commit files to the repository. VARARGIN are
     %   parameter-value pairs. Possible parameters are as follows:
-    %   'all' - <logical> Automatically stage files that have been modified or
+    %   'all' <logical> Automatically stage files that have been modified or
     %       deleted before commit.
-    %   'message' - <char> Commit message.
-    %   'amend' - <logical> Amend the commit message of HEAD.
+    %   'message' <char> Commit message.
+    %   'amend' <logical> Amend the commit message of HEAD.
+    %   'gitDir' <char> Specify the folder in which Git Repo resides.
     %   For more information see also
     %   <a href="https://www.kernel.org/pub/software/scm/git/docs/git-commit.html">Git Commit Documentation</a>
     %   <a href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/api/CommitCommand.html">JGit Git API Class CommitCommand</a>
-    %   
-    %   JGIT.LOG Show the commit log.
+    %
+    %   JGIT.LOG(VARARGIN) Show the commit log.
+    %   Posible parameters are as follows:
+    %   'since' <char> Show log of newer commits since this commit.
+    %   'until' <char> Show log of older commits until this commit.
+    %   'maxCount' <integer> Maximum count of commit logs to show.
+    %   'skip' <integer> Number of commits logs to skip.
+    %   'gitDir' <char> Specify the folder in which Git Repo resides.
     %   For more information see also
     %   <a href="https://www.kernel.org/pub/software/scm/git/docs/git-log.html">Git Log Documentation</a>
     %   <a href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/api/LogCommand.html">JGit Git API Class LogCommand</a>
     %
     %   JGIT.STATUS Return the status of the repository.
+    %   JGIT.STATUS(GITDIR) Specify the folder in which Git Repo resides.
+    %   JGIT.STATUS(GITDIR,FID) Output status to file identifier, FID.
+    %   JGIT.STATUS(GITDIR, FID, AMEND) Add "Initial commit" text to status.
     %   For more information see also
     %   <a href="https://www.kernel.org/pub/software/scm/git/docs/git-status.html">Git Status Documentation</a>
     %   <a href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/api/StatusCommand.html">JGit Git API Class StatusCommand</a>
@@ -57,6 +68,10 @@ classdef JGit < handle
         JGIT = 'org.eclipse.jgit'
     end
     methods (Static)
+        add(pathlist,gitDir)
+        commit(varargin)
+        log(varargin)
+        status(gitDir,fid,amend)
         function gitAPI = getGitAPI(gitDir)
             %GETGITAPI Get an instance of the JGit API Git Class.
             %   GITAPIOBJ = GETGITAPI returns GITAPIOBJ, an instance of the
@@ -91,11 +106,17 @@ classdef JGit < handle
                 'directories): .git'])
             gitAPI = org.eclipse.jgit.api.Git.open(java.io.File(gitDir));
         end
-        add(pathlist,gitDir)
-        commit(varargin)
-        log(varargin)
-        status(gitDir,fid,amend)
         function gitDir = getGitDir(path)
+            %GETGITDIR Find the .git folder of the repository.
+            %   GITDIR = GETGITDIR(GITDIR) returns GITDIR, the .git folder for
+            %   the Git repository in the current directory.
+            %
+            %   See also: JGIT, GETGITAPI
+            %
+            %   Version 0.1 - Alpaca Release
+            %   2013-04-16 Mark Mikofski
+            %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
+            
             gitDir = fullfile(path,JGit.GIT_DIR);
             s = dir(gitDir);
             while isempty(s)

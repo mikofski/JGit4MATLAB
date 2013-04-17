@@ -42,11 +42,15 @@ end
 revwalker = logCMD.call;
 commit = revwalker.next;
 while ~isempty(commit)
-    disp(commit.getAuthorIdent)
-    disp(commit.getFullMessage)
+    fprintf(2,'%s\n',char(commit.getId));
+    fprintf('%s\n',char(commit.getAuthorIdent))
+    fprintf('%s\n\n',strtrim(char(commit.getFullMessage)))
     commit = revwalker.next;
-    reply = input(':','s');
+    prompt = '<ENTER to continue/Q-ENTER to quit>:';
+    reply = input(prompt,'s');
+    fprintf('%s',repmat(sprintf('\b'),numel(prompt)+1,1))
     if strncmpi(reply,'q',1)
+        fprintf('\b')
         break
     end
 end

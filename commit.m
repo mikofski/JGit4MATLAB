@@ -66,7 +66,7 @@ else
         msglines = textscan(msg,'%s','Delimiter','\n','CommentStyle','#');
         msglines = msglines{1};
         msglines = [msglines,repmat({sprintf('\n')},numel(msglines),1)]';
-        msg = [msglines{:}];
+        msg = strtrim([msglines{:}]);
         if numel(msg)==1 && strcmp(msg,sprintf('\n'))
             fprintf(2,'Aborting commit due to empty commit message.\n\n');
         else
