@@ -48,9 +48,8 @@ while ~isempty(commit)
     commit = revwalker.next;
     prompt = '<ENTER to continue/Q-ENTER to quit>:';
     reply = input(prompt,'s');
-    fprintf('%s',repmat(sprintf('\b'),numel(prompt)+1,1))
+    fprintf('%s',repmat(sprintf('\b'),numel(prompt)+numel(reply)+1,1))
     if strncmpi(reply,'q',1)
-        fprintf('\b')
         break
     end
 end

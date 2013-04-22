@@ -69,7 +69,9 @@ classdef JGit < handle
     end
     methods (Static)
         add(pathlist,gitDir)
+        clone(varagin)
         commit(varargin)
+        init(varargin)
         log(varargin)
         status(gitDir,fid,amend)
         function gitAPI = getGitAPI(gitDir)
