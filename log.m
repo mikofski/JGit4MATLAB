@@ -53,4 +53,4 @@ while ~isempty(commit)
         break
     end
 end
-
+end

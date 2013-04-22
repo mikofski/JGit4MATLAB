@@ -1,4 +1,28 @@
 function commit(varargin)
+%COMMIT Commit files to the repo.
+%   JGIT.COMMIT(PARAM,VAL,...) uses parameter-value pairs PARAM,VAL. The
+%   following parameters can be used in any combination.
+%   all <logical> [false] Automatically stage files that have been modified or
+%       deleted before commit.
+%   message <char> [] Commit with the given message. An empty message will start
+%       the editor given by GETENV(EDITOR) or JGIT.EDITOR.
+%   amend <logical> [false] Amend the previous commit message.
+%   gitDir <char> [PWD] Commit to repo in specified folder.
+%
+%   For more information see also
+%   <a href="https://www.kernel.org/pub/software/scm/git/docs/git-commit.html">Git Commit Documentation</a>
+%   <a href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/api/CommitCommand.html">JGit Git API Class CommitCommand</a>
+%
+%   Example:
+%       JGIT.COMMIT('all',true,'message','initial dump')
+%
+%   See also JGIT
+%
+%   Version 0.1 - Alpaca Release
+%   2013-04-16 Mark Mikofski
+%   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
+
+%% Check inputs
 p = inputParser;
 p.addParamValue('all',false,@(x)validateattributes(x,{'logical'},{'scalar'}))
 p.addParamValue('author','',@(x)validateattributes(x,{'cell'},{'numel',2}))
@@ -10,15 +34,18 @@ p.parse(varargin{:})
 gitDir = p.Results.gitDir;
 gitAPI = JGit.getGitAPI(gitDir);
 commitCMD = gitAPI.commit;
+%% set all
 if p.Results.all
     commitCMD.setAll(true);
 end
+%% set author and committer
 if ~isempty(p.Results.author)
     commitCMD.setAuthor(p.Results.author{:});
 end
 if ~isempty(p.Results.committer)
     commitCMD.setCommitter(p.Results.committer{:});
 end
+%% amend commit
 amendcommit = '';
 if p.Results.amend
     commitCMD.setAmend(true);
@@ -31,6 +58,7 @@ if p.Results.amend
     % revCommit = logCMD.all.setMaxCount(1).call;
     amendcommit = char(revCommit.next.getFullMessage);
 end
+%% commit message
 if ~isempty(p.Results.message)
     commitCMD.setMessage(p.Results.message);
 else
@@ -74,5 +102,6 @@ else
         end
     end
 end
-commitCMD.call
+%% call
+commitCMD.call;
 end

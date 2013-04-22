@@ -20,7 +20,9 @@ classdef JGit < handle
     %
     %   JGIT.ADD(PATHLIST) Stage file(s) in PATHLIST, a character string or
     %   a cell string.
-    %   JGIT.ADD(PATHLIST,GITDIR) Specify the folder in which Git Repo resides.
+    %   JGIT.ADD(PATHLIST,VARARGIN) Specify parameter-value pairs.
+    %   'update' <logical> Only stage tracked files.
+    %   'gitDir' <char> Specify the folder in which Git Repo resides.
     %   For more information see also
     %   <a href="https://www.kernel.org/pub/software/scm/git/docs/git-add.html">Git Add Documentation</a>
     %   <a href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/api/AddCommand.html">JGit Git API Class AddCommand</a>
@@ -35,6 +37,11 @@ classdef JGit < handle
     %   For more information see also
     %   <a href="https://www.kernel.org/pub/software/scm/git/docs/git-commit.html">Git Commit Documentation</a>
     %   <a href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/api/CommitCommand.html">JGit Git API Class CommitCommand</a>
+    %
+    %   JGIT.INIT(VARARGIN) Initialize or reinitialize a Git repository.
+    %   For more information see also
+    %   <a href="https://www.kernel.org/pub/software/scm/git/docs/git-init.html">Git Init Documentation</a>
+    %   <a href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/api/InitCommand.html">JGit Git API Class InitCommand</a>
     %
     %   JGIT.LOG(VARARGIN) Show the commit log.
     %   Posible parameters are as follows:
@@ -63,9 +70,12 @@ classdef JGit < handle
     %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
     
     properties (Constant)
-        EDITOR = 'notepad'
-        GIT_DIR = '.git'
-        JGIT = 'org.eclipse.jgit'
+        EDITOR = JGit.getEDITOR % an editor
+        GIT_DIR = '.git' % git repository folder
+        JGIT = 'org.eclipse.jgit' % JGit package name
+        VALID = JGit.validateJavaClassPath
+        VERFILE = fullfile(fileparts(mfilename('fullpath')),'version') % file storing JGit package version
+        VERSION = strtrim(fileread(JGit.VERFILE)) % JGit version string
     end
     methods (Static)
         add(pathlist,gitDir)
@@ -94,16 +104,8 @@ classdef JGit < handle
             if nargin<1
                 gitDir = pwd;
             end
-            assert(JGit.validateJavaClassPath,'git:noJGit', ...
-                ['\n\t**Please restart MATLAB.**\n\n', ...
-                'JGit has been downloaded and/or added to the MATLAB Java static path,\n', ...
-                'but you must restart MATLAB for the changes to take effect.\n\n', ...
-                'For more information see:\n', ...
-                '<a href="http://www.mathworks.com/help/matlab/matlab_external/', ...
-                'bringing-java-classes-and-methods-into-matlab-workspace.html#f111065">', ...
-                'Bringing Java Classes into MATLAB Workspace: The Java Class Path: The Static Path</a>'])
             gitDir = JGit.getGitDir(gitDir);
-            assert(~isempty(gitDir),'git:notGitRepo', ...
+            assert(~isempty(gitDir),'jgit:notGitRepo', ...
                 ['fatal: Not a git repository (or any of the parent', ...
                 'directories): .git'])
             gitAPI = org.eclipse.jgit.api.Git.open(java.io.File(gitDir));
@@ -133,6 +135,7 @@ classdef JGit < handle
             end
         end
         function valid = validateJavaClassPath
+            %VALIDATEJAVACLASSPATH Validate MATLAB static Java class path.
             valid = true;
             githome =  fileparts(mfilename('fullpath'));
             jgitjar = fullfile(githome,[JGit.JGIT,'.jar']);
@@ -143,63 +146,102 @@ classdef JGit < handle
                 if status==1
                     fprintf(2,'Saved as:\n\t%s.\n... Done.\n\n',f);
                 else
-                    error('git:validateJavaClassPath:downloadError',status)
+                    error('jgit:validateJavaClassPath:downloadError',status)
                 end
             end
             spath = javaclasspath('-static');
             if any(strcmp(spath,jgitjar))
                 valid = valid && true;
-                return
-            end
-            valid = false;
-            fprintf(2,'\n\t**JGit not detected.**\n\n');
-            workhome = userpath;workhome = workhome(1:end-1);
-            javapath = fullfile(workhome,'javaclasspath.txt');
-            if exist(javapath,'file')~=2
-                fprintf(2,'"javaclasspath.txt" not detected. Writing ...\n');
-                try
-                    fid = fopen(javapath,'wt');
-                    fprintf(fid,'# JGit package\n%s\n',jgitjar);
-                    fclose(fid);
-                    fprintf(2,'... Done.\n\n');
-                catch ME
-                    fclose(fid);
-                    throw(ME)
-                end
             else
-                try
-                    fid = fopen(javapath,'r+t');
-                    pathline = fgetl(fid);
-                    while ~strcmp(pathline,jgitjar)
-                        if feof(fid)
-                            copyfile(javapath,[javapath,'.JGitSaved'])
-                            fprintf(2,'JGit not on static Java class path. Writing ...\n');
-                            fprintf(fid,'# JGit package\n%s\n',jgitjar);
-                            fclose(fid);
-                            fprintf(2,'... Done.\n\n');
-                            break
-                        end
-                        pathline = fgetl(fid);
+                valid = false;
+                fprintf(2,'\n\t**JGit not detected.**\n\n');
+                workhome = userpath;workhome = workhome(1:end-1);
+                javapath = fullfile(workhome,'javaclasspath.txt');
+                if exist(javapath,'file')~=2
+                    fprintf(2,'"javaclasspath.txt" not detected. Writing ...\n');
+                    try
+                        fid = fopen(javapath,'wt');
+                        fprintf(fid,'# JGit package\n%s\n',jgitjar);
+                        fclose(fid);
+                        fprintf(2,'... Done.\n\n');
+                    catch ME
+                        fclose(fid);
+                        throw(ME)
                     end
-                catch ME
-                    fclose(fid);
-                    close(h)
-                    throw(ME)
+                else
+                    try
+                        fid = fopen(javapath,'r+t');
+                        pathline = fgetl(fid);
+                        while ~strcmp(pathline,jgitjar)
+                            if feof(fid)
+                                copyfile(javapath,[javapath,'.JGitSaved'])
+                                fprintf(2,'JGit not on static Java class path. Writing ...\n');
+                                fprintf(fid,'# JGit package\n%s\n',jgitjar);
+                                fclose(fid);
+                                fprintf(2,'... Done.\n\n');
+                                break
+                            end
+                            pathline = fgetl(fid);
+                        end
+                    catch ME
+                        fclose(fid);
+                        close(h)
+                        throw(ME)
+                    end
                 end
             end
+            assert(valid,'jgit:noJGit', ...
+                ['\n\t**Please restart MATLAB.**\n\n', ...
+                'JGit has been downloaded and/or added to the MATLAB Java static path,\n', ...
+                'but you must restart MATLAB for the changes to take effect.\n\n', ...
+                'For more information see:\n', ...
+                '<a href="http://www.mathworks.com/help/matlab/matlab_external/', ...
+                'bringing-java-classes-and-methods-into-matlab-workspace.html#f111065">', ...
+                'Bringing Java Classes into MATLAB Workspace: The Java Class Path: The Static Path</a>'])
         end
         function [f,status] = downloadJGitJar(jgitjar)
+            %DOWNLOADJGITJAR Download the latest JGit jar file.
             ver = '[0-9].[0-9].[0-9].[0-9]{12}';
             expr = ['<a href="(http://download.eclipse.org/jgit/maven/', ...
                 'org/eclipse/jgit/',JGit.JGIT,'/',ver,'-r/',JGit.JGIT,'-', ...
                 ver,'-r.jar)">',JGit.JGIT,'.jar</a>'];
             str = urlread('http://www.eclipse.org/jgit/download/');
-            assert(~isempty(str),'git:downloadJGitJar:badURL', ...
+            assert(~isempty(str),'jgit:downloadJGitJar:badURL', ...
                 'Can''t read from jgit download page.')
             tokens = regexp(str,expr,'tokens');
             version = regexp(tokens{1}{1},ver,'match');
             fprintf('\tVersion: %s\n',version{1})
             [f,status] = urlwrite(tokens{1}{1},jgitjar);
+            try
+                fid = fopen(JGit.VERFILE,'wt');
+                fprintf(fid,'%s\n',version{1});
+            catch ME
+                fclose(fid);
+                throw(ME)
+            end
+            fclose(fid);
+        end
+        function editor = getEDITOR
+            %GETEDITOR Get the default system editor.
+            comp = computer;
+            switch comp
+                case {'PCWIN','PCWIN64'}
+                    editor = 'notepad';
+                case 'MACI64'
+                    editor = 'textedit';
+                case 'GLNXA64'
+                    editor = 'gedit';
+                otherwise
+                    if ispc
+                        editor = 'notepad';
+                    elseif ismac
+                        editor = 'textedit';
+                    elseif isunix
+                        editor = 'gedit';
+                    else
+                        error('jgit:noeditor','No editor found.')
+                    end
+            end
         end
     end
 end
