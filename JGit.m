@@ -58,6 +58,7 @@ classdef JGit < handle
         EDITOR = JGit.getEDITOR % an editor
         GIT_DIR = '.git' % git repository folder
         JGIT = 'org.eclipse.jgit' % JGit package name
+        PROGRESSMONITOR = [JGit.JGIT,'.lib.MATLABProgressMonitor']
         VALID = JGit.validateJavaClassPath
         VERFILE = fullfile(fileparts(mfilename('fullpath')),'version') % file storing JGit package version
         VERSION = strtrim(fileread(JGit.VERFILE)) % JGit version string
@@ -65,8 +66,9 @@ classdef JGit < handle
     %% static methods
     methods (Static)
         %% common methods
-        add(pathlist,gitDir)
-        clone(varagin)
+        add(files,gitDir)
+        branch(varargin)
+        clone(uri,varargin)
         commit(varargin)
         init(varargin)
         log(varargin)
@@ -144,6 +146,7 @@ classdef JGit < handle
             valid = true;
             githome =  fileparts(mfilename('fullpath'));
             jgitjar = fullfile(githome,[JGit.JGIT,'.jar']);
+            pmjar = fullfile(githome,[JGit.PROGRESSMONITOR,'.jar']);
             if exist(jgitjar,'file')~=2
                 valid = false;
                 fprintf(2,'JGit jar-file doesn''t exist. Downloading ...\n');
@@ -156,7 +159,7 @@ classdef JGit < handle
             end
             %% check MATLAB static Java class path
             spath = javaclasspath('-static');
-            if any(strcmp(spath,jgitjar))
+            if any(strcmp(spath,jgitjar)) && any(strcmp(spath,pmjar))
                 %% Yes, jar-file is on MATLAB static Java class path
                 % return false if jar-file has just been downloaded even if
                 % already on MATLAB static Java class path
@@ -174,6 +177,7 @@ classdef JGit < handle
                     try
                         fid = fopen(javapath,'wt');
                         fprintf(fid,'# JGit package\n%s\n',jgitjar);
+                        fprintf(fid,'# JGit package\n%s\n',pmjar);
                         fclose(fid);
                         fprintf(2,'... Done.\n\n');
                     catch ME
@@ -185,16 +189,28 @@ classdef JGit < handle
                     try
                         fid = fopen(javapath,'r+t');
                         pathline = fgetl(fid);
-                        while ~strcmp(pathline,jgitjar)
+                        foundJGit = strcmp(pathline,jgitjar);
+                        foundPM = strcmp(pathline,pmjar);
+                        while ~foundJGit || ~foundPM
                             if feof(fid)
                                 copyfile(javapath,[javapath,'.JGitSaved'])
-                                fprintf(2,'JGit not on static Java class path. Writing ...\n');
-                                fprintf(fid,'# JGit package\n%s\n',jgitjar);
-                                fclose(fid);
-                                fprintf(2,'... Done.\n\n');
+                                if ~foundJGit
+                                    fprintf(2,'JGit not on static Java class path. Writing ...\n');
+                                    fprintf(fid,'# JGit package\n%s\n',jgitjar);
+                                    fclose(fid);
+                                    fprintf(2,'... Done.\n\n');
+                                end
+                                if ~foundPM
+                                    fprintf(2,'ProgressMonitor not on static Java class path. Writing ...\n');
+                                    fprintf(fid,'# JGit package\n%s\n',pmjar);
+                                    fclose(fid);
+                                    fprintf(2,'... Done.\n\n');
+                                end
                                 break
                             end
                             pathline = fgetl(fid);
+                            foundJGit = foundJGit || strcmp(pathline,jgitjar);
+                            foundPM = foundPM || strcmp(pathline,pmjar);
                         end
                     catch ME
                         fclose(fid);

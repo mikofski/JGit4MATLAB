@@ -3,7 +3,7 @@ function init(varargin)
 %   JGIT.INIT(PARAMETER,VALUE,...) uses any combination of the following
 %   PARAMETER, VALUE pairs.
 %   'bare' <logical> [false] Initialize a bare repository.
-%   'directory' <char> [PWD] Create a repository in the specified directory.
+%   'directory' <char> [PWD] Create repository in specified directory.
 %
 %   For more information see also
 %   <a href="https://www.kernel.org/pub/software/scm/git/docs/git-init.html">Git Init Documentation</a>

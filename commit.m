@@ -98,7 +98,7 @@ else
         if numel(msg)==1 && strcmp(msg,sprintf('\n'))
             fprintf(2,'Aborting commit due to empty commit message.\n\n');
         else
-            commitCMD.setMessage(msg)
+            commitCMD.setMessage(msg);
         end
     end
 end
