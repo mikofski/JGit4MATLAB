@@ -54,9 +54,25 @@ end
 if ~isempty(p.Results.branch)
     cloneCMD.setBranch(p.Results.branch);
 end
+%% set branches to clone
+if ~isempty(p.Results.branchesToClone)
+    cloneCMD.setBranchesToClone(p.Results.branchesToClone);
+end
+%% bare cloneAllBranches
+if p.Results.cloneAllBranches
+    cloneCMD.setCloneAllBranches(true);
+end
+%% bare cloneSubmodules
+if p.Results.cloneSubmodules
+    cloneCMD.setCloneSubmodules(true);
+end
 %% set directory
 if ~isempty(p.Results.directory)
     cloneCMD.setDirectory(java.io.File(p.Results.directory));
+end
+%% bare noCheckout
+if p.Results.noCheckout
+    cloneCMD.setNoCheckout(true);
 end
 %% set progressMonitor
 cloneCMD.setProgressMonitor(p.Results.progressMonitor);
