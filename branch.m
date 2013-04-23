@@ -100,18 +100,6 @@ switch lower(p.Results.cmd)
         end
         %% set name(s) of deleted branch(es)
         if ~isempty(p.Results.oldNames)
-            % Don't need javaArray, and not passing array to java,
-            % '...' notation is varargs notation in java.
-            % % http://www.mathworks.com/help/matlab/matlab_external/passing-data-to-a-java-method.html
-            % % http://www.mathworks.com/help/matlab/matlab_external/handling-data-returned-from-a-java-method.html
-            % % http://www.mathworks.com/help/matlab/ref/javaarray.html
-            % if iscellstr(p.Results.oldNames)
-            %     strArray = javaArray('java.lang.String',numel(p.Results.oldNames));
-            %     for n = 1:numel(p.Results.oldNames)
-            %         strArray(n) = java.lang.String(p.Results.oldNames{n});
-            %     end
-            %     p.Results.oldNames = strArray(n);
-            % end
             branchCMD.setBranchNames(p.Results.oldNames);
         end
     case 'list'
