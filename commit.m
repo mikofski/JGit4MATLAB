@@ -18,7 +18,7 @@ function commit(varargin)
 %
 %   See also JGIT
 %
-%   Version 0.2 - Bumblebee Release
+%   Version 0.3 - Chameleon Release
 %   2013-04-22 Mark Mikofski
 %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
 

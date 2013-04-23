@@ -47,10 +47,10 @@ classdef JGit < handle
     %   See `help JGIT.METHOD` for more information on a specific METHOD.
     %
     %   See also ADD, BRANCH, CLONE, COMMIT, CONFIG, DIFF, INIT, LOG, STATUS,
-    %   GETGITAPI, GETGITDIR, VALIDATEJAVACLASSPATH, DOWNLOADJGITJAR
+    %   GETGITAPI, GETGITDIR, VALIDATEJAVACLASSPATH, DOWNLOADJGITJAR, GETEDITOR
     %
-    %   Version 0.2 - Bumblebee Release
-    %   2013-04-22 Mark Mikofski
+    %   Version 0.3 - Chameleon Release
+    %   2013-04-23 Mark Mikofski
     %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
     
     %% constant properties
@@ -67,7 +67,7 @@ classdef JGit < handle
     methods (Static)
         %% common methods
         add(files,gitDir)
-        branch(varargin)
+        branch(cmd,newName,varargin)
         clone(uri,varargin)
         commit(varargin)
         init(varargin)
@@ -87,8 +87,8 @@ classdef JGit < handle
             %
             %   See also: JGIT, GETGITDIR
             %
-            %   Version 0.2 - Bumblebee Release
-            %   2013-04-22 Mark Mikofski
+            %   Version 0.3 - Chameleon Release
+            %   2013-04-23 Mark Mikofski
             %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
             
             %% checkin inputs
@@ -110,7 +110,7 @@ classdef JGit < handle
             %
             %   See also: JGIT, GETGITAPI
             %
-            %   Version 0.2 - Bumblebee Release
+            %   Version 0.3 - Chameleon Release
             %   2013-04-22 Mark Mikofski
             %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
             
@@ -138,7 +138,7 @@ classdef JGit < handle
             %
             %   See also: JGIT, DOWNLOADJGITJAR
             %
-            %   Version 0.2 - Bumblebee Release
+            %   Version 0.3 - Chameleon Release
             %   2013-04-22 Mark Mikofski
             %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
             
@@ -239,7 +239,7 @@ classdef JGit < handle
             %
             %   See also: JGIT, DOWNLOADJGITJAR, URLWRITE
             %
-            %   Version 0.2 - Bumblebee Release
+            %   Version 0.3 - Chameleon Release
             %   2013-04-22 Mark Mikofski
             %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
             
@@ -275,7 +275,7 @@ classdef JGit < handle
             %
             %   See also: JGIT, DOWNLOADJGITJAR, URLWRITE
             %
-            %   Version 0.2 - Bumblebee Release
+            %   Version 0.3 - Chameleon Release
             %   2013-04-22 Mark Mikofski
             %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
             

@@ -18,13 +18,13 @@ function add(files,varargin)
 %
 %   See also JGIT
 %
-%   Version 0.2 - Bumblebee Release
+%   Version 0.3 - Chameleon Release
 %   2013-04-22 Mark Mikofski
 %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
 
 %% check inputs
 p = inputParser;
-p.addRequired('files',@(x)validatefiles(files))
+p.addRequired('files',@(x)validatefiles(x))
 p.addParamValue('update',false,@(x)validateattributes(x,{'logical'},{'scalar'}))
 p.addParamValue('gitDir',pwd,@(x)validateattributes(x,{'char'},{'row'}))
 p.parse(files,varargin{:})
@@ -48,9 +48,8 @@ addCMD.call;
 end
 
 function tf = validatefiles(files)
-if iscellstr(files)
-    tf = true;
-    return
+if ~iscellstr(files)
+    validateattributes(files,{'char'},{'row'})
 end
-validateattributes(files,{'char'},{'row'})
+tf = true;
 end
