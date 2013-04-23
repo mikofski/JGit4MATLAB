@@ -1,12 +1,12 @@
 function add(files,varargin)
-%ADD Add files to the index.
+%JGIT.ADD Add files to the index.
 %   JGIT.ADD(FILES) adds the file or files given by the string or cell-string
 %   FILES to the index.
-%   JGIT.ADD(FILES,PARAM,VAL,...) any of the following parameter-value
-%   pairs PARAM,VAL can be specified.
-%       update <logical> [false] Only stage tracked files. New files will not
-%           be added to the index.
-%       gitDir <char> [PWD] Add to index of the repo in specified folder.
+%   JGIT.ADD(FILES,PARAMETER,VALUE,...) uses any combination of the following
+%   PARAMETER, VALUE pairs.
+%   'update' <logical> [false] Only stage tracked files. New files will not be
+%       staged.
+%   'gitDir' <char> [PWD] Add to index of the repository in specified folder.
 %
 %   For more information see also
 %   <a href="https://www.kernel.org/pub/software/scm/git/docs/git-add.html">Git Add Documentation</a>
@@ -18,11 +18,11 @@ function add(files,varargin)
 %
 %   See also JGIT
 %
-%   Version 0.1 - Alpaca Release
-%   2013-04-16 Mark Mikofski
+%   Version 0.2 - Bumblebee Release
+%   2013-04-22 Mark Mikofski
 %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
 
-%% Check inputs
+%% check inputs
 p = inputParser;
 p.addRequired('files',@(x)validatefiles(files))
 p.addParamValue('update',false,@(x)validateattributes(x,{'logical'},{'scalar'}))

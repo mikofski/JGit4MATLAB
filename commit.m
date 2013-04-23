@@ -1,13 +1,13 @@
 function commit(varargin)
-%COMMIT Commit files to the repo.
-%   JGIT.COMMIT(PARAM,VAL,...) uses parameter-value pairs PARAM,VAL. The
-%   following parameters can be used in any combination.
-%   all <logical> [false] Automatically stage files that have been modified or
+%JGIT.COMMIT Commit files to the repository.
+%   JGIT.COMMIT(PARAMETER,VALUE,...) uses any combination of the following
+%   PARAMETER, VALUE pairs.
+%   'all' <logical> [false] Automatically stage files that have been modified or
 %       deleted before commit.
-%   message <char> [] Commit with the given message. An empty message will start
-%       the editor given by GETENV(EDITOR) or JGIT.EDITOR.
-%   amend <logical> [false] Amend the previous commit message.
-%   gitDir <char> [PWD] Commit to repo in specified folder.
+%   'message' <char> [] Commit with the given message. An empty message will
+%       start the editor given by GETENV(EDITOR) or JGIT.EDITOR.
+%   'amend' <logical> [false] Amend the previous commit message.
+%   'gitDir' <char> [PWD] Commit to repository in specified folder.
 %
 %   For more information see also
 %   <a href="https://www.kernel.org/pub/software/scm/git/docs/git-commit.html">Git Commit Documentation</a>
@@ -18,11 +18,11 @@ function commit(varargin)
 %
 %   See also JGIT
 %
-%   Version 0.1 - Alpaca Release
-%   2013-04-16 Mark Mikofski
+%   Version 0.2 - Bumblebee Release
+%   2013-04-22 Mark Mikofski
 %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
 
-%% Check inputs
+%% check inputs
 p = inputParser;
 p.addParamValue('all',false,@(x)validateattributes(x,{'logical'},{'scalar'}))
 p.addParamValue('author','',@(x)validateattributes(x,{'cell'},{'numel',2}))

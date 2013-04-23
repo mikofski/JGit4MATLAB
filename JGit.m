@@ -6,69 +6,54 @@ classdef JGit < handle
     %   "javaclasspath.JGitSaved". MATLAB must then be restarted for the
     %   changes to the MATLAB static Java class path to take effect.
     %
-    %   For more information see also
+    %   For more information on MATLAB static Java class path see also
     %   <a href="http://www.mathworks.com/help/matlab/matlab_external/bringing-java-classes-and-methods-into-matlab-workspace.html#f111065">Bringing Java Classes into MATLAB Workspace: The Java Class Path: The Static Path</a>
     %
     %   JGIT has only class methods that call the corresponding command
     %   methods of the Git class in the org.eclipse.jgit.api package.
     %
-    %   For more information see also
+    %   For more information on JGit and Git see also
     %   <a href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/api/Git.html">Class Git in org.eclipse.jgit.api package</a>
     %   <a href="http://eclipse.org/jgit/">JGit-eclipse</a>
     %   <a href="https://www.kernel.org/pub/software/scm/git/docs/">Git Manual</a>
     %   <a href="http://git-scm.com/">Git-SCM</a>
     %
-    %   JGIT.ADD(PATHLIST) Stage file(s) in PATHLIST, a character string or
-    %   a cell string.
-    %   JGIT.ADD(PATHLIST,VARARGIN) Specify parameter-value pairs.
-    %   'update' <logical> Only stage tracked files.
-    %   'gitDir' <char> Specify the folder in which Git Repo resides.
-    %   For more information see also
-    %   <a href="https://www.kernel.org/pub/software/scm/git/docs/git-add.html">Git Add Documentation</a>
-    %   <a href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/api/AddCommand.html">JGit Git API Class AddCommand</a>
+    %   Usage:
+    %       JGIT.METHOD(REQUIRED,PARAMETER,VALUES)
+    %   
+    %   The most commonly used METHODS are:
+    %   add        Add file contents to the index
+    %   bisect     Find by binary search the change that introduced a bug
+    %   branch     List, create, or delete branches
+    %   checkout   Checkout a branch or paths to the working tree
+    %   clone      Clone a repository into a new directory
+    %   commit     Record changes to the repository
+    %   diff       Show changes between commits, commit and working tree, etc
+    %   fetch      Download objects and refs from another repository
+    %   grep       Print lines matching a pattern
+    %   init       Create an empty git repository or reinitialize an existing one
+    %   log        Show commit logs
+    %   merge      Join two or more development histories together
+    %   mv         Move or rename a file, a directory, or a symlink
+    %   pull       Fetch from and merge with another repository or a local branch
+    %   push       Update remote refs along with associated objects
+    %   rebase     Forward-port local commits to the updated upstream head
+    %   reset      Reset current HEAD to the specified state
+    %   rm         Remove files from the working tree and from the index
+    %   show       Show various types of objects
+    %   status     Show the working tree status
+    %   tag        Create, list, delete or verify a tag object signed with GPG
+    % 
+    %   See `help JGIT.METHOD` for more information on a specific METHOD.
     %
-    %   JGIT.COMMIT(VARARGIN) Commit files to the repository. VARARGIN are
-    %   parameter-value pairs. Possible parameters are as follows:
-    %   'all' <logical> Automatically stage files that have been modified or
-    %       deleted before commit.
-    %   'message' <char> Commit message.
-    %   'amend' <logical> Amend the commit message of HEAD.
-    %   'gitDir' <char> Specify the folder in which Git Repo resides.
-    %   For more information see also
-    %   <a href="https://www.kernel.org/pub/software/scm/git/docs/git-commit.html">Git Commit Documentation</a>
-    %   <a href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/api/CommitCommand.html">JGit Git API Class CommitCommand</a>
+    %   See also ADD, BRANCH, CLONE, COMMIT, CONFIG, DIFF, INIT, LOG, STATUS,
+    %   GETGITAPI, GETGITDIR, VALIDATEJAVACLASSPATH, DOWNLOADJGITJAR
     %
-    %   JGIT.INIT(VARARGIN) Initialize or reinitialize a Git repository.
-    %   For more information see also
-    %   <a href="https://www.kernel.org/pub/software/scm/git/docs/git-init.html">Git Init Documentation</a>
-    %   <a href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/api/InitCommand.html">JGit Git API Class InitCommand</a>
-    %
-    %   JGIT.LOG(VARARGIN) Show the commit log.
-    %   Posible parameters are as follows:
-    %   'since' <char> Show log of newer commits since this commit.
-    %   'until' <char> Show log of older commits until this commit.
-    %   'maxCount' <integer> Maximum count of commit logs to show.
-    %   'skip' <integer> Number of commits logs to skip.
-    %   'gitDir' <char> Specify the folder in which Git Repo resides.
-    %   For more information see also
-    %   <a href="https://www.kernel.org/pub/software/scm/git/docs/git-log.html">Git Log Documentation</a>
-    %   <a href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/api/LogCommand.html">JGit Git API Class LogCommand</a>
-    %
-    %   JGIT.STATUS Return the status of the repository.
-    %   JGIT.STATUS(GITDIR) Specify the folder in which Git Repo resides.
-    %   JGIT.STATUS(GITDIR,FID) Output status to file identifier, FID.
-    %   JGIT.STATUS(GITDIR, FID, AMEND) Add "Initial commit" text to status.
-    %   For more information see also
-    %   <a href="https://www.kernel.org/pub/software/scm/git/docs/git-status.html">Git Status Documentation</a>
-    %   <a href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/api/StatusCommand.html">JGit Git API Class StatusCommand</a>
-    %
-    %   See also ADD, COMMIT, LOG, STATUS, GETGITAPI, GETGITDIR,
-    %   VALIDATEJAVACLASSPATH, DOWNLOADJGITJAR
-    %
-    %   Version 0.1 - Alpaca Release
-    %   2013-04-16 Mark Mikofski
+    %   Version 0.2 - Bumblebee Release
+    %   2013-04-22 Mark Mikofski
     %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
     
+    %% constant properties
     properties (Constant)
         EDITOR = JGit.getEDITOR % an editor
         GIT_DIR = '.git' % git repository folder
@@ -77,17 +62,20 @@ classdef JGit < handle
         VERFILE = fullfile(fileparts(mfilename('fullpath')),'version') % file storing JGit package version
         VERSION = strtrim(fileread(JGit.VERFILE)) % JGit version string
     end
+    %% static methods
     methods (Static)
+        %% common methods
         add(pathlist,gitDir)
         clone(varagin)
         commit(varargin)
         init(varargin)
         log(varargin)
         status(gitDir,fid,amend)
+        %% JGIT4MATLAB methods
         function gitAPI = getGitAPI(gitDir)
-            %GETGITAPI Get an instance of the JGit API Git Class.
-            %   GITAPIOBJ = GETGITAPI returns GITAPIOBJ, an instance of the
-            %   JGit API Git Class for the Git repository in the current
+            %JGIT.GETGITAPI Get an instance of the JGit API Git Class.
+            %   JGIT.GITAPIOBJ = GETGITAPI returns GITAPIOBJ, an instance of
+            %   the JGit API Git Class for the Git repository in the current
             %   directory.
             %   GITAPIOBJ = GETGITAPI(GITDIR) returns GITAPIOBJ for the Git
             %   repository in which GITDIR is located. GITDIR can be any
@@ -97,31 +85,36 @@ classdef JGit < handle
             %
             %   See also: JGIT, GETGITDIR
             %
-            %   Version 0.1 - Alpaca Release
-            %   2013-04-16 Mark Mikofski
+            %   Version 0.2 - Bumblebee Release
+            %   2013-04-22 Mark Mikofski
             %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
             
+            %% checkin inputs
             if nargin<1
                 gitDir = pwd;
             end
+            %% get gitDir
             gitDir = JGit.getGitDir(gitDir);
             assert(~isempty(gitDir),'jgit:notGitRepo', ...
                 ['fatal: Not a git repository (or any of the parent', ...
                 'directories): .git'])
+            %% get Git API
             gitAPI = org.eclipse.jgit.api.Git.open(java.io.File(gitDir));
         end
         function gitDir = getGitDir(path)
-            %GETGITDIR Find the .git folder of the repository.
-            %   GITDIR = GETGITDIR(GITDIR) returns GITDIR, the .git folder for
-            %   the Git repository in the current directory.
+            %JGIT.GETGITDIR Find the .git folder of the repository.
+            %   GITDIR = JGIT.GETGITDIR(GITDIR) returns GITDIR, the .git folder
+            %   for the Git repository in the current directory.
             %
             %   See also: JGIT, GETGITAPI
             %
-            %   Version 0.1 - Alpaca Release
-            %   2013-04-16 Mark Mikofski
+            %   Version 0.2 - Bumblebee Release
+            %   2013-04-22 Mark Mikofski
             %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
             
+            %% create full path to gitDir
             gitDir = fullfile(path,JGit.GIT_DIR);
+            %% walk directory tree to find gitDir
             s = dir(gitDir);
             while isempty(s)
                 parent = fileparts(path);
@@ -135,7 +128,19 @@ classdef JGit < handle
             end
         end
         function valid = validateJavaClassPath
-            %VALIDATEJAVACLASSPATH Validate MATLAB static Java class path.
+            %JGIT.VALIDATEJAVACLASSPATH Validate MATLAB static Java class path.
+            %   VALID = JGIT.VALIDATEJAVACLASSPATH returns true if the JGit
+            %   package jar-file is in the @JGit folder and on the MATLAB
+            %   static Java class path. Downloads current version of JGit
+            %   and/or adds it to the MATLAB static Java class path if false.
+            %
+            %   See also: JGIT, DOWNLOADJGITJAR
+            %
+            %   Version 0.2 - Bumblebee Release
+            %   2013-04-22 Mark Mikofski
+            %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
+            
+            %% check JGit package jar-file in @JGit folder
             valid = true;
             githome =  fileparts(mfilename('fullpath'));
             jgitjar = fullfile(githome,[JGit.JGIT,'.jar']);
@@ -149,15 +154,22 @@ classdef JGit < handle
                     error('jgit:validateJavaClassPath:downloadError',status)
                 end
             end
+            %% check MATLAB static Java class path
             spath = javaclasspath('-static');
             if any(strcmp(spath,jgitjar))
+                %% Yes, jar-file is on MATLAB static Java class path
+                % return false if jar-file has just been downloaded even if
+                % already on MATLAB static Java class path
                 valid = valid && true;
             else
+                %% No, jar-file is not on MATLAB static Java class path
+                % check for file called "javaclasspath.txt"
                 valid = false;
                 fprintf(2,'\n\t**JGit not detected.**\n\n');
                 workhome = userpath;workhome = workhome(1:end-1);
                 javapath = fullfile(workhome,'javaclasspath.txt');
                 if exist(javapath,'file')~=2
+                    %% no "javaclasspath.txt"
                     fprintf(2,'"javaclasspath.txt" not detected. Writing ...\n');
                     try
                         fid = fopen(javapath,'wt');
@@ -169,6 +181,7 @@ classdef JGit < handle
                         throw(ME)
                     end
                 else
+                    %% "javaclasspath.txt" already exists
                     try
                         fid = fopen(javapath,'r+t');
                         pathline = fgetl(fid);
@@ -190,6 +203,7 @@ classdef JGit < handle
                     end
                 end
             end
+            %% restart message
             assert(valid,'jgit:noJGit', ...
                 ['\n\t**Please restart MATLAB.**\n\n', ...
                 'JGit has been downloaded and/or added to the MATLAB Java static path,\n', ...
@@ -200,45 +214,80 @@ classdef JGit < handle
                 'Bringing Java Classes into MATLAB Workspace: The Java Class Path: The Static Path</a>'])
         end
         function [f,status] = downloadJGitJar(jgitjar)
-            %DOWNLOADJGITJAR Download the latest JGit jar file.
-            ver = '[0-9].[0-9].[0-9].[0-9]{12}';
+            %JGIT.DOWNLOADJGITJAR Download the latest JGit jar file.
+            %   [F,STATUS] = JGIT.DOWNLOADJGITJAR(JGITJAR) downloads JGit
+            %   jar file using filename and path specified by JGITJAR.
+            %   [F,STATUS] are the parameters returned by URLWRITE. Writes
+            %   the version number in a file called 'version' in the @JGit
+            %   folder if successful.
+            %
+            %   See also: JGIT, DOWNLOADJGITJAR, URLWRITE
+            %
+            %   Version 0.2 - Bumblebee Release
+            %   2013-04-22 Mark Mikofski
+            %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
+            
+            %% get version number and jar download url from eclipse
+            ver = '[0-9].[0-9].[0-9].[0-9]{12}'; % regex for version number
             expr = ['<a href="(http://download.eclipse.org/jgit/maven/', ...
                 'org/eclipse/jgit/',JGit.JGIT,'/',ver,'-r/',JGit.JGIT,'-', ...
-                ver,'-r.jar)">',JGit.JGIT,'.jar</a>'];
+                ver,'-r.jar)">',JGit.JGIT,'.jar</a>']; % regex for url
             str = urlread('http://www.eclipse.org/jgit/download/');
             assert(~isempty(str),'jgit:downloadJGitJar:badURL', ...
                 'Can''t read from jgit download page.')
-            tokens = regexp(str,expr,'tokens');
-            version = regexp(tokens{1}{1},ver,'match');
-            fprintf('\tVersion: %s\n',version{1})
-            [f,status] = urlwrite(tokens{1}{1},jgitjar);
-            try
-                fid = fopen(JGit.VERFILE,'wt');
-                fprintf(fid,'%s\n',version{1});
-            catch ME
+            tokens = regexp(str,expr,'tokens'); % download url
+            version = regexp(tokens{1}{1},ver,'match'); % version
+            fprintf('\tVersion: %s\n',version{1}) % display version to download
+            [f,status] = urlwrite(tokens{1}{1},jgitjar); % download jar-file
+            %% write version number to file if successful
+            if status==1
+                try
+                    fid = fopen(JGit.VERFILE,'wt');
+                    fprintf(fid,'%s\n',version{1});
+                catch ME
+                    fclose(fid);
+                    throw(ME)
+                end
                 fclose(fid);
-                throw(ME)
             end
-            fclose(fid);
         end
         function editor = getEDITOR
-            %GETEDITOR Get the default system editor.
+            %JGIT.GETEDITOR Get the default system editor.
+            %   EDITOR = JGIT.GETEDITOR returns 'notepad' if pc, 'textedit'
+            %   if mac and 'gedit' if linux.
+            
+            %
+            %   See also: JGIT, DOWNLOADJGITJAR, URLWRITE
+            %
+            %   Version 0.2 - Bumblebee Release
+            %   2013-04-22 Mark Mikofski
+            %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
+            
+            %% get computer type
             comp = computer;
             switch comp
                 case {'PCWIN','PCWIN64'}
+                    %% PC
                     editor = 'notepad';
                 case 'MACI64'
+                    %% MAC
                     editor = 'textedit';
                 case 'GLNXA64'
+                    %% LINUX
                     editor = 'gedit';
                 otherwise
+                    %% Try is* if computer didn't work?
                     if ispc
+                        %% PC
                         editor = 'notepad';
                     elseif ismac
+                        %% MAC
                         editor = 'textedit';
                     elseif isunix
+                        %% LINUX
                         editor = 'gedit';
                     else
+                        %% no editor
                         error('jgit:noeditor','No editor found.')
                     end
             end

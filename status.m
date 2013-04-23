@@ -1,4 +1,23 @@
 function status(gitDir,fid,amend)
+%JGIT.STATUS Return the status of the repository.
+%   JGIT.STATUS(GITDIR) Specify the folder in which Git Repo resides.
+%   JGIT.STATUS(GITDIR,FID) Output status to file identifier, FID.
+%   JGIT.STATUS(GITDIR,FID,AMEND) Add "Initial commit" text to status.
+%
+%   For more information see also
+%   <a href="https://www.kernel.org/pub/software/scm/git/docs/git-status.html">Git Status Documentation</a>
+%   <a href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/api/StatusCommand.html">JGit Git API Class StatusCommand</a>
+%
+%   Example:
+%       JGIT.STATUS
+%
+%   See also JGIT
+%
+%   Version 0.2 - Bumblebee Release
+%   2013-04-22 Mark Mikofski
+%   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
+
+%% Check inputs
 if nargin<1
     gitDir = pwd;
 end
@@ -9,15 +28,20 @@ if nargin<3
     amend = false;
 end
 gitAPI = JGit.getGitAPI(gitDir);
+%% call
 statusCall = gitAPI.status.call;
+%% display status
 fmtStr = '# On branch %s\n';
 fprintf(fid,fmtStr,char(gitAPI.getRepository.getBranch));
+% if amended add "Initial commit" to status message
 if amend
     fprintf(fid,'#\n# Initial commit\n#\n');
 end
 if statusCall.isClean
+    %% status message if clean
     fprintf('nothing to commit, working directory clean\n')
 else
+    %% staged fils
     added = statusCall.getAdded;
     changed = statusCall.getChanged;
     removed = statusCall.getRemoved;
@@ -61,6 +85,7 @@ else
         end
         fprintf(fid,'#\n');
     end
+    %% tracked but not staged
     modified = statusCall.getModified;
     missing = statusCall.getMissing;
     if ~modified.isEmpty || ~missing.isEmpty
@@ -87,6 +112,7 @@ else
         if fid==2,fid = 1;end
         fprintf(fid,'#\n');
     end
+    %% untracked and/or ignored
     untracked = statusCall.getUntracked;
     ignored = statusCall.getIgnoredNotInIndex;
     ignoreFlag = false(untracked.size,1);
