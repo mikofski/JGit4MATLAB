@@ -1,5 +1,5 @@
 function init(varargin)
-%JGIT.INIT Initialize or reinitialize a Git repository.
+%JGIT.INIT Create an empty git repository or reinitalize an existing one.
 %   JGIT.INIT(PARAMETER,VALUE,...) uses any combination of the following
 %   PARAMETER, VALUE pairs.
 %   'bare' <logical> [false] Initialize a bare repository.
