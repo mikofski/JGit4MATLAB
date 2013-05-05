@@ -1,5 +1,5 @@
 function clone(uri,varargin)
-%JGIT.CLONE Show the commit clone.
+%JGIT.CLONE Clone a repository into a new working directory.
 %   JGIT.CLONE(URI) makes a clone of the repo found at URI in the current
 %   folder. The cloned repo is named the same as the repo found at the URI.
 %   JGIT.CLONE(URI,PARAMETER,VALUE,...) uses any combination of the following
