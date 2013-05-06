@@ -72,7 +72,7 @@ if iscellstr(p.Results.path)
     for n = 1:numel(path)
         checkoutCMD.addPath(p.Results.path{n});
     end
-elseif ischar(p.Results.path)
+elseif ~isempty(p.Results.path)
     checkoutCMD.addPath(p.Results.path);
 end
 %% set allPaths
