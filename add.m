@@ -41,7 +41,7 @@ elseif ischar(p.Results.files)
 end
 %% set update
 if p.Results.update
-    addCMD.setUpdate;
+    addCMD.setUpdate(true);
 end
 %% call
 addCMD.call;

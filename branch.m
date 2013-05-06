@@ -14,7 +14,7 @@ function branch(cmd,newName,varargin)
 %   'oldNames' <char|cellstr> [''] Name of old branch(es) to be deleted or
 %       renamed. If empty does nothing for delete, and for rename defaults to
 %       currently checked out branch.
-%   'gitDir' <char> [PWD] Add to index of the repository in specified folder.
+%   'gitDir' <char> [PWD] Applies to the repository in specified folder.
 %
 %   For more information see also
 %   <a href="https://www.kernel.org/pub/software/scm/git/docs/git-branch.html">Git Branch Documentation</a>

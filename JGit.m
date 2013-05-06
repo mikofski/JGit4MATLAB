@@ -271,7 +271,7 @@ classdef JGit < handle
             %JGIT.GETEDITOR Get the default system editor.
             %   EDITOR = JGIT.GETEDITOR returns 'notepad' if pc, 'textedit'
             %   if mac and 'gedit' if linux.
-            
+            %
             %
             %   See also: JGIT, DOWNLOADJGITJAR, URLWRITE
             %
