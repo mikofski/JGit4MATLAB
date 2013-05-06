@@ -68,6 +68,7 @@ classdef JGit < handle
         %% common methods
         add(files,gitDir)
         branch(cmd,newName,varargin)
+        checkout(name,varargin)
         clone(uri,varargin)
         commit(varargin)
         init(varargin)
