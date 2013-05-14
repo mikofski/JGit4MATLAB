@@ -71,6 +71,7 @@ classdef JGit < handle
         checkout(name,varargin)
         clone(uri,varargin)
         commit(varargin)
+        diff(varargin)
         init(varargin)
         log(varargin)
         status(gitDir,fid,amend)

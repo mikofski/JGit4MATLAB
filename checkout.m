@@ -53,7 +53,7 @@ end
 p = inputParser;
 p.addRequired('name',@(x)validateattributes(x,{'char'},{'row'}))
 p.addParamValue('path','',@(x)validatepaths(x))
-p.addParamValue('getResults',false,@(x)validateattributes(x,{'char'},{'row'}))
+p.addParamValue('getResults',false,@(x)validateattributes(x,{'logical'},{'scalar'}))
 p.addParamValue('allPaths',false,@(x)validateattributes(x,{'logical'},{'scalar'}))
 p.addParamValue('createBranch',false,@(x)validateattributes(x,{'logical'},{'scalar'}))
 p.addParamValue('force',false,@(x)validateattributes(x,{'logical'},{'scalar'}))
@@ -126,7 +126,6 @@ if nargout>0 && p.Results.getResults
     results = checkoutCMD.getResults;
 end
 end
-
 
 function tf = validatepaths(paths)
 if ~iscellstr(paths)
