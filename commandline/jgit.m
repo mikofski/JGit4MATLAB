@@ -35,7 +35,9 @@ function jgit(varargin)
 %       * master
 %         origin/master
 
-if strcmpi(varargin{1},'help')
+if nargin==0
+    JGit %#ok<NOPRT>
+elseif strcmpi(varargin{1},'help')
     fstr = 'JGit';
     if nargin==2
         fstr = [fstr,'.',varargin{2}];
