@@ -126,10 +126,10 @@ if p.Results.difftool
         oldpath = char(d.getOldPath);
         newpath = char(d.getNewPath);
         if strcmp('/dev/null',oldpath)
-            oldpath = 'devnull.m';
+            oldpath = 'dev:null.m';
         end
         if strcmp('/dev/null',newpath)
-            newpath = 'devnull.m';
+            newpath = 'dev:null.m';
         end
         oldAbbrev = d.getOldId;
         newAbbrev = d.getNewId;
@@ -137,8 +137,8 @@ if p.Results.difftool
         newId = newAbbrev.toObjectId;
         oldSHA = char(oldAbbrev.name);
         newSHA = char(newAbbrev.name);
-        OLDFILE = fullfile(TMP_DIFF_DIR,[oldSHA,'-',oldpath]);
-        NEWFILE = fullfile(TMP_DIFF_DIR,[newSHA,'-',newpath]);
+        OLDFILE = fullfile(TMP_DIFF_DIR,[oldSHA,'-',strrep(oldpath,'/',':')]);
+        NEWFILE = fullfile(TMP_DIFF_DIR,[newSHA,'-',strrep(newpath,'/',':')]);
         oldFileOS = java.io.FileOutputStream(OLDFILE);
         newFileOS = java.io.FileOutputStream(NEWFILE);
         if repo.hasObject(oldId)

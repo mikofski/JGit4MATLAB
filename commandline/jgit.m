@@ -44,6 +44,12 @@ elseif strcmpi(varargin{1},'help')
     end
     help(fstr)
 else
+    bools = [false,strcmpi('true',varargin(2:end))];
+    [varargin{bools}] = deal(true);
+    bools = [false,strcmpi('false',varargin(2:end))];
+    [varargin{bools}] = deal(false);
+    numbers = [NaN,str2double(varargin(2:end))];
+    varargin(~isnan(numbers)) = num2cell(numbers(~isnan(numbers)));
     JGit.(varargin{1})(varargin{2:end})
 end
 end
