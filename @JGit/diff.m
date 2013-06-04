@@ -137,8 +137,8 @@ if p.Results.difftool
         newId = newAbbrev.toObjectId;
         oldSHA = char(oldAbbrev.name);
         newSHA = char(newAbbrev.name);
-        OLDFILE = fullfile(TMP_DIFF_DIR,[oldSHA,'-',strrep(oldpath,'/',':')]);
-        NEWFILE = fullfile(TMP_DIFF_DIR,[newSHA,'-',strrep(newpath,'/',':')]);
+        OLDFILE = fullfile(TMP_DIFF_DIR,['[',oldSHA(1:8),']-',strrep(oldpath,'/','.')]);
+        NEWFILE = fullfile(TMP_DIFF_DIR,['[',newSHA(1:8),']-',strrep(newpath,'/','.')]);
         oldFileOS = java.io.FileOutputStream(OLDFILE);
         newFileOS = java.io.FileOutputStream(NEWFILE);
         if repo.hasObject(oldId)
