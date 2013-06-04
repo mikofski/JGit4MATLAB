@@ -49,8 +49,8 @@ classdef JGit < handle
     %   See also ADD, BRANCH, CLONE, COMMIT, CONFIG, DIFF, INIT, LOG, STATUS,
     %   GETGITAPI, GETGITDIR, VALIDATEJAVACLASSPATH, DOWNLOADJGITJAR, GETEDITOR
     %
-    %   Version 0.3 - Chameleon Release
-    %   2013-04-23 Mark Mikofski
+    %   Version 0.4 - Dragonfly Release
+    %   2013-06-04 Mark Mikofski
     %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
     
     %% constant properties
@@ -68,12 +68,13 @@ classdef JGit < handle
         %% common methods
         add(files,gitDir)
         branch(cmd,newName,varargin)
-        checkout(name,varargin)
+        r = checkout(name,varargin)
         clone(uri,varargin)
         commit(varargin)
         diff(varargin)
         init(varargin)
         log(varargin)
+        r = merge(include,varargin)
         status(gitDir,fid,amend)
         %% JGIT4MATLAB methods
         function gitAPI = getGitAPI(gitDir)
@@ -89,7 +90,7 @@ classdef JGit < handle
             %
             %   See also: JGIT, GETGITDIR
             %
-            %   Version 0.3 - Chameleon Release
+            %   Version 0.4 - Dragonfly Release
             %   2013-04-23 Mark Mikofski
             %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
             
@@ -112,8 +113,8 @@ classdef JGit < handle
             %
             %   See also: JGIT, GETGITAPI
             %
-            %   Version 0.3 - Chameleon Release
-            %   2013-04-22 Mark Mikofski
+            %   Version 0.4 - Dragonfly Release
+            %   2013-06-04 Mark Mikofski
             %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
             
             %% create full path to gitDir
@@ -140,8 +141,8 @@ classdef JGit < handle
             %
             %   See also: JGIT, DOWNLOADJGITJAR
             %
-            %   Version 0.3 - Chameleon Release
-            %   2013-04-22 Mark Mikofski
+            %   Version 0.4 - Dragonfly Release
+            %   2013-06-04 Mark Mikofski
             %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
             
             %% check JGit package jar-file in @JGit folder
@@ -241,8 +242,8 @@ classdef JGit < handle
             %
             %   See also: JGIT, DOWNLOADJGITJAR, URLWRITE
             %
-            %   Version 0.3 - Chameleon Release
-            %   2013-04-22 Mark Mikofski
+            %   Version 0.4 - Dragonfly Release
+            %   2013-06-04 Mark Mikofski
             %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
             
             %% get version number and jar download url from eclipse
@@ -277,8 +278,8 @@ classdef JGit < handle
             %
             %   See also: JGIT, DOWNLOADJGITJAR, URLWRITE
             %
-            %   Version 0.3 - Chameleon Release
-            %   2013-04-22 Mark Mikofski
+            %   Version 0.4 - Dragonfly Release
+            %   2013-06-04 Mark Mikofski
             %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
             
             %% get computer type

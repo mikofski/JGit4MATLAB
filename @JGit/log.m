@@ -18,8 +18,8 @@ function log(varargin)
 %
 %   See also JGIT
 %
-%   Version 0.3 - Chameleon Release
-%   2013-04-22 Mark Mikofski
+%   Version 0.4 - Dragonfly Release
+%   2013-06-04 Mark Mikofski
 %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
 
 %% check inputs
