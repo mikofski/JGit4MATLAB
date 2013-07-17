@@ -215,6 +215,7 @@ classdef JGit < handle
                             foundJGit = foundJGit || strcmp(pathline,jgitjar);
                             foundPM = foundPM || strcmp(pathline,pmjar);
                         end
+                        valid = foundJGit && foundPM;
                     catch ME
                         fclose(fid);
                         close(h)
