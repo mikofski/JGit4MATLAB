@@ -20,7 +20,7 @@ classdef JGit < handle
     %
     %   Usage:
     %       JGIT.METHOD(REQUIRED,PARAMETER,VALUES)
-    %   
+    %
     %   The most commonly used METHODS are:
     %   add        Add file contents to the index
     %   bisect     Find by binary search the change that introduced a bug
@@ -43,14 +43,14 @@ classdef JGit < handle
     %   show       Show various types of objects
     %   status     Show the working tree status
     %   tag        Create, list, delete or verify a tag object signed with GPG
-    % 
+    %
     %   See `help JGIT.METHOD` for more information on a specific METHOD.
     %
     %   See also ADD, BRANCH, CLONE, COMMIT, CONFIG, DIFF, INIT, LOG, STATUS,
     %   GETGITAPI, GETGITDIR, VALIDATEJAVACLASSPATH, DOWNLOADJGITJAR, GETEDITOR
     %
-    %   Version 0.4 - Dragonfly Release
-    %   2013-06-04 Mark Mikofski
+    %   Version 0.5 - Egret Release
+    %   2013-09-25 Mark Mikofski
     %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
     
     %% constant properties
@@ -90,8 +90,8 @@ classdef JGit < handle
             %
             %   See also: JGIT, GETGITDIR
             %
-            %   Version 0.4 - Dragonfly Release
-            %   2013-04-23 Mark Mikofski
+            %   Version 0.5 - Egret Release
+            %   2013-09-25 Mark Mikofski
             %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
             
             %% checkin inputs
@@ -113,8 +113,8 @@ classdef JGit < handle
             %
             %   See also: JGIT, GETGITAPI
             %
-            %   Version 0.4 - Dragonfly Release
-            %   2013-06-04 Mark Mikofski
+            %   Version 0.5 - Egret Release
+            %   2013-09-25 Mark Mikofski
             %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
             
             %% create full path to gitDir
@@ -141,8 +141,8 @@ classdef JGit < handle
             %
             %   See also: JGIT, DOWNLOADJGITJAR
             %
-            %   Version 0.4 - Dragonfly Release
-            %   2013-06-04 Mark Mikofski
+            %   Version 0.5 - Egret Release
+            %   2013-09-25 Mark Mikofski
             %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
             
             %% check JGit package jar-file in @JGit folder
@@ -242,20 +242,37 @@ classdef JGit < handle
             %
             %   See also: JGIT, DOWNLOADJGITJAR, URLWRITE
             %
-            %   Version 0.4 - Dragonfly Release
-            %   2013-06-04 Mark Mikofski
+            %   Version 0.5 - Egret Release
+            %   2013-09-25 Mark Mikofski
             %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
             
+            %% inputs
+            % use org.eclipse.jgit as default
+            githome =  fileparts(mfilename('fullpath'));
+            if nargin<1
+                jgitjar = fullfile(githome,[JGit.JGIT,'.jar']);
+            end
+            % copy old org.eclipse.jgit with version info as backup
+            if exist(jgitjar,'file')==2
+                oldver = fullfile(githome,'older-versions');
+                if exist(oldver,'dir')~=7
+                    mkdir(oldver)
+                end
+                oldver = fullfile(oldver,[JGit.JGIT,'-',JGit.VERSION,'-r.jar']);
+                copyfile(jgitjar,oldver)
+            end
             %% get version number and jar download url from eclipse
             ver = '[0-9].[0-9].[0-9].[0-9]{12}'; % regex for version number
-            expr = ['<a href="(http://download.eclipse.org/jgit/maven/', ...
-                'org/eclipse/jgit/',JGit.JGIT,'/',ver,'-r/',JGit.JGIT,'-', ...
+            expr = ['<a href="(https://repo.eclipse.org/content/groups/releases/', ...
+                '/org/eclipse/jgit/',JGit.JGIT,'/',ver,'-r/',JGit.JGIT,'-', ...
                 ver,'-r.jar)">',JGit.JGIT,'.jar</a>']; % regex for url
             str = urlread('http://www.eclipse.org/jgit/download/');
             assert(~isempty(str),'jgit:downloadJGitJar:badURL', ...
                 'Can''t read from jgit download page.')
             tokens = regexp(str,expr,'tokens'); % download url
+            assert(~isempty(tokens{1}),'Please report JGit download path has changed.')
             version = regexp(tokens{1}{1},ver,'match'); % version
+            assert(~isempty(version{1}),'Please report JGit version format has changed.')
             fprintf('\tVersion: %s\n',version{1}) % display version to download
             [f,status] = urlwrite(tokens{1}{1},jgitjar); % download jar-file
             %% write version number to file if successful
@@ -278,8 +295,8 @@ classdef JGit < handle
             %
             %   See also: JGIT, DOWNLOADJGITJAR, URLWRITE
             %
-            %   Version 0.4 - Dragonfly Release
-            %   2013-06-04 Mark Mikofski
+            %   Version 0.5 - Egret Release
+            %   2013-09-25 Mark Mikofski
             %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
             
             %% get computer type
