@@ -2,3 +2,4 @@ org.eclipse.jgit.jar
 *.zip
 jgit.misc
 version
+@JGit/older-versions
