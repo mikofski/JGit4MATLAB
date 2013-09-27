@@ -59,7 +59,12 @@ classdef JGit < handle
         EDITOR = JGit.getEDITOR % an editor
         GIT_DIR = '.git' % git repository folder
         JGIT = 'org.eclipse.jgit' % JGit package name
-        PROGRESSMONITOR = 'com.mikofski.jgit4matlab.MATLABProgressMonitor'
+        % package with MATLABProgressMonitor, replaces \r with \b
+        PROGRESSMONITOR = 'MATLABProgressMonitor'
+        % package with UserInfoSshSessionFactory, a custom SshSessionFactory,
+        % configures a CredentialProvider to provide SSH passphrase for Jsch,
+        % registers itself as the default SshSessionFactory instance
+        USERINFOSSHSESSIONFACTORY = 'UserInfoSshSessionFactory'
         VERFILE = fullfile(fileparts(mfilename('fullpath')),'version') % file storing JGit package version
         VERSION = strtrim(fileread(JGit.VERFILE)) % JGit version string
         USERHOME = org.eclipse.jgit.util.FS.DETECTED.userHome % user home
@@ -155,6 +160,7 @@ classdef JGit < handle
             githome =  fileparts(mfilename('fullpath'));
             jgitjar = fullfile(githome,[JGit.JGIT,'.jar']);
             pmjar = fullfile(githome,[JGit.PROGRESSMONITOR,'.jar']);
+            SSHjar = fullfile(githome,[JGit.USERINFOSSHSESSIONFACTORY,'.jar']);
             if exist(jgitjar,'file')~=2
                 valid = false;
                 fprintf('JGit jar-file doesn''t exist. Downloading ...\n');
@@ -166,14 +172,15 @@ classdef JGit < handle
                 end
             end
             %% check MATLAB static Java class path
-            spath = javaclasspath('-static');
-            if any(strcmp(spath,jgitjar)) && any(strcmp(spath,pmjar))
-                %% Yes, jar-file is on MATLAB static Java class path
+            spath = javaclasspath('-static'); % static java class path
+            if any(strcmp(spath,jgitjar)) && any(strcmp(spath,pmjar)) && ...
+                    any(strcmp(spath,SSHjar))
+                %% Yes, jar-files are on MATLAB static Java class path
                 % return false if jar-file has just been downloaded even if
                 % already on MATLAB static Java class path
                 valid = valid && true;
             else
-                %% No, jar-file is not on MATLAB static Java class path
+                %% No, jar-files are not on MATLAB static Java class path
                 % check for file called "javaclasspath.txt"
                 valid = false;
                 workhome = userpath;workhome = workhome(1:end-1);
@@ -183,8 +190,7 @@ classdef JGit < handle
                     fprintf('"javaclasspath.txt" not detected. Writing ...\n');
                     try
                         fid = fopen(javapath,'wt');
-                        fprintf(fid,'# JGit package\n%s\n',jgitjar);
-                        fprintf(fid,'# JGit package\n%s\n',pmjar);
+                        fprintf(fid,'# JGit package\n%s\n',jgitjar,pmjar,SSHjar);
                         fclose(fid);
                         fprintf('... Done.\n\n');
                     catch ME
@@ -198,17 +204,23 @@ classdef JGit < handle
                         pathline = fgetl(fid);
                         foundJGit = strcmp(pathline,jgitjar);
                         foundPM = strcmp(pathline,pmjar);
-                        while ~foundJGit || ~foundPM
+                        foundSSH = strcmp(pathline,SSHjar);
+                        while ~foundJGit || ~foundPM || ~foundSSH
                             if feof(fid)
                                 copyfile(javapath,[javapath,'.JGitSaved'])
                                 if ~foundJGit
-                                    fprintf('JGit not on static Java class path. Writing ...\n');
+                                    fprintf('JGit is not on static Java class path. Writing ...\n');
                                     fprintf(fid,'\n# JGit package\n%s\n',jgitjar);
                                     fprintf('... Done.\n\n');
                                 end
                                 if ~foundPM
-                                    fprintf('ProgressMonitor not on static Java class path. Writing ...\n');
+                                    fprintf('ProgressMonitor is not on static Java class path. Writing ...\n');
                                     fprintf(fid,'\n# JGit package\n%s\n',pmjar);
+                                    fprintf('... Done.\n\n');
+                                end
+                                if ~foundSSH
+                                    fprintf('UserInfoSshSessionFactory is not on static Java class path. Writing ...\n');
+                                    fprintf(fid,'\n# JGit package\n%s\n',SSHjar);
                                     fprintf('... Done.\n\n');
                                 end
                                 break
@@ -216,6 +228,7 @@ classdef JGit < handle
                             pathline = fgetl(fid);
                             foundJGit = foundJGit || strcmp(pathline,jgitjar);
                             foundPM = foundPM || strcmp(pathline,pmjar);
+                            foundSSH = foundSSH || strcmp(pathline,SSHjar);
                         end
                         fclose(fid);
                     catch ME
@@ -232,14 +245,45 @@ classdef JGit < handle
                 'For more information see:\n', ...
                 '<a href="http://www.mathworks.com/help/matlab/matlab_external/', ...
                 'bringing-java-classes-and-methods-into-matlab-workspace.html#f111065">', ...
-                'Bringing Java Classes into MATLAB Workspace: The Java Class Path: The Static Path</a>'])
+                'Bringing Java Classes into MATLAB Workspace: The Java Class Path: The Static Path</a>\n\n', ...
+                'If this is the first time you are setting up JGIT4MATLAB, please ', ...
+                'set your name and email in the global gitconfig file using ', ...
+                'JGIT.SETUSERINFO(NAME,EMAIL).\nYou should also download ', ...
+                '<a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html">', ...
+                'PuTTY gen</a>, create a pair of SSH RSA keys in %HOME%\.ssh, ', ...
+                'convert them to openSSH format and use SAVESSHPASSPHRASE(PASSPHRASE) ', ...
+                'to save your passphrase.\nNote, it is not necessary to set a ', ...
+                'passphrase. Also note, SSH keys are only required for cloning, ', ...
+                'pulling and pushing (to) private repositories with which you''ve ', ...
+                'shared your public key.'])
+            %% check user info
+            [user,email] = JGit.getUserInfo;
+            if user.isEmpty || email.isEmpty
+                key = org.eclipse.jgit.lib.UserConfig.KEY;
+                cnf = org.eclipse.jgit.lib.Config;
+                usrcnf = cnf.get(key);
+                user = usrcnf.getAuthorEmail;
+                email = usrcnf.getAuthorName;
+                warning('jgit:noUserInfo', ...
+                    ['\nUser info in global .gitconfig file is missing. Please', ...
+                    'set user info using JGIT.SETUSERINFO(NAME,EMAIL), otherwise' ...
+                    'the default values will be used.\n\tDEFAULT USER: %s', ...
+                    '\n\tDEFAULT EMAIL: %s'],user,email)
+            end
+            % check SSH passphrase
+            f = fullfile(char(JGit.USERHOME),JGit.JSCH_USERINFO); % savefile path
+            if exist(f, 'file')~=2
+                warning('jgit:noSSHpassphrase', ...
+                    'Please use SAVESSHPASSPHRASE(PASSPHRASE) to save your passphrase.')
+            end
         end
         function setUserInfo(name, email)
             %JGIT.SETUSERINFO Set global user config.
             %   JGIT.SETUSERINFO(NAME,EMAIL)
             cnfile = java.io.File(JGit.USERHOME,JGit.GITCONFIG); % java File
             % create gitconfig obj and load it
-            gitconfig = org.eclipse.jgit.storage.file.FileBasedConfig(cnfile, org.eclipse.jgit.util.FS.DETECTED);
+            gitconfig = org.eclipse.jgit.storage.file.FileBasedConfig(cnfile, ...
+                org.eclipse.jgit.util.FS.DETECTED);
             gitconfig.load % gitconfig obj must be loaded before calling set/get methods
             gitconfig.setString('user',[],'name',name); % set user name
             gitconfig.setString('user',[],'email',email); % set user email
@@ -250,7 +294,8 @@ classdef JGit < handle
             %   [NAME,EMAIL] = JGIT.GETUSERINFO
             cnfile = java.io.File(JGit.USERHOME,JGit.GITCONFIG); % java File
             % create gitconfig obj and load it
-            gitconfig = org.eclipse.jgit.storage.file.FileBasedConfig(cnfile, org.eclipse.jgit.util.FS.DETECTED);
+            gitconfig = org.eclipse.jgit.storage.file.FileBasedConfig(cnfile, ...
+                org.eclipse.jgit.util.FS.DETECTED);
             gitconfig.load % gitconfig obj must be loaded before calling set/get methods
             name = gitconfig.getString('user',[],'name'); % get user name
             email = gitconfig.getString('user',[],'email'); % get user email
@@ -261,7 +306,7 @@ classdef JGit < handle
             %   Save SSH passphrase in un-encrypted file, F, for Jsch
             %   custom CredentialProvider to use. STATUS == 1 if
             %   successful.
-            f = fullfile(JGit.USERHOME,JGit.JSCH_USERINFO); % savefile path
+            f = fullfile(char(JGit.USERHOME),JGit.JSCH_USERINFO); % savefile path
             fid = fopen(f,'wt'); % open file for writing text
             try
                 fprintf(fid,'%s\n',passphrase); % write passphrase to file
