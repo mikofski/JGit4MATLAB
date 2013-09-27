@@ -3,3 +3,4 @@ org.eclipse.jgit.jar
 jgit.misc
 version
 @JGit/older-versions
+*.orig
