@@ -79,7 +79,7 @@ if ~isempty(p.Results.remote)
     cloneCMD.setRemote(p.Results.remote);
 end
 %% call
-sessionFactory = com.mikofski.jgit4matlab.UserInfoSshSessionFactory.getInstance();
-org.eclipse.jgit.transport.SshSessionFactory.setInstance(sessionFactory);
+com.mikofski.jgit4matlab.UserInfoSshSessionFactory;
+disp(org.eclipse.jgit.transport.SshSessionFactory.getInstance)
 cloneCMD.call;
 end
