@@ -27,7 +27,7 @@ function diff(varargin)
 %           from master to feature branch in MATLAB visual comparison tool.
 %       JGIT.DIFF('chached',true) % compare HEAD to staged files.
 %
-%   See also JGIT
+%   See also JGIT, MERGE, LOG, STATUS
 %
 %   Version 0.4 - Dragonfly Release
 %   2013-06-04 Mark Mikofski

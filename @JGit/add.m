@@ -16,7 +16,7 @@ function add(files,varargin)
 %       JGIT.ADD('myfile.m') % add 'myfile.m' to index
 %       JGIT.ADD({'myclass.m','myfun.m') % add 'myclass.m' and 'myfun.m'
 %
-%   See also JGIT
+%   See also JGIT, COMMIT
 %
 %   Version 0.4 - Dragonfly Release
 %   2013-06-04 Mark Mikofski

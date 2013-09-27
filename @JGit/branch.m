@@ -33,7 +33,7 @@ function branch(cmd,newName,varargin)
 %           'upstreamMode','TRACK') % track "remoteBranch"
 %       JGIT.BRANCH('delete',[],'oldNames',{'superFeature','remoteBranch})
 %
-%   See also JGIT
+%   See also JGIT, CHECKOUT
 %
 %   Version 0.4 - Dragonfly Release
 %   2013-06-04 Mark Mikofski

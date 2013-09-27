@@ -16,7 +16,7 @@ function commit(varargin)
 %   Example:
 %       JGIT.COMMIT('all',true,'message','initial dump')
 %
-%   See also JGIT
+%   See also JGIT, ADD
 %
 %   Version 0.4 - Dragonfly Release
 %   2013-06-04 Mark Mikofski

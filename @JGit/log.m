@@ -16,7 +16,7 @@ function log(varargin)
 %   Example:
 %       JGIT.LOG('since','HEAD~5') % show last 5 commits
 %
-%   See also JGIT
+%   See also JGIT, STATUS
 %
 %   Version 0.4 - Dragonfly Release
 %   2013-06-04 Mark Mikofski

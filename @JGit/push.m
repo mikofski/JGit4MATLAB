@@ -8,14 +8,13 @@ function push(varargin)
 %   'setForce' <logical> Sets force push.
 %   'setPushAll' <logical> Push all branches.
 %   'setPushTags' <logical> Push tags.
-%   'setRemote' <char> Set remote.
+%   'remote' <char> Set remote.
 %   'progressMonitor' <ProgressMonitor> [MATLABProgressMonitor] Display progress.
 %   'gitDir' <char> [PWD] Applies to the repository in specified folder.
 %
 %   For more information see also
 %   <a href="https://www.kernel.org/pub/software/scm/git/docs/git-push.html">Git Push Documentation</a>
 %   <a href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/api/PushCommand.html">JGit Git API Class PushCommand</a>
-%   <a href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/transport/PushResult.html">JGit Git API Class PushResult</a>
 %
 %   Example:
 %       JGIT.PUSH('ref','feature') % push 'feature' ref to default remote
@@ -23,7 +22,7 @@ function push(varargin)
 %       JGIT.PUSH('ref','feature', 'setRemote', 'upstream') % push upstream
 %       JGIT.PUSH('ref','feature','setForce',true) % force push master to default
 %
-%   See also JGIT
+%   See also JGIT, COMMIT
 %
 %   Version 0.5 - Egret Release
 %   2013-09-25 Mark Mikofski

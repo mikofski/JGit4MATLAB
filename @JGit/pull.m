@@ -15,7 +15,7 @@ function results = pull(varargin)
 %       JGIT.PULL % pull
 %       JGIT.PULL('setRebase',true) % use rebase
 %
-%   See also JGIT
+%   See also JGIT, MERGE, CLONE
 %
 %   Version 0.5 - Egret Release
 %   2013-09-25 Mark Mikofski

@@ -21,7 +21,7 @@ function clone(uri,varargin)
 %   Example:
 %       JGIT.CLONE('git://github.com/eclipse/jgit.git','directory','repos/jgit')
 %
-%   See also JGIT
+%   See also JGIT, INIT, PULL
 %
 %   Version 0.4 - Dragonfly Release
 %   2013-06-04 Mark Mikofski

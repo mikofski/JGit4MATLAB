@@ -12,7 +12,7 @@ function init(varargin)
 %   Example:
 %       JGIT.INIT('directory','repositories/myRepo')
 %
-%   See also JGIT
+%   See also JGIT, CLONE, PULL
 %
 %   Version 0.4 - Dragonfly Release
 %   2013-06-04 Mark Mikofski

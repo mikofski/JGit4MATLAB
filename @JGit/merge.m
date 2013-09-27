@@ -24,7 +24,7 @@ function results = merge(include,varargin)
 %       JGIT.MERGE('feature', 'name', 'merge feature into master') % add commit message
 %       JGIT.MERGE('feature','setSquash',true) % merge but don't commit or move head
 %
-%   See also JGIT
+%   See also JGIT, FETCH, CHECKOUT
 %
 %   Version 0.4 - Dragonfly Release
 %   2013-06-04 Mark Mikofski

@@ -33,7 +33,7 @@ function results = checkout(name,varargin)
 %       JGIT.CHECKOUT('stable','createBranch',true,'upstreamMode','SET_UPSTREAM', ...
 %           'startPoint','origin/stable') % create a new tracking branch
 %
-%   See also JGIT, JGIT.BRANCH
+%   See also JGIT, BRANCH
 %
 %   Version 0.4 - Dragonfly Release
 %   2013-06-04 Mark Mikofski

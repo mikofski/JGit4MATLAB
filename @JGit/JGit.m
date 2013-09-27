@@ -22,32 +22,33 @@ classdef JGit < handle
     %       JGIT.METHOD(REQUIRED,PARAMETER,VALUES)
     %
     %   The most commonly used METHODS are:
-    %   add        Add file contents to the index
-    %   bisect     Find by binary search the change that introduced a bug
-    %   branch     List, create, or delete branches
-    %   checkout   Checkout a branch or paths to the working tree
-    %   clone      Clone a repository into a new directory
-    %   commit     Record changes to the repository
-    %   diff       Show changes between commits, commit and working tree, etc
-    %   fetch      Download objects and refs from another repository
-    %   grep       Print lines matching a pattern
-    %   init       Create an empty git repository or reinitialize an existing one
-    %   log        Show commit logs
-    %   merge      Join two or more development histories together
-    %   mv         Move or rename a file, a directory, or a symlink
-    %   pull       Fetch from and merge with another repository or a local branch
-    %   push       Update remote refs along with associated objects
-    %   rebase     Forward-port local commits to the updated upstream head
-    %   reset      Reset current HEAD to the specified state
-    %   rm         Remove files from the working tree and from the index
-    %   show       Show various types of objects
-    %   status     Show the working tree status
-    %   tag        Create, list, delete or verify a tag object signed with GPG
+    %   +add        Add file contents to the index
+    %   -bisect     Find by binary search the change that introduced a bug
+    %   +branch     List, create, or delete branches
+    %   +checkout   Checkout a branch or paths to the working tree
+    %   +clone      Clone a repository into a new directory
+    %   +commit     Record changes to the repository
+    %   +diff       Show changes between commits, commit and working tree, etc
+    %   +fetch      Download objects and refs from another repository
+    %   -grep       Print lines matching a pattern
+    %   +init       Create an empty git repository or reinitialize an existing one
+    %   +log        Show commit logs
+    %   +merge      Join two or more development histories together
+    %   -mv         Move or rename a file, a directory, or a symlink
+    %   +pull       Fetch from and merge with another repository or a local branch
+    %   +push       Update remote refs along with associated objects
+    %   -rebase     Forward-port local commits to the updated upstream head
+    %   -reset      Reset current HEAD to the specified state
+    %   +rm         Remove files from the working tree and from the index
+    %   -show       Show various types of objects
+    %   +status     Show the working tree status
+    %   -tag        Create, list, delete or verify a tag object signed with GPG
     %
     %   See `help JGIT.METHOD` for more information on a specific METHOD.
     %
-    %   See also ADD, BRANCH, CLONE, COMMIT, CONFIG, DIFF, INIT, LOG, STATUS,
-    %   GETGITAPI, GETGITDIR, VALIDATEJAVACLASSPATH, DOWNLOADJGITJAR, GETEDITOR
+    %   See also ADD, BRANCH, CHECKOUT, CLONE, COMMIT, DIFF, FETCH, INIT, LOG,
+    %   MERGE, PULL, PUSH, STATUS, GETGITAPI, GETGITDIR, VALIDATEJAVACLASSPATH,
+    %   DOWNLOADJGITJAR, GETEDITOR, SETUSERINFO, GETUSERINFO, SAVESSHPASSPHRASE
     %
     %   Version 0.5 - Egret Release
     %   2013-09-25 Mark Mikofski
@@ -80,6 +81,7 @@ classdef JGit < handle
         clone(uri,varargin)
         commit(varargin)
         diff(varargin)
+        fetch(varargin)
         init(varargin)
         log(varargin)
         r = merge(include,varargin)
@@ -149,7 +151,8 @@ classdef JGit < handle
             %   static Java class path. Downloads current version of JGit
             %   and/or adds it to the MATLAB static Java class path if false.
             %
-            %   See also: JGIT, DOWNLOADJGITJAR
+            %   See also: JGIT, DOWNLOADJGITJAR, SETUSERINFO, GETUSERINFO,
+            %   SAVESSHPASSPHRASE
             %
             %   Version 0.5 - Egret Release
             %   2013-09-25 Mark Mikofski
@@ -285,6 +288,8 @@ classdef JGit < handle
         function setUserInfo(name, email)
             %JGIT.SETUSERINFO Set global user config.
             %   JGIT.SETUSERINFO(NAME,EMAIL)
+            %
+            %   See also: JGIT, GETUSERINFO
             cnfile = java.io.File(JGit.USERHOME,JGit.GITCONFIG); % java File
             % create gitconfig obj and load it
             gitconfig = org.eclipse.jgit.storage.file.FileBasedConfig(cnfile, ...
@@ -297,6 +302,8 @@ classdef JGit < handle
         function [name,email] = getUserInfo()
             %JGIT.GETUSERINFO Get global user config.
             %   [NAME,EMAIL] = JGIT.GETUSERINFO
+            %
+            %   See also: JGIT, SETUSERINFO
             cnfile = java.io.File(JGit.USERHOME,JGit.GITCONFIG); % java File
             % create gitconfig obj and load it
             gitconfig = org.eclipse.jgit.storage.file.FileBasedConfig(cnfile, ...
@@ -311,6 +318,8 @@ classdef JGit < handle
             %   Save SSH passphrase in un-encrypted file, F, for Jsch
             %   custom CredentialProvider to use. STATUS == 1 if
             %   successful.
+            %
+            %   See also: JGIT, CLONE, FETCH, PULL, PUSH
             f = fullfile(char(JGit.USERHOME),JGit.JSCH_USERINFO); % savefile path
             fid = fopen(f,'wt'); % open file for writing text
             try
@@ -330,7 +339,7 @@ classdef JGit < handle
             %   the version number in a file called 'version' in the @JGit
             %   folder if successful.
             %
-            %   See also: JGIT, DOWNLOADJGITJAR, URLWRITE
+            %   See also: JGIT, URLREAD, URLWRITE
             %
             %   Version 0.5 - Egret Release
             %   2013-09-25 Mark Mikofski
@@ -383,7 +392,7 @@ classdef JGit < handle
             %   if mac and 'gedit' if linux.
             %
             %
-            %   See also: JGIT, DOWNLOADJGITJAR, URLWRITE
+            %   See also: JGIT, COMMIT
             %
             %   Version 0.5 - Egret Release
             %   2013-09-25 Mark Mikofski
