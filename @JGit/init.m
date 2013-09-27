@@ -35,7 +35,13 @@ if exist(fullfile(p.Results.directory,JGit.GIT_DIR),'dir')==7
     msg = 'Reinitialized';
 end
 %% set directory
-initCMD.setDirectory(java.io.File(p.Results.directory));
+folder = java.io.File(p.Results.directory);
+% Java always makes relative paths in matlab userpath
+if ~folder.isAbsolute
+    cwd = pwd; % get current directory
+    folder = java.io.File(cwd,p.Results.directory); % folder relative to cwd
+end
+initCMD.setDirectory(folder);
 %% call
 git = initCMD.call;
 %% output message
