@@ -4,3 +4,4 @@ jgit.misc
 version
 @JGit/older-versions
 *.orig
+jsch-0.1.50.jar
