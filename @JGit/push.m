@@ -71,7 +71,9 @@ if ~isempty(p.Results.remote)
     pushCMD.setRemote(p.Results.remote);
 end
 %% call
+% UserInfoSshSessionFactory is a customized SshSessionFactory that
+% configures a CredentialProvider to provide SSH passphrase for Jsch and
+% registers itself as the default instance of SshSessionFactory.
 com.mikofski.jgit4matlab.UserInfoSshSessionFactory;
-disp(org.eclipse.jgit.transport.SshSessionFactory.getInstance)
 pushCMD.call;
 end
