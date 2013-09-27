@@ -30,7 +30,7 @@ if nargin==0
     try
         JGit %#ok<NOPRT>
     catch ME
-        throw(ME)
+        rethrow(ME)
     end
 elseif strcmpi(varargin{1},'help')
     fstr = 'JGit';
@@ -48,7 +48,7 @@ else
     try
         JGit.(varargin{1})(varargin{2:end})
     catch ME
-        throw(ME)
+        rethrow(ME)
     end
 end
 end
