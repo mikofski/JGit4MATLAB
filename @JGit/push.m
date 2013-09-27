@@ -3,6 +3,7 @@ function push(varargin)
 %   JGIT.PUSH(PARAMETER,VALUE,...) uses any combination of the
 %   following PARAMETER, VALUE pairs.
 %   'ref' <char> sets references and ID's of commits to push.
+%   'refSpecs' <char|cellstr> sets ref specs used in push.
 %   'setDryRun' <logical> Sets a dry run.
 %   'setForce' <logical> Sets force push.
 %   'setPushAll' <logical> Push all branches.
@@ -31,6 +32,7 @@ function push(varargin)
 %% check inputs
 p = inputParser;
 p.addParamValue('ref','',@(x)validateattributes(x,{'char'},{'row'}))
+p.addParamValue('refSpecs','',@(x)validateRefSpecs(x))
 p.addParamValue('setDryRun',false,@(x)validateattributes(x,{'logical'},{'scalar'}))
 p.addParamValue('setForce',false,@(x)validateattributes(x,{'logical'},{'scalar'}))
 p.addParamValue('setPushAll',false,@(x)validateattributes(x,{'logical'},{'scalar'}))
@@ -47,6 +49,19 @@ pushCMD = gitAPI.push;
 %% add ref
 if ~isempty(p.Results.ref)
     pushCMD.add(p.Results.ref);
+end
+%% add refSpecs
+if ~isempty(p.Results.refSpecs)
+    % convert cellstring or string to Java List
+    refSpecsList = java.util.ArrayList;
+    if iscellstr(p.Results.refSpecs)
+        for n = 1:numel(p.Results.refSpecs)
+            refSpecsList.add(org.eclipse.jgit.transport.RefSpec(p.Results.refSpecs{n}));
+        end
+    elseif ischar(p.Results.refSpecs)
+        refSpecsList.add(org.eclipse.jgit.transport.RefSpec(p.Results.refSpecs));
+    end
+    pushCMD.setRefSpecs(refSpecsList); % pass list to push command
 end
 %% set dry run
 if p.Results.setDryRun
@@ -76,4 +91,11 @@ end
 % registers itself as the default instance of SshSessionFactory.
 com.mikofski.jgit4matlab.UserInfoSshSessionFactory;
 pushCMD.call;
+end
+
+function tf = validateRefSpecs(refspecs)
+if ~iscellstr(refspecs)
+    validateattributes(refspecs,{'char'},{'row'})
+end
+tf = true;
 end

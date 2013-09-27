@@ -33,7 +33,7 @@ gitAPI = JGit.getGitAPI(gitDir);
 addCMD = gitAPI.add;
 %% add files
 if iscellstr(p.Results.files)
-    for n = 1:numel(files)
+    for n = 1:numel(p.Results.files)
         addCMD.addFilepattern(p.Results.files{n});
     end
 elseif ischar(p.Results.files)
