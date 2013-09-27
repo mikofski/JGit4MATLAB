@@ -62,6 +62,9 @@ classdef JGit < handle
         PROGRESSMONITOR = 'com.mikofski.jgit4matlab.MATLABProgressMonitor'
         VERFILE = fullfile(fileparts(mfilename('fullpath')),'version') % file storing JGit package version
         VERSION = strtrim(fileread(JGit.VERFILE)) % JGit version string
+        USERHOME = org.eclipse.jgit.util.FS.DETECTED.userHome % user home
+        GITCONFIG = '.gitconfig' % global git config file found in USERHOME
+        JSCH_USERINFO = '.jsch-userinfo' % global Jsch userinfo file with SSH passphrase
     end
     %% static methods
     methods (Static)
@@ -231,32 +234,43 @@ classdef JGit < handle
                 'bringing-java-classes-and-methods-into-matlab-workspace.html#f111065">', ...
                 'Bringing Java Classes into MATLAB Workspace: The Java Class Path: The Static Path</a>'])
         end
-%         function setUserInfo(name, email)
-%             file = java.io.File(fullfile(getenv('home'),'.gitconfig'));
-%             gitconfig = org.eclipse.jgit.storage.file.FileBasedConfig(file, org.eclipse.jgit.util.FS.DETECTED);
-%             gitconfig.setString('user',[],'name',name); % place your name in here
-%             gitconfig.setString('user',[],'email',email); % place your email in here
-%             gitconfig.save;
-%         end
-%         function getUserInfo()
-%             file = java.io.File(fullfile(getenv('home'),'.gitconfig'));
-%             gitconfig = org.eclipse.jgit.storage.file.FileBasedConfig(file, org.eclipse.jgit.util.FS.DETECTED);
-%             name = gitconfig.getString('user',[],'name'); % get your name
-%             email = gitconfig.getString('user',[],'email'); % get your email
-%             fprintf('\nname: %s, email: %s\n',name,email)
-%         end
-        function [f,status] = setSSHpassphrase(passphrase)
-            % write SSH passphrase
-            f = fullfile(getenv('home'),'.jsch-userinfo','wt');
-            fid = fopen(fullfile(getenv('home'),'.jsch-userinfo','wt'));
+        function setUserInfo(name, email)
+            %JGIT.SETUSERINFO Set global user config.
+            %   JGIT.SETUSERINFO(NAME,EMAIL)
+            cnfile = java.io.File(JGit.USERHOME,JGit.GITCONFIG); % java File
+            % create gitconfig obj and load it
+            gitconfig = org.eclipse.jgit.storage.file.FileBasedConfig(cnfile, org.eclipse.jgit.util.FS.DETECTED);
+            gitconfig.load % gitconfig obj must be loaded before calling set/get methods
+            gitconfig.setString('user',[],'name',name); % set user name
+            gitconfig.setString('user',[],'email',email); % set user email
+            gitconfig.save;
+        end
+        function [name,email] = getUserInfo()
+            %JGIT.GETUSERINFO Get global user config.
+            %   [NAME,EMAIL] = JGIT.GETUSERINFO
+            cnfile = java.io.File(JGit.USERHOME,JGit.GITCONFIG); % java File
+            % create gitconfig obj and load it
+            gitconfig = org.eclipse.jgit.storage.file.FileBasedConfig(cnfile, org.eclipse.jgit.util.FS.DETECTED);
+            gitconfig.load % gitconfig obj must be loaded before calling set/get methods
+            name = gitconfig.getString('user',[],'name'); % get user name
+            email = gitconfig.getString('user',[],'email'); % get user email
+        end
+        function [f,status] = saveSSHpassphrase(passphrase)
+            %SETSSHPASSPHRASE Save SSH passphrase for JSch.
+            %   [F,STATUS] = SAVESSHPASSPHRASE(PASSPHRASE)
+            %   Save SSH passphrase in un-encrypted file, F, for Jsch
+            %   custom CredentialProvider to use. STATUS == 1 if
+            %   successful.
+            f = fullfile(JGit.USERHOME,JGit.JSCH_USERINFO); % savefile path
+            fid = fopen(f,'wt'); % open file for writing text
             try
-                fprintf(fid,'%s\n',passphrase);
-                fclose(fid);
+                fprintf(fid,'%s\n',passphrase); % write passphrase to file
+                fclose(fid); % close file
             catch ME
-                fclose(fid);
-                throw(ME)
+                fclose(fid); % catch errors and close file
+                throw(ME) % throw error
             end
-            status = 1;
+            status = 1; % success
         end
         function [f,status] = downloadJGitJar(jgitjar)
             %JGIT.DOWNLOADJGITJAR Download the latest JGit jar file.
