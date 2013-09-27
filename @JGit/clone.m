@@ -66,7 +66,13 @@ if p.Results.cloneSubmodules
 end
 %% set directory
 if ~isempty(p.Results.directory)
-    cloneCMD.setDirectory(java.io.File(p.Results.directory));
+    folder = java.io.File(p.Results.directory); 
+    % Java always makes relative paths in matlab userpath
+    if ~folder.isAbsolute
+        userhome = org.eclipse.jgit.util.FS.DETECTED.userHome;
+        folder = java.io.File(userhome,p.Results.directory);
+    end
+    cloneCMD.setDirectory(folder);
 end
 %% bare noCheckout
 if p.Results.noCheckout

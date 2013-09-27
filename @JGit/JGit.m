@@ -231,6 +231,33 @@ classdef JGit < handle
                 'bringing-java-classes-and-methods-into-matlab-workspace.html#f111065">', ...
                 'Bringing Java Classes into MATLAB Workspace: The Java Class Path: The Static Path</a>'])
         end
+%         function setUserInfo(name, email)
+%             file = java.io.File(fullfile(getenv('home'),'.gitconfig'));
+%             gitconfig = org.eclipse.jgit.storage.file.FileBasedConfig(file, org.eclipse.jgit.util.FS.DETECTED);
+%             gitconfig.setString('user',[],'name',name); % place your name in here
+%             gitconfig.setString('user',[],'email',email); % place your email in here
+%             gitconfig.save;
+%         end
+%         function getUserInfo()
+%             file = java.io.File(fullfile(getenv('home'),'.gitconfig'));
+%             gitconfig = org.eclipse.jgit.storage.file.FileBasedConfig(file, org.eclipse.jgit.util.FS.DETECTED);
+%             name = gitconfig.getString('user',[],'name'); % get your name
+%             email = gitconfig.getString('user',[],'email'); % get your email
+%             fprintf('\nname: %s, email: %s\n',name,email)
+%         end
+        function [f,status] = setSSHpassphrase(passphrase)
+            % write SSH passphrase
+            f = fullfile(getenv('home'),'.jsch-userinfo','wt');
+            fid = fopen(fullfile(getenv('home'),'.jsch-userinfo','wt'));
+            try
+                fprintf(fid,'%s\n',passphrase);
+                fclose(fid);
+            catch ME
+                fclose(fid);
+                throw(ME)
+            end
+            status = 1;
+        end
         function [f,status] = downloadJGitJar(jgitjar)
             %JGIT.DOWNLOADJGITJAR Download the latest JGit jar file.
             %   [F,STATUS] = JGIT.DOWNLOADJGITJAR(JGITJAR) downloads JGit
