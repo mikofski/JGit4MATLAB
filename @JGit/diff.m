@@ -94,7 +94,7 @@ diffFileOS = java.io.FileOutputStream(DIFF_FILE);
 diffCMD.setOutputStream(diffFileOS);
 %% show progress
 if p.Results.showProgress
-    diffCMD.setProgressMonitor(org.eclipse.jgit.lib.MATLABProgressMonitor);
+    diffCMD.setProgressMonitor(com.mikofski.jgit4matlab.MATLABProgressMonitor);
 end
 %% show name and status only
 if p.Results.showNameAndStatusOnly

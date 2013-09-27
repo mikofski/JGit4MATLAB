@@ -58,7 +58,7 @@ classdef JGit < handle
         EDITOR = JGit.getEDITOR % an editor
         GIT_DIR = '.git' % git repository folder
         JGIT = 'org.eclipse.jgit' % JGit package name
-        PROGRESSMONITOR = [JGit.JGIT,'.lib.MATLABProgressMonitor']
+        PROGRESSMONITOR = 'com.mikofski.jgit4matlab.MATLABProgressMonitor'
         VALID = JGit.validateJavaClassPath
         VERFILE = fullfile(fileparts(mfilename('fullpath')),'version') % file storing JGit package version
         VERSION = strtrim(fileread(JGit.VERFILE)) % JGit version string
@@ -75,6 +75,8 @@ classdef JGit < handle
         init(varargin)
         log(varargin)
         r = merge(include,varargin)
+        pull(varargin)
+        push(ref,varargin)
         status(gitDir,fid,amend)
         %% JGIT4MATLAB methods
         function gitAPI = getGitAPI(gitDir)

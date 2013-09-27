@@ -1,8 +1,10 @@
-package org.eclipse.jgit.lib;
+package com.mikofski.jgit4matlab;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
+
+import org.eclipse.jgit.lib.BatchingProgressMonitor;
 
 /** A simple progress reporter printing on a stream. */
 public class MATLABProgressMonitor extends BatchingProgressMonitor {

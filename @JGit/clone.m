@@ -11,7 +11,7 @@ function clone(uri,varargin)
 %   'cloneSubmodules' <logical> [false] Initialize and update submodules.
 %   'directory' <char> [uriish.humanish] Clone into specified directory.
 %   'noCheckout' <logical> [false] Don't checkout any branch after cloning.
-%   'progressMonitor' <ProgressMonitor> [TextProgressMonitor] Display progress.
+%   'progressMonitor' <ProgressMonitor> [MATLABProgressMonitor] Display progress.
 %   'remote' <char> [origin] Name of remote to track of upstream repository.
 %
 %   For more information see also
@@ -37,8 +37,7 @@ p.addParamValue('cloneAllBranches',false,@(x)validateattributes(x,{'logical'},{'
 p.addParamValue('cloneSubmodules',false,@(x)validateattributes(x,{'logical'},{'scalar'}))
 p.addParamValue('directory','',@(x)validateattributes(x,{'char'},{'row'}))
 p.addParamValue('noCheckout',false,@(x)validateattributes(x,{'logical'},{'scalar'}))
-p.addParamValue('progressMonitor',org.eclipse.jgit.lib.MATLABProgressMonitor, ...
-    @(x)validateattributes(x,{'org.eclipse.jgit.lib.ProgressMonitor'},{'scalar'}))
+p.addParamValue('progressMonitor',com.mikofski.jgit4matlab.MATLABProgressMonitor,@(x)isjava(x))
 p.addParamValue('remote','',@(x)validateattributes(x,{'char'},{'row'}))
 p.parse(uri,varargin{:})
 % Git.init is a static method (so is clone) for obvious reasons
@@ -80,5 +79,7 @@ if ~isempty(p.Results.remote)
     cloneCMD.setRemote(p.Results.remote);
 end
 %% call
+sessionFactory = com.mikofski.jgit4matlab.UserInfoSshSessionFactory.getInstance();
+org.eclipse.jgit.transport.SshSessionFactory.setInstance(sessionFactory);
 cloneCMD.call;
 end
