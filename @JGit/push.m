@@ -1,5 +1,5 @@
 function push(varargin)
-%JGIT.PUSH Push commit with current head.
+%JGIT.PUSH Push commits.
 %   JGIT.PUSH(PARAMETER,VALUE,...) uses any combination of the
 %   following PARAMETER, VALUE pairs.
 %   'ref' <char> sets references and ID's of commits to push.

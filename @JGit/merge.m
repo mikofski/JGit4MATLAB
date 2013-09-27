@@ -97,6 +97,8 @@ if ~isempty(p.Results.strategy)
 end
 %% call CMD
 mergeResult = mergeCMD.call;
+fprintf('%s\n',char(mergeResult.getMergeStatus))
+%% results
 if nargout>0
     results = mergeResult;
 end

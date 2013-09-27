@@ -83,7 +83,7 @@ classdef JGit < handle
         init(varargin)
         log(varargin)
         r = merge(include,varargin)
-        pull(varargin)
+        r = pull(varargin)
         push(varargin)
         status(gitDir,fid,amend)
         %% JGIT4MATLAB methods
