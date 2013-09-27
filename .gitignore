@@ -1,7 +1,8 @@
 org.eclipse.jgit.jar
+jsch-0.1.50.jar
+*.orig
 *.zip
+*.png
 jgit.misc
 version
 @JGit/older-versions
-*.orig
-jsch-0.1.50.jar
