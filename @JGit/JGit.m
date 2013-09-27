@@ -76,7 +76,7 @@ classdef JGit < handle
         log(varargin)
         r = merge(include,varargin)
         pull(varargin)
-        push(ref,varargin)
+        push(varargin)
         status(gitDir,fid,amend)
         %% JGIT4MATLAB methods
         function gitAPI = getGitAPI(gitDir)

@@ -1,4 +1,4 @@
-function push(ref,varargin)
+function push(varargin)
 %JGIT.PUSH Push commit with current head.
 %   JGIT.PUSH(PARAMETER,VALUE,...) uses any combination of the
 %   following PARAMETER, VALUE pairs.
@@ -38,7 +38,7 @@ p.addParamValue('setPushTags',false,@(x)validateattributes(x,{'logical'},{'scala
 p.addParamValue('progressMonitor',com.mikofski.jgit4matlab.MATLABProgressMonitor,@(x)isjava(x))
 p.addParamValue('remote','',@(x)validateattributes(x,{'char'},{'row'}))
 p.addParamValue('gitDir',pwd,@(x)validateattributes(x,{'char'},{'row'}))
-p.parse(ref,varargin{:})
+p.parse(varargin{:})
 gitDir = p.Results.gitDir;
 gitAPI = JGit.getGitAPI(gitDir);
 pushCMD = gitAPI.push;
