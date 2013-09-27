@@ -36,7 +36,11 @@ function jgit(varargin)
 %         origin/master
 
 if nargin==0
-    JGit %#ok<NOPRT>
+    try
+        JGit %#ok<NOPRT>
+    catch ME
+        throw(ME)
+    end
 elseif strcmpi(varargin{1},'help')
     fstr = 'JGit';
     if nargin==2
@@ -50,7 +54,11 @@ else
     [varargin{bools}] = deal(false);
     numbers = [NaN,str2double(varargin(2:end))];
     varargin(~isnan(numbers)) = num2cell(numbers(~isnan(numbers)));
-    JGit.(varargin{1})(varargin{2:end})
+    try
+        JGit.(varargin{1})(varargin{2:end})
+    catch ME
+        throw(ME)
+    end
 end
 end
 

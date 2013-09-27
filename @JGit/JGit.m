@@ -55,11 +55,11 @@ classdef JGit < handle
     
     %% constant properties
     properties (Constant)
+        VALID = JGit.validateJavaClassPath
         EDITOR = JGit.getEDITOR % an editor
         GIT_DIR = '.git' % git repository folder
         JGIT = 'org.eclipse.jgit' % JGit package name
         PROGRESSMONITOR = 'com.mikofski.jgit4matlab.MATLABProgressMonitor'
-        VALID = JGit.validateJavaClassPath
         VERFILE = fullfile(fileparts(mfilename('fullpath')),'version') % file storing JGit package version
         VERSION = strtrim(fileread(JGit.VERFILE)) % JGit version string
     end
@@ -154,10 +154,10 @@ classdef JGit < handle
             pmjar = fullfile(githome,[JGit.PROGRESSMONITOR,'.jar']);
             if exist(jgitjar,'file')~=2
                 valid = false;
-                fprintf(2,'JGit jar-file doesn''t exist. Downloading ...\n');
+                fprintf('JGit jar-file doesn''t exist. Downloading ...\n');
                 [f,status] = JGit.downloadJGitJar(jgitjar);
                 if status==1
-                    fprintf(2,'Saved as:\n\t%s.\n... Done.\n\n',f);
+                    fprintf('Saved as:\n\t%s.\n... Done.\n\n',f);
                 else
                     error('jgit:validateJavaClassPath:downloadError',status)
                 end
@@ -173,18 +173,17 @@ classdef JGit < handle
                 %% No, jar-file is not on MATLAB static Java class path
                 % check for file called "javaclasspath.txt"
                 valid = false;
-                fprintf(2,'\n\t**JGit not detected.**\n\n');
                 workhome = userpath;workhome = workhome(1:end-1);
                 javapath = fullfile(workhome,'javaclasspath.txt');
                 if exist(javapath,'file')~=2
                     %% no "javaclasspath.txt"
-                    fprintf(2,'"javaclasspath.txt" not detected. Writing ...\n');
+                    fprintf('"javaclasspath.txt" not detected. Writing ...\n');
                     try
                         fid = fopen(javapath,'wt');
                         fprintf(fid,'# JGit package\n%s\n',jgitjar);
                         fprintf(fid,'# JGit package\n%s\n',pmjar);
                         fclose(fid);
-                        fprintf(2,'... Done.\n\n');
+                        fprintf('... Done.\n\n');
                     catch ME
                         fclose(fid);
                         throw(ME)
@@ -200,16 +199,14 @@ classdef JGit < handle
                             if feof(fid)
                                 copyfile(javapath,[javapath,'.JGitSaved'])
                                 if ~foundJGit
-                                    fprintf(2,'JGit not on static Java class path. Writing ...\n');
-                                    fprintf(fid,'# JGit package\n%s\n',jgitjar);
-                                    fclose(fid);
-                                    fprintf(2,'... Done.\n\n');
+                                    fprintf('JGit not on static Java class path. Writing ...\n');
+                                    fprintf(fid,'\n# JGit package\n%s\n',jgitjar);
+                                    fprintf('... Done.\n\n');
                                 end
                                 if ~foundPM
-                                    fprintf(2,'ProgressMonitor not on static Java class path. Writing ...\n');
-                                    fprintf(fid,'# JGit package\n%s\n',pmjar);
-                                    fclose(fid);
-                                    fprintf(2,'... Done.\n\n');
+                                    fprintf('ProgressMonitor not on static Java class path. Writing ...\n');
+                                    fprintf(fid,'\n# JGit package\n%s\n',pmjar);
+                                    fprintf('... Done.\n\n');
                                 end
                                 break
                             end
@@ -217,9 +214,9 @@ classdef JGit < handle
                             foundJGit = foundJGit || strcmp(pathline,jgitjar);
                             foundPM = foundPM || strcmp(pathline,pmjar);
                         end
+                        fclose(fid);
                     catch ME
                         fclose(fid);
-                        close(h)
                         throw(ME)
                     end
                 end
