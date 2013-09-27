@@ -6,7 +6,7 @@ function jgit(varargin)
 %      JGIT help                --> help(JGit) or help JGit
 %      JGIT help <command>      --> help(JGit.<command>) or help JGit.<command>
 %
-%   Examples
+%   Examples:
 %       >> jgit status
 %       # On branch master
 %       nothing to commit, working directory clean
@@ -17,23 +17,14 @@ function jgit(varargin)
 %           JGit.status(GITDIR,FID) Output status to file identifier, FID.
 %           JGit.status(GITDIR,FID,AMEND) Add "Initial commit" text to status.
 %
-%           For more information see also
-%           Git Status Documentation
-%           JGit Git API Class StatusCommand
-%
-%           Example:
-%               JGit.status
-%  
-%           See also JGit
-%
-%           Version 0.4 - Dragonfly Release
-%           2013-06-04 Mark Mikofski
-%           poquitopicante.blogspot.com
-%
 %       >> jgit branch list [] ListMode ALL
 %         gitCheckout
 %       * master
 %         origin/master
+%
+%       >> JGit.add({'foo.m','bar.m'}) % only strings used in commands
+%
+%       >> jgit commit all true message 'commit all tracked but not staged'
 
 if nargin==0
     try
