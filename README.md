@@ -78,7 +78,7 @@ index.
         'upstreamMode','SET_UPSTREAM','startPoint','origin/stable')
 
 Clone
-+++++
+-----
 Clone a remote repository.
 
     JGit.clone('git://github.com/eclipse/jgit.git', ... 
@@ -119,7 +119,7 @@ Initialize or reinitialize a Git repository.
     JGit.init('directory','repositories/myRepo')
 
 Log
-+++
+---
 Return commit log. Any combination of commands will work. Commits are entered
 as strings which can be SHA1 of the commit, HEAD~N, where N is the number of
 commits from HEAD or as refs/heads/branch, where branch is the branch of the
