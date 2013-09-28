@@ -43,15 +43,18 @@ try
 catch
     argopts = {};
 end
+%% help
+if strcmpi(cmd,'help')
+    %% help
+    fstr = 'JGit';
+    if nargin==2
+        fstr = [fstr,'.',varargin{2}];
+    end
+    help(fstr)
+    return
+end
 %% brute force each command
 switch lower(cmd)
-    case 'help'
-        %% help
-        fstr = 'JGit';
-        if nargin==2
-            fstr = [fstr,'.',varargin{2}];
-        end
-        help(fstr)
     case 'status'
         %% status
         parsed_argopts = {};
