@@ -54,7 +54,7 @@ if strcmp(cmd,'help')
     return
 end
 %% brute force each command
-switch lower(cmd)
+switch cmd
     case 'status'
         %% status
         parsed_argopts = {};
@@ -78,6 +78,8 @@ switch lower(cmd)
         end
     case 'branch'
         parsed_argopts = parseBranch(argopts);
+    case 'checkout'
+        parsed_argopts = parseCheckout(argopts);
     otherwise
         error('jgit:noCommand','%s is not a jgit command',cmd)
 end
@@ -114,7 +116,7 @@ parsed_argopts = {};
 force = strcmp('-f',argopts) | strcmp('--force',argopts);
 % set-upstream mode
 set_upstream = strcmp('--set-upstream',argopts);
-track = strcmp('--track',argopts);
+track = strcmp('-t',argopts) | strcmp('--track',argopts);
 no_track = strcmp('--no-track',argopts);
 % delete branch
 delbranch = strcmp('-d',argopts) | strcmp('--delete',argopts);
@@ -198,4 +200,34 @@ else % if any(set_upstream) || any(track) || any(no_track) && ~isempty(argopts)
         parsed_argopts = [parsed_argopts,'startPoint',argopts(2)];
     end
 end
+end
+
+function parsed_argopts = parseCheckout(argopts)
+%PARSECHECKOUT Parse checkout arguments and options.
+parsed_argopts = {};
+%% options
+% force
+force = strcmp('-f',argopts) | strcmp('--force',argopts);
+% newbranch
+newbranch = strcmp('-b',argopts);
+% force new branch
+forcenew = strcmp('-B',argopts);
+% stage for unmerged paths
+ours = strcmp('--ours',argopts);
+theirs = strcmp('--theirs',argopts);
+% set upstream mode
+track = strcmp('-t',argopts) | strcmp('--track',argopts);
+no_track = strcmp('--no-track',argopts);
+% pop upstream mode argopts
+argopts(force) = [];
+argopts(newbranch) = [];
+argopts(forcenew) = [];
+argopts(ours) = [];
+argopts(theirs) = [];
+argopts(track) = [];
+argopts(no_track) = [];
+%% other options
+% filter other options and/or double-hyphen
+argopts = filterOpts(argopts);
+% no argument or option checks - jgit checks args/opts
 end
