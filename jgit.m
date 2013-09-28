@@ -78,6 +78,10 @@ switch cmd.lower
         set_upstream = strcmpi('--set-upstream',argopts);
         track = strcmpi('--track',argopts);
         no_track = strcmpi('--no-track',argopts);
+        % look for delete
+        delbranch = strcmpi('-d',argopts) | strcmpi('--delete',argopts);
+        % look for move
+        move = strcmpi('-m',argopts) | strcmpi('--move',argopts);
         % check for ambiguous upstream mode
         if sum(set_upstream | track | no_track)>1
             error('jgit:setupstream', ...
@@ -113,6 +117,20 @@ switch cmd.lower
             if numel(argopts)==2
                 parsed_argopts = [parsed_argopts,'startPoint',argopts(2)];
             end
+        elseif any(move)
+            % move
+            % look for any more options or option-terminatore
+            options = strncmp('-',argopts,1) | strncmp('--',argopts,2); % options
+            if any(options)
+                argopts(options) = [];
+            end
+            % whatever is left must be branchname and oldname
+            assert(~isempty(argopts),'jgit:branch','Specify branch new name.')
+            assert(numel(argopts)==2,'jgit:branch','Specify branch old name.')
+            parsed_argopts = {'rename',argopts(1),'oldNames',argopts(2)};
+            if numel(argopts)==2
+                parsed_argopts = [parsed_argopts,'startPoint',argopts(2)];
+            end            
         end
     otherwise
         error('jgit:noCommand','%s is not a jgit command',cmd)
