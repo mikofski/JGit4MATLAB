@@ -39,12 +39,12 @@ end
 cmd = varargin{1}; % command
 % arguments if any
 try
-    argopts = varargin{2:end};
+    argopts = varargin(2:end);
 catch
     argopts = {};
 end
 %% brute force each command
-switch cmd.lower
+switch lower(cmd)
     case 'help'
         %% help
         fstr = 'JGit';
@@ -52,6 +52,9 @@ switch cmd.lower
             fstr = [fstr,'.',varargin{2}];
         end
         help(fstr)
+    case 'status'
+        %% status
+        parsed_argopts = {};
     case 'add'
         %% add
         parsed_argopts = {};
@@ -157,19 +160,31 @@ switch cmd.lower
         elseif any(remotes) || any(listall) || any(list)
             % list mode
             parsed_argopts = {'list'};
-            assert(sum(remote | listall)==1,'jgit:listmode','List --all or --remotes.')
+            argopts(list) = [];
+            assert(sum(remotes | listall)<=1,'jgit:listmode','List --all or --remotes.')
             % remotes
             if any(remotes)
-                parsed_argopts = [parsed_argopts,'remote','REMOTE'];
+                parsed_argopts = [parsed_argopts,{[]},'listMode','REMOTE'];
+                argopts(remotes) = [];
             elseif any(listall)
-                parsed_argopts = [parsed_argopts,'remote','ALL'];
+                parsed_argopts = [parsed_argopts,{[]},'listMode','ALL'];
+                argopts(listall) = [];
             end
+            % look for any more options or option-terminatore
+            options = strncmp('-',argopts,1) | strncmp('--',argopts,2); % options
+            if any(options)
+                argopts(options) = [];
+            end
+            % whatever is left must be oldnames
+            assert(isempty(argopts),'jgit:branch','Incorrect list mode options.')
+        else
+            error('jgit:branch','Incorrect options and arguments for branch.')
         end
     otherwise
         error('jgit:noCommand','%s is not a jgit command',cmd)
 end
 try
-    JGit.(cmd)(parsed_argopts)
+    JGit.(cmd)(parsed_argopts{:})
 catch ME
     rethrow(ME)
 end
