@@ -230,4 +230,29 @@ argopts(no_track) = [];
 % filter other options and/or double-hyphen
 argopts = filterOpts(argopts);
 % no argument or option checks - jgit checks args/opts
+if any(newbranch) || any(forcenew)
+    %% create
+    if any(newbranch)
+        parsed_argopts = [parsed_argopts,'createBranch',true];
+    elseif any(forcenew)
+        % force
+        parsed_argopts = [parsed_argopts,'force',true];
+    end
+    % upstream mode
+    if any(track)
+        % track
+        parsed_argopts = [parsed_argopts,'upstreamMode','TRACK'];
+    elseif any(no_track)
+        % no-track
+        parsed_argopts = [parsed_argopts,'upstreamMode','NO_TRACK'];
+    end
+    % branchname
+    assert(~isempty(argopts),'jgit:checkout:noName', ...
+        'Specify branch name to create.')
+    parsed_argopts = [argopts(1),parsed_argopts];
+    % start-point
+    if numel(argopts)>1
+        parsed_argopts = [parsed_argopts,'startPoint',argopts(2)];
+    end
+end
 end
