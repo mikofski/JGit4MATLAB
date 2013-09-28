@@ -74,7 +74,11 @@ switch lower(cmd)
         end
         % filepatterns
         assert(~isempty(argopts),'jgit:add','Specify file patterns to add.')
-        parsed_argopts = [argopts,parsed_argopts];
+        if numel(argopts)>1
+            parsed_argopts = [{argopts},parsed_argopts]; % cell string
+        else
+            parsed_argopts = [argopts,parsed_argopts]; % char
+        end
     case 'branch'
         parsed_argopts = parseBranch(argopts);
     otherwise
@@ -146,9 +150,9 @@ elseif any(delbranch) || any(forcedelete)
     % oldnames
     assert(~isempty(argopts),'jgit:branch','Specify branch(s) to delete.')
     if numel(argopts)>1
-        parsed_argopts = [parsed_argopts,'oldNames',{argopts}];
+        parsed_argopts = [parsed_argopts,'oldNames',{argopts}]; % cell string
     else
-        parsed_argopts = [parsed_argopts,'oldNames',argopts];
+        parsed_argopts = [parsed_argopts,'oldNames',argopts]; % char
     end
 elseif any(remotes) || any(listall) || any(list) || isempty(argopts)
     %% list branch
