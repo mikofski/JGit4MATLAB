@@ -91,8 +91,11 @@ end
 % end
 end
 
-function argopts = filterOpts(argopts)
+function argopts = filterOpts(argopts, pop)
 %FILTEROPTS Filter out options from literal arguments.
+if nargin<2 || isempty(pop)
+    pop = true;
+end
 %% other options
 % double-hyphen is used to indicate the last option,
 % arguments after lastopt are interpreted literaly.
@@ -105,7 +108,7 @@ if any(options)
     argopts(options) = [];
 end
 %% pop double-hyphen
-argopts(strcmp('--',argopts)) = [];
+if pop,argopts(strcmp('--',argopts)) = [];end
 end
 
 function parsed_argopts = parseBranch(argopts)
@@ -218,6 +221,8 @@ theirs = strcmp('--theirs',argopts);
 % set upstream mode
 track = strcmp('-t',argopts) | strcmp('--track',argopts);
 no_track = strcmp('--no-track',argopts);
+% paths
+paths = strcmp('--',argopts);
 % pop upstream mode argopts
 argopts(force) = [];
 argopts(newbranch) = [];
@@ -228,7 +233,7 @@ argopts(track) = [];
 argopts(no_track) = [];
 %% other options
 % filter other options and/or double-hyphen
-argopts = filterOpts(argopts);
+argopts = filterOpts(argopts,false);
 % no argument or option checks - jgit checks args/opts
 if any(newbranch) || any(forcenew)
     %% create
@@ -253,6 +258,15 @@ if any(newbranch) || any(forcenew)
     % start-point
     if numel(argopts)>1
         parsed_argopts = [parsed_argopts,'startPoint',argopts(2)];
+    end
+elseif any(paths)
+    %% checkout paths
+    if any(ours)
+        % stage ours
+        parsed_argopts = [parsed_argopts,'stage','OURS'];
+    elseif any(theirs)
+        % stage theirs
+        parsed_argopts = [parsed_argopts,'stage','THEIRS'];
     end
 end
 end
