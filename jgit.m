@@ -67,11 +67,8 @@ switch lower(cmd)
             parsed_argopts = {'update',true};
             argopts(update) = [];
         end
-        % other options or option-terminator
-        options = strncmp('-',argopts,1) | strncmp('--',argopts,2); % options
-        if any(options)
-            argopts(options) = [];
-        end
+        % filter other options and/or double-hyphen
+        argopts = filterOpts(argopts);
         % filepatterns
         assert(~isempty(argopts),'jgit:add','Specify file patterns to add.')
         if numel(argopts)>1
@@ -90,6 +87,23 @@ catch ME
     rethrow(ME)
 end
 % end
+end
+
+function argopts = filterOpts(argopts)
+%FILTEROPTS Filter out options from literal arguments.
+%% other options
+% double-hyphen is used to indicate the last option,
+% arguments after lastopt are interpreted literaly.
+lastopt = ~cumsum(strcmp('--',argopts)); % last option
+options = strncmp('-',argopts(lastopt),1) | strncmp('--',argopts(lastopt),2);
+if any(options)
+    warning('jgit:unsupportedOption','Unsupported options.')
+    unsupported_options = argopts(options);
+    fprintf(2,'\t%s\n',unsupported_options{:});
+    argopts(options) = [];
+end
+%% pop double-hyphen
+argopts(strcmp('--',argopts)) = [];
 end
 
 function parsed_argopts = parseBranch(argopts)
@@ -125,14 +139,9 @@ argopts(move) = [];
 argopts(remotes) = [];
 argopts(listall) = [];
 argopts(list) = [];
-% other options or option-terminator
-options = strncmp('-',argopts,1) | strncmp('--',argopts,2); % options
-if any(options)
-    warning('jgit:parsebranch','Unsupported options.')
-    unsupported_options = argopts(options);
-    fprintf(2,'\t%s\n',unsupported_options{:});
-    argopts(options) = [];
-end
+%% other options
+% filter other options and/or double-hyphen
+argopts = filterOpts(argopts);
 % no argument or option checks - jgit checks args/opts
 if any(move)
     %% rename branch
