@@ -84,6 +84,12 @@ switch cmd.lower
         forcedelete = strcmpi('-D',argopts);
         % look for move
         move = strcmpi('-m',argopts) | strcmpi('--move',argopts);
+        % look for remotes
+        remotes = strcmpi('-r',argopts) | strcmpi('--remotes',argopts);
+        % look for all
+        listall = strcmpi('-a',argopts) | strcmpi('--all',argopts);
+        % look for list
+        list = strcmpi('--list',argopts);
         % check for ambiguous upstream mode
         if sum(set_upstream | track | no_track)>1
             error('jgit:setupstream', ...
@@ -133,10 +139,8 @@ switch cmd.lower
             parsed_argopts = {'rename',argopts(1),'oldNames',argopts(2)};
         elseif any(delbranch) || any(forcedelete)
             % delete
-            if any(delbranch)
-                parsed_argopts = {'delete',{[]},};
-                argopts(delbranch) = [];
-            end
+            parsed_argopts = {'delete',{[]},};
+            argopts(delbranch) = [];
             % force delete
             if any(forcedelete)
                 parsed_argopts = [parsed_argopts,'force',true];
@@ -150,6 +154,16 @@ switch cmd.lower
             % whatever is left must be oldnames
             assert(~isempty(argopts),'jgit:branch','Specify branch(s) to delete.')
             parsed_argopts = [parsed_argopts,'startPoint',argopts];
+        elseif any(remotes) || any(listall) || any(list)
+            % list mode
+            parsed_argopts = {'list'};
+            assert(sum(remote | listall)==1,'jgit:listmode','List --all or --remotes.')
+            % remotes
+            if any(remotes)
+                parsed_argopts = [parsed_argopts,'remote','REMOTE'];
+            elseif any(listall)
+                parsed_argopts = [parsed_argopts,'remote','ALL'];
+            end
         end
     otherwise
         error('jgit:noCommand','%s is not a jgit command',cmd)
