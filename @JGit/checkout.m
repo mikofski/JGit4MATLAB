@@ -48,7 +48,7 @@ NOTRACK = javaMethod('valueOf','org.eclipse.jgit.api.CreateBranchCommand$SetupUp
 SET_UPSTREAM = javaMethod('valueOf','org.eclipse.jgit.api.CreateBranchCommand$SetupUpstreamMode','SET_UPSTREAM');
 TRACK = javaMethod('valueOf','org.eclipse.jgit.api.CreateBranchCommand$SetupUpstreamMode','TRACK');
 %% check inputs
-if isempty(name) && (strcmpi('path', varargin) || strcmpi('allPaths',varargin))
+if isempty(name) && (any(strcmpi('path', varargin)) || any(strcmpi('allPaths',varargin)))
     name = 'n/a';
 end
 p = inputParser;

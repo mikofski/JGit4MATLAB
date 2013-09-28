@@ -70,7 +70,7 @@ switch cmd
         % filter other options and/or double-hyphen
         argopts = filterOpts(argopts);
         % filepatterns
-        assert(~isempty(argopts),'jgit:add','Specify file patterns to add.')
+        assert(~isempty(argopts),'jgit:parseAdd','Specify file patterns to add.')
         if numel(argopts)>1
             parsed_argopts = [{argopts},parsed_argopts]; % cell string
         else
@@ -151,8 +151,8 @@ argopts = filterOpts(argopts);
 if any(move)
     %% rename branch
     % new and old branch names
-    assert(~isempty(argopts),'jgit:branch','Specify new branch name.')
-    assert(numel(argopts)==2,'jgit:branch','Specify old branch name.')
+    assert(~isempty(argopts),'jgit:parseBranch','Specify new branch name.')
+    assert(numel(argopts)==2,'jgit:parseBranch','Specify old branch name.')
     parsed_argopts = {'rename',argopts(1),'oldNames',argopts(2)};
 elseif any(delbranch) || any(forcedelete)
     %% delete branch
@@ -162,7 +162,7 @@ elseif any(delbranch) || any(forcedelete)
         parsed_argopts = [parsed_argopts,'force',true];
     end
     % oldnames
-    assert(~isempty(argopts),'jgit:branch','Specify branch(s) to delete.')
+    assert(~isempty(argopts),'jgit:parseBranch','Specify branch(s) to delete.')
     if numel(argopts)>1
         parsed_argopts = [parsed_argopts,'oldNames',{argopts}]; % cell string
     else
@@ -195,8 +195,7 @@ else % if any(set_upstream) || any(track) || any(no_track) && ~isempty(argopts)
         parsed_argopts = [parsed_argopts,'force',true];
     end
     % branchname
-    assert(~isempty(argopts),'jgit:createBranch:noName', ...
-        'Specify branch name to create.')
+    assert(~isempty(argopts),'jgit:parseBranch','Specify branch name to create.')
     parsed_argopts = ['create',argopts(1),parsed_argopts];
     % start-point
     if numel(argopts)>1
@@ -237,9 +236,10 @@ argopts = filterOpts(argopts,false);
 % no argument or option checks - jgit checks args/opts
 if any(newbranch) || any(forcenew)
     %% create
-    if any(newbranch)
+    if any(newbranch) || any(forcenew)
         parsed_argopts = [parsed_argopts,'createBranch',true];
-    elseif any(forcenew)
+    end
+    if any(forcenew) || any(force)
         % force
         parsed_argopts = [parsed_argopts,'force',true];
     end
@@ -252,8 +252,7 @@ if any(newbranch) || any(forcenew)
         parsed_argopts = [parsed_argopts,'upstreamMode','NO_TRACK'];
     end
     % branchname
-    assert(~isempty(argopts),'jgit:checkout:noName', ...
-        'Specify branch name to create.')
+    assert(~isempty(argopts),'jgit:parseCheckout','Specify branch name to create.')
     parsed_argopts = [argopts(1),parsed_argopts];
     % start-point
     if numel(argopts)>1
@@ -261,6 +260,7 @@ if any(newbranch) || any(forcenew)
     end
 elseif any(paths)
     %% checkout paths
+    parsed_argopts = {[]}; % startPoint specifies commit when checking out paths
     if any(ours)
         % stage ours
         parsed_argopts = [parsed_argopts,'stage','OURS'];
@@ -268,5 +268,37 @@ elseif any(paths)
         % stage theirs
         parsed_argopts = [parsed_argopts,'stage','THEIRS'];
     end
+    % force
+    if any(force)
+        parsed_argopts = [parsed_argopts,'force',true];
+    end
+    % tree-ish
+    assert(numel(argopts)>1,'jgit:parseCheckout','Specify path(s) to checkout.')
+    if strcmp('--',argopts{2})
+        parsed_argopts = [parsed_argopts,'startPoint',argopts(1)];
+        argopts(1:2) = []; % pop tree-ish and '--'
+    elseif strcmp('--',argopts{1})
+        % no commit
+        argopts(1) = []; % pop tree-ish and '--'
+    else
+        % ignore '--'
+        argopts(strcmp('--',argopts)) = [];
+        parsed_argopts = [parsed_argopts,'startPoint',argopts(1)];
+        argopts(1) = []; % pop tree-ish
+    end
+    % paths
+    assert(~isempty(argopts),'jgit:parseCheckout','Specify path(s) to checkout.')
+    if numel(argopts)>1
+        parsed_argopts = [parsed_argopts,'path',{argopts}]; % cell string
+    else
+        parsed_argopts = [parsed_argopts,'path',argopts]; % char
+    end
+else
+    %% checkout commit-ish
+    % force
+    if any(force)
+        parsed_argopts = [parsed_argopts,'force',true];
+    end
+    parsed_argopts = [argopts,parsed_argopts];
 end
 end
