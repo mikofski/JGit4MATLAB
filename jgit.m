@@ -26,19 +26,7 @@ function jgit(varargin)
 %
 %       >> jgit commit all true message 'commit all tracked but not staged'
 
-GRAMMAR = {'add',{'files'},{'update'}; ...
-    'branch',{'cmd','newName'},{'force','startPoint','upstreamMode','listMode','oldNames'}; ...
-    'checkout',{},{}; ...
-    'clone',{},{}; ...
-    'commit',{},{}; ...
-    'diff',{},{}; ...
-    'fetch',{},{}; ...
-    'init',{},{}; ...
-    'log',{},{}; ...
-    'merge',{},{}; ...
-    'pull',{},{}; ...
-    'push',{},{}; ...
-    'status',{},{}};
+%% initialize and/or return JGit constants
 if nargin==0
     try
         JGit %#ok<NOPRT>
@@ -47,13 +35,7 @@ if nargin==0
     end
     return
 end
-% elseif strcmpi(varargin{1},'help')
-%     fstr = 'JGit';
-%     if nargin==2
-%         fstr = [fstr,'.',varargin{2}];
-%     end
-%     help(fstr)
-% else
+%% command/arguments
 cmd = varargin{1}; % command
 % arguments if any
 try
@@ -61,106 +43,84 @@ try
 catch
     argopts = {};
 end
-% find option terminator '--' if exists
-if ~isempty(argopts)    
-    lastopt = strcmp('--',argopts); % last option
-    % split options and args by terminator
-    if any(lastopt)
-        lastopt = find(lastopt); % index of last option
-        % last option is last argopt
-        if lastopt==numel(argopts)
-            args = {};
-        else
-            args = argopts(lastopt+1:end);
-        end
-        % last option is first argopt
-        if lastopt==1
-            opts = 0;
-        else
-            opts = argopts(1:lastopt-1);
-        end
-    end
-    % parse options
-    parsed_options = opts; % parsed args
-    Nopts = numel(opts); % initial number of options
-    for o = 1:Nopts
-        % short options
-        isshort = strncmp('-',o,1); % short options
-        if isshort
-            if length(o)==2
-                okey = o;oval = true; % boolean options
-            elseif length(o)>2
-                okey = o(1:2); % option key-value pairs
-                try
-                    oval = str2double(o(3:end));
-                catch
-                    oval = o(3:end);
-                end
-            else
-                error('jgit:parse','"-" is not a valid jgit option or argument.')
-            end
-        parsed_options = [argopts, okey, oval];
-        end
-    end
-    
-end
-switch cmd
+%% brute force each command
+switch cmd.lower
     case 'help'
+        %% help
         fstr = 'JGit';
         if nargin==2
             fstr = [fstr,'.',varargin{2}];
         end
         help(fstr)
     case 'add'
+        %% add
+        parsed_argopts = {};
         % look for update option
         update = strcmpi('-u',argopts) | strcmpi('--update',argopts);
         if any(update)
-            parsed_argopts = {'update','true'};
+            parsed_argopts = {'update',true};
             argopts(update) = [];
         end
+        % look for any more options or option-terminatore
         options = strncmp('-',argopts,1) | strncmp('--',argopts,2); % options
         if any(options)
             argopts(options) = [];
         end
-        parsed_argopts = [argoupts,parsed_argopts];
+        % whatever is left must be filepatterns
+        assert(~isempty(argopts),'jgit:add','Specify file patterns to add.')
+        parsed_argopts = [argopts,parsed_argopts];
+    case 'branch'
+        %% branch
+        parsed_argopts = {};
+        % look for force
+        force = strcmpi('-f',argopts) | strcmpi('--force',argopts);
+        % look for set-upstream mode
+        set_upstream = strcmpi('--set-upstream',argopts);
+        track = strcmpi('--track',argopts);
+        no_track = strcmpi('--no-track',argopts);
+        % check for ambiguous upstream mode
+        if sum(set_upstream | track | no_track)>1
+            error('jgit:setupstream', ...
+                'Choose only one upstream mode: "--set-upstream", "track" or "no-track".')
+        elseif sum(set_upstream | track | no_track)==1
+            % create branch
+            if any(set_upstream)
+                % set-upstream
+                parsed_argopts = {'upstreamMode','SET_UPSTREAM'};
+                argopts(set_upstream) = [];
+            elseif any(track)
+                % track
+                parsed_argopts = {'upstreamMode','TRACK'};
+                argopts(set_upstream) = [];
+            elseif any(no_track)
+                % no-track
+                parsed_argopts = {'upstreamMode','NO_TRACK'};
+                argopts(set_upstream) = [];
+            end
+            % force
+            if any(force)
+                parsed_argopts = [parsed_argopts,'force',true];
+                argopts(set_upstream) = [];
+            end
+            % look for any more options or option-terminatore
+            options = strncmp('-',argopts,1) | strncmp('--',argopts,2); % options
+            if any(options)
+                argopts(options) = [];
+            end
+            % whatever is left must be branchname and start-point
+            assert(~isempty(argopts),'jgit:branch','Specify branchname to create.')
+            parsed_argopts = ['create',argopts(1),parsed_argopts];
+            if numel(argopts)==2
+                parsed_argopts = [parsed_argopts,'startPoint',argopts(2)];
+            end
+        end
     otherwise
         error('jgit:noCommand','%s is not a jgit command',cmd)
 end
 try
-    %         JGit.(varargin{1})(varargin{2:end})
-    JGit.(cmd)(argparse(cmd,argopts,GRAMMAR))
+    JGit.(cmd)(parsed_argopts)
 catch ME
     rethrow(ME)
 end
 % end
 end
-
-% short options
-%     short = strncmp('-',opts,1); % short options
-%     long = strncmp('--',opts,2); % long options
-%     Nopts = sum(short)+sum(long); % number of options
-
-% function argparse(cmd,argopts,grammar)
-%     argout = {};
-%     %% look for command
-%     commands = grammar(:,1);
-%     icmd = strcmpi(cmd,commands); % index of command
-%     if ~any(icmd)
-%         error('jgit:noCommand','%s is not a valid command',cmd)
-%     end
-%     cmdargs = grammar(icmd,2); % command args
-%     cmdopts = grammar(icmd,3); % command opts
-%     %% look for option terminator '--'
-%     lastopt = strcmp('--',argopts); % last option
-%     if any(lastopt)
-%         args = argopts(1:find(lastopt));
-%     end
-%     Nargs = numel(argopts); % number of args
-%     for n = 1:Nargs
-%         % check the first character
-%         if strcmp('-',argopts{n}(1))
-%             opt = strncmpi()
-%         end
-%     end
-% end
-
