@@ -80,6 +80,8 @@ switch cmd.lower
         no_track = strcmpi('--no-track',argopts);
         % look for delete
         delbranch = strcmpi('-d',argopts) | strcmpi('--delete',argopts);
+        % look for force delete
+        forcedelete = strcmpi('-D',argopts);
         % look for move
         move = strcmpi('-m',argopts) | strcmpi('--move',argopts);
         % check for ambiguous upstream mode
@@ -119,6 +121,7 @@ switch cmd.lower
             end
         elseif any(move)
             % move
+            argopts(move) = [];
             % look for any more options or option-terminatore
             options = strncmp('-',argopts,1) | strncmp('--',argopts,2); % options
             if any(options)
@@ -128,9 +131,25 @@ switch cmd.lower
             assert(~isempty(argopts),'jgit:branch','Specify branch new name.')
             assert(numel(argopts)==2,'jgit:branch','Specify branch old name.')
             parsed_argopts = {'rename',argopts(1),'oldNames',argopts(2)};
-            if numel(argopts)==2
-                parsed_argopts = [parsed_argopts,'startPoint',argopts(2)];
-            end            
+        elseif any(delbranch) || any(forcedelete)
+            % delete
+            if any(delbranch)
+                parsed_argopts = {'delete',{[]},};
+                argopts(delbranch) = [];
+            end
+            % force delete
+            if any(forcedelete)
+                parsed_argopts = [parsed_argopts,'force',true];
+                argopts(forcedelete) = [];
+            end
+            % look for any more options or option-terminatore
+            options = strncmp('-',argopts,1) | strncmp('--',argopts,2); % options
+            if any(options)
+                argopts(options) = [];
+            end
+            % whatever is left must be oldnames
+            assert(~isempty(argopts),'jgit:branch','Specify branch(s) to delete.')
+            parsed_argopts = [parsed_argopts,'startPoint',argopts];
         end
     otherwise
         error('jgit:noCommand','%s is not a jgit command',cmd)
