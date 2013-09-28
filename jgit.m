@@ -44,7 +44,7 @@ catch
     argopts = {};
 end
 %% help
-if strcmpi(cmd,'help')
+if strcmp(cmd,'help')
     %% help
     fstr = 'JGit';
     if nargin==2
@@ -61,128 +61,22 @@ switch lower(cmd)
     case 'add'
         %% add
         parsed_argopts = {};
-        % look for update option
-        update = strcmpi('-u',argopts) | strcmpi('--update',argopts);
+        % update
+        update = strcmp('-u',argopts) | strcmp('--update',argopts);
         if any(update)
             parsed_argopts = {'update',true};
             argopts(update) = [];
         end
-        % look for any more options or option-terminatore
+        % other options or option-terminator
         options = strncmp('-',argopts,1) | strncmp('--',argopts,2); % options
         if any(options)
             argopts(options) = [];
         end
-        % whatever is left must be filepatterns
+        % filepatterns
         assert(~isempty(argopts),'jgit:add','Specify file patterns to add.')
         parsed_argopts = [argopts,parsed_argopts];
     case 'branch'
-        %% branch
-        parsed_argopts = {};
-        % look for force
-        force = strcmpi('-f',argopts) | strcmpi('--force',argopts);
-        % look for set-upstream mode
-        set_upstream = strcmpi('--set-upstream',argopts);
-        track = strcmpi('--track',argopts);
-        no_track = strcmpi('--no-track',argopts);
-        % look for delete
-        delbranch = strcmpi('-d',argopts) | strcmpi('--delete',argopts);
-        % look for force delete
-        forcedelete = strcmpi('-D',argopts);
-        % look for move
-        move = strcmpi('-m',argopts) | strcmpi('--move',argopts);
-        % look for remotes
-        remotes = strcmpi('-r',argopts) | strcmpi('--remotes',argopts);
-        % look for all
-        listall = strcmpi('-a',argopts) | strcmpi('--all',argopts);
-        % look for list
-        list = strcmpi('--list',argopts);
-        % check for ambiguous upstream mode
-        if sum(set_upstream | track | no_track)>1
-            error('jgit:setupstream', ...
-                'Choose only one upstream mode: "--set-upstream", "track" or "no-track".')
-        elseif sum(set_upstream | track | no_track)==1
-            % create branch
-            if any(set_upstream)
-                % set-upstream
-                parsed_argopts = {'upstreamMode','SET_UPSTREAM'};
-                argopts(set_upstream) = [];
-            elseif any(track)
-                % track
-                parsed_argopts = {'upstreamMode','TRACK'};
-                argopts(set_upstream) = [];
-            elseif any(no_track)
-                % no-track
-                parsed_argopts = {'upstreamMode','NO_TRACK'};
-                argopts(set_upstream) = [];
-            end
-            % force
-            if any(force)
-                parsed_argopts = [parsed_argopts,'force',true];
-                argopts(set_upstream) = [];
-            end
-            % look for any more options or option-terminatore
-            options = strncmp('-',argopts,1) | strncmp('--',argopts,2); % options
-            if any(options)
-                argopts(options) = [];
-            end
-            % whatever is left must be branchname and start-point
-            assert(~isempty(argopts),'jgit:branch','Specify branchname to create.')
-            parsed_argopts = ['create',argopts(1),parsed_argopts];
-            if numel(argopts)==2
-                parsed_argopts = [parsed_argopts,'startPoint',argopts(2)];
-            end
-        elseif any(move)
-            % move
-            argopts(move) = [];
-            % look for any more options or option-terminatore
-            options = strncmp('-',argopts,1) | strncmp('--',argopts,2); % options
-            if any(options)
-                argopts(options) = [];
-            end
-            % whatever is left must be branchname and oldname
-            assert(~isempty(argopts),'jgit:branch','Specify branch new name.')
-            assert(numel(argopts)==2,'jgit:branch','Specify branch old name.')
-            parsed_argopts = {'rename',argopts(1),'oldNames',argopts(2)};
-        elseif any(delbranch) || any(forcedelete)
-            % delete
-            parsed_argopts = {'delete',{[]},};
-            argopts(delbranch) = [];
-            % force delete
-            if any(forcedelete)
-                parsed_argopts = [parsed_argopts,'force',true];
-                argopts(forcedelete) = [];
-            end
-            % look for any more options or option-terminatore
-            options = strncmp('-',argopts,1) | strncmp('--',argopts,2); % options
-            if any(options)
-                argopts(options) = [];
-            end
-            % whatever is left must be oldnames
-            assert(~isempty(argopts),'jgit:branch','Specify branch(s) to delete.')
-            parsed_argopts = [parsed_argopts,'startPoint',argopts];
-        elseif any(remotes) || any(listall) || any(list)
-            % list mode
-            parsed_argopts = {'list'};
-            argopts(list) = [];
-            assert(sum(remotes | listall)<=1,'jgit:listmode','List --all or --remotes.')
-            % remotes
-            if any(remotes)
-                parsed_argopts = [parsed_argopts,{[]},'listMode','REMOTE'];
-                argopts(remotes) = [];
-            elseif any(listall)
-                parsed_argopts = [parsed_argopts,{[]},'listMode','ALL'];
-                argopts(listall) = [];
-            end
-            % look for any more options or option-terminatore
-            options = strncmp('-',argopts,1) | strncmp('--',argopts,2); % options
-            if any(options)
-                argopts(options) = [];
-            end
-            % whatever is left must be oldnames
-            assert(isempty(argopts),'jgit:branch','Incorrect list mode options.')
-        else
-            error('jgit:branch','Incorrect options and arguments for branch.')
-        end
+        parsed_argopts = parseBranch(argopts);
     otherwise
         error('jgit:noCommand','%s is not a jgit command',cmd)
 end
@@ -192,4 +86,103 @@ catch ME
     rethrow(ME)
 end
 % end
+end
+
+function parsed_argopts = parseBranch(argopts)
+%PARSEBRANCH Parse branch arguments and options.
+parsed_argopts = {};
+%% options
+% force
+force = strcmp('-f',argopts) | strcmp('--force',argopts);
+% set-upstream mode
+set_upstream = strcmp('--set-upstream',argopts);
+track = strcmp('--track',argopts);
+no_track = strcmp('--no-track',argopts);
+% delete branch
+delbranch = strcmp('-d',argopts) | strcmp('--delete',argopts);
+% force delete
+forcedelete = strcmp('-D',argopts);
+% move
+move = strcmp('-m',argopts) | strcmp('--move',argopts);
+% remotes
+remotes = strcmp('-r',argopts) | strcmp('--remotes',argopts);
+% all
+listall = strcmp('-a',argopts) | strcmp('--all',argopts);
+% list
+list = strcmp('--list',argopts);
+% pop upstream mode argopts
+argopts(force) = [];
+argopts(set_upstream) = [];
+argopts(track) = [];
+argopts(no_track) = [];
+argopts(delbranch) = [];
+argopts(forcedelete) = [];
+argopts(move) = [];
+argopts(remotes) = [];
+argopts(listall) = [];
+argopts(list) = [];
+% other options or option-terminator
+options = strncmp('-',argopts,1) | strncmp('--',argopts,2); % options
+if any(options)
+    warning('jgit:parsebranch','Unsupported options.')
+    unsupported_options = argopts(options);
+    fprintf(2,'\t%s\n',unsupported_options{:});
+    argopts(options) = [];
+end
+% no argument or option checks - jgit checks args/opts
+if any(move)
+    %% rename branch
+    % new and old branch names
+    assert(~isempty(argopts),'jgit:branch','Specify new branch name.')
+    assert(numel(argopts)==2,'jgit:branch','Specify old branch name.')
+    parsed_argopts = {'rename',argopts(1),'oldNames',argopts(2)};
+elseif any(delbranch) || any(forcedelete)
+    %% delete branch
+    parsed_argopts = {'delete',[]};
+    % force delete
+    if any(forcedelete)
+        parsed_argopts = [parsed_argopts,'force',true];
+    end
+    % oldnames
+    assert(~isempty(argopts),'jgit:branch','Specify branch(s) to delete.')
+    if numel(argopts)>1
+        parsed_argopts = [parsed_argopts,'oldNames',{argopts}];
+    else
+        parsed_argopts = [parsed_argopts,'oldNames',argopts];
+    end
+elseif any(remotes) || any(listall) || any(list) || isempty(argopts)
+    %% list branch
+    parsed_argopts = {'list'};
+    if any(listall)
+        % all
+        parsed_argopts = [parsed_argopts,{[]},'listMode','ALL'];
+    elseif any(remotes)
+        % remotes
+        parsed_argopts = [parsed_argopts,{[]},'listMode','REMOTE'];
+    end
+else % if any(set_upstream) || any(track) || any(no_track) && ~isempty(argopts)
+    %% create branch
+    if any(set_upstream)
+        % set-upstream
+        parsed_argopts = {'upstreamMode','SET_UPSTREAM'};
+    elseif any(track)
+        % track
+        parsed_argopts = {'upstreamMode','TRACK'};
+    elseif any(no_track)
+        % no-track
+        parsed_argopts = {'upstreamMode','NO_TRACK'};
+    end
+    % force
+    if any(force)
+        parsed_argopts = [parsed_argopts,'force',true];
+    end
+    % branchname
+    assert(~isempty(argopts),'jgit:createBranch:noName', ...
+        'Specify branch name to create.')
+    parsed_argopts = ['create',argopts(1),parsed_argopts];
+    % start-point
+    if numel(argopts)>1
+        parsed_argopts = [parsed_argopts,'startPoint',argopts(2)];
+    end
+end
 end
