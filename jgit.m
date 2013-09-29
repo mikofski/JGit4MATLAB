@@ -1,7 +1,5 @@
 function jgit(varargin)
 %JGIT Command line function and arg/opt parser for JGit4MATLAB.
-%   A command line function to call JGit static methods.
-%
 %   Copyright (c) 2013 Mark Mikofski
 
 %% initialize and/or return JGit constants
@@ -44,9 +42,6 @@ end
 % brute force because not just parsing args/opts, also translating git
 % subcommands, args & opts to JGit.
 switch cmd
-    case 'status'
-        %% status
-        parsed_argopts = {};
     case 'add'
         %% add
         parsed_argopts = {};
@@ -69,6 +64,9 @@ switch cmd
         parsed_argopts = parseBranch(argopts);
     case 'checkout'
         parsed_argopts = parseCheckout(argopts);
+    case 'status'
+        %% status
+        parsed_argopts = {};
     otherwise
         error('jgit:noCommand', ...
             '"%s" is not a JGit command. See <a href="matlab: fprintf(''%s''),jgit help">%s</a>', ...
