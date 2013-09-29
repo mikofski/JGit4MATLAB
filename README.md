@@ -19,11 +19,11 @@ User Info
 ---------
 Set your global gitconfig user name and email using the following:
 
-    >> jgit setUserInfo '<John Doe>' <John.Doe@email.com>
+    jgit setUserInfo '<John Doe>' <John.Doe@email.com>
 
 You can retrieve your global gitconfig settings as well.
 
-    >> [name,email] = JGit.getUserInfo
+    [name,email] = JGit.getUserInfo
 
 SSH
 ---
@@ -32,15 +32,15 @@ Create your SSH keys using [PuTTY gen]
 and convert them to OpenSSH format. If you
 set a passphrase, save it in `%HOME%\.jsch-userinfo` using the following:
 
-    >> jgit saveSSHpassphrase <passphrase>
+    jgit saveSSHpassphrase <passphrase>
 
 Usage
 =====
 In general usage is the same as in [Git](http://git-scm.com/docs/git-help) and
 [`org.eclipse.jgit.api.Git`](http://download.eclipse.org/jgit/docs/latest/apidocs/).
 
-    >> jgit <command> <args> <param> <key> ...
-    >> JGit.command(args,param,key,...)
+    jgit <command> <args> <param> <key> ...
+    JGit.command(args,param,key,...)
 
 Commands & Args 
 ---------------
