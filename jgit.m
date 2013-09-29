@@ -64,6 +64,8 @@ switch cmd
         parsed_argopts = parseBranch(argopts);
     case 'checkout'
         parsed_argopts = parseCheckout(argopts);
+    case 'clone'
+        parsed_argopts = parseCheckout(argopts);
     case 'status'
         %% status
         parsed_argopts = {};
