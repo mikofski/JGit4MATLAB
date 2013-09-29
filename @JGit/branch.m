@@ -17,7 +17,7 @@ function branch(cmd,newName,varargin)
 %   'gitDir' <char> [PWD] Applies to the repository in specified folder.
 %
 %   For more information see also
-%   <a href="https://www.kernel.org/pub/software/scm/git/docs/git-branch.html">Git Branch Documentation</a>
+%   <a href="http://git-scm.com/docs/git-branch">Git Branch Documentation</a>
 %   <a href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/api/CreateBranchCommand.html">JGit Git API Class CreateBranchCommand</a>
 %   <a href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/api/DeleteBranchCommand.html">JGit Git API Class DeleteBranchCommand</a>
 %   <a href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/api/ListBranchCommand.html">JGit Git API Class ListBranchCommand</a>
@@ -35,9 +35,7 @@ function branch(cmd,newName,varargin)
 %
 %   See also JGIT, CHECKOUT
 %
-%   Version 0.4 - Dragonfly Release
-%   2013-06-04 Mark Mikofski
-%   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
+%   Copyright (c) 2013 Mark Mikofski
 
 %% constants
 % TODO: move all constants to JGIT class definition.

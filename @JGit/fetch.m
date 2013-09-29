@@ -18,9 +18,7 @@ function fetch(varargin)
 %
 %   See also JGIT, CHECKOUT, PULL
 %
-%   Version 0.5 - Egret Release
-%   2013-09-25 Mark Mikofski
-%   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
+%   Copyright (c) 2013 Mark Mikofski
 
 %% check inputs
 p = inputParser;

@@ -15,7 +15,7 @@ classdef JGit < handle
     %   For more information on JGit and Git see also
     %   <a href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/api/Git.html">Class Git in org.eclipse.jgit.api package</a>
     %   <a href="http://eclipse.org/jgit/">JGit-eclipse</a>
-    %   <a href="https://www.kernel.org/pub/software/scm/git/docs/">Git Manual</a>
+    %   <a href="http://git-scm.com/docs">Git Reference</a>
     %   <a href="http://git-scm.com/">Git-SCM</a>
     %
     %   Usage:

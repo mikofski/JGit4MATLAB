@@ -9,7 +9,7 @@ function add(files,varargin)
 %   'gitDir' <char> [PWD] Add to index of the repository in specified folder.
 %
 %   For more information see also
-%   <a href="https://www.kernel.org/pub/software/scm/git/docs/git-add.html">Git Add Documentation</a>
+%   <a href="http://git-scm.com/docs/git-add">Git Add Documentation</a>
 %   <a href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/api/AddCommand.html">JGit Git API Class AddCommand</a>
 %
 %   Example:
@@ -18,9 +18,7 @@ function add(files,varargin)
 %
 %   See also JGIT, COMMIT
 %
-%   Version 0.4 - Dragonfly Release
-%   2013-06-04 Mark Mikofski
-%   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
+%   Copyright (c) 2013 Mark Mikofski
 
 %% check inputs
 p = inputParser;

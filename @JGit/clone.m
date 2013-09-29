@@ -23,9 +23,7 @@ function clone(uri,varargin)
 %
 %   See also JGIT, INIT, PULL
 %
-%   Version 0.4 - Dragonfly Release
-%   2013-06-04 Mark Mikofski
-%   <a href="http://poquitopicante.bclonespot.com">poquitopicante.bclonespot.com</a>
+%   Copyright (c) 2013 Mark Mikofski
 
 %% check inputs
 p = inputParser;

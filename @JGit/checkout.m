@@ -21,7 +21,7 @@ function results = checkout(name,varargin)
 %   'gitDir' <char> [PWD] Applies to the repository in specified folder.
 %
 %   For more information see also
-%   <a href="https://www.kernel.org/pub/software/scm/git/docs/git-checkout.html">Git Checkout Documentation</a>
+%   <a href="http://git-scm.com/docs/git-checkout">Git Checkout Documentation</a>
 %   <a href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/api/CheckoutCommand.html">JGit Git API Class CheckoutCommand</a>
 %   <a href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/api/CheckoutResult.html">JGit Git API Class CheckoutResult</a>
 %
@@ -35,9 +35,7 @@ function results = checkout(name,varargin)
 %
 %   See also JGIT, BRANCH
 %
-%   Version 0.4 - Dragonfly Release
-%   2013-06-04 Mark Mikofski
-%   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
+%   Copyright (c) 2013 Mark Mikofski
 
 %% constants
 BASE = javaMethod('valueOf','org.eclipse.jgit.api.CheckoutCommand$Stage','BASE');

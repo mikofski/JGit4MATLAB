@@ -26,9 +26,7 @@ function results = merge(include,varargin)
 %
 %   See also JGIT, FETCH, CHECKOUT
 %
-%   Version 0.4 - Dragonfly Release
-%   2013-06-04 Mark Mikofski
-%   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
+%   Copyright (c) 2013 Mark Mikofski
 
 %% constants
 % TODO: move all constants to JGIT class definition.
