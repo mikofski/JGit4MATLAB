@@ -65,15 +65,20 @@ if p.Results.cloneSubmodules
     cloneCMD.setCloneSubmodules(true);
 end
 %% set directory
-if ~isempty(p.Results.directory)
-    folder = java.io.File(p.Results.directory); 
-    % Java always makes relative paths in matlab userpath
+% Java always makes relative paths in matlab userpath
+if isempty(p.Results.directory)
+    humanDir = org.eclipse.jgit.transport.URIish(p.Results.uri).getHumanishName;
+    cwd = pwd; % get current directory
+    folder = java.io.File(cwd,humanDir); 
+else
+    folder = java.io.File(p.Results.directory);
     if ~folder.isAbsolute
         cwd = pwd; % get current directory
         folder = java.io.File(cwd,p.Results.directory); % folder relative to cwd
     end
-    cloneCMD.setDirectory(folder);
 end
+% put cloned repo in correct folder
+cloneCMD.setDirectory(folder);
 %% bare noCheckout
 if p.Results.noCheckout
     cloneCMD.setNoCheckout(true);
