@@ -21,29 +21,6 @@ classdef JGit < handle
     %   Usage:
     %       JGIT.METHOD(REQUIRED,PARAMETER,VALUES)
     %
-    %   The most commonly used METHODS are:
-    %   +add        Add file contents to the index
-    %   -bisect     Find by binary search the change that introduced a bug
-    %   +branch     List, create, or delete branches
-    %   +checkout   Checkout a branch or paths to the working tree
-    %   +clone      Clone a repository into a new directory
-    %   +commit     Record changes to the repository
-    %   +diff       Show changes between commits, commit and working tree, etc
-    %   +fetch      Download objects and refs from another repository
-    %   -grep       Print lines matching a pattern
-    %   +init       Create an empty git repository or reinitialize an existing one
-    %   +log        Show commit logs
-    %   +merge      Join two or more development histories together
-    %   -mv         Move or rename a file, a directory, or a symlink
-    %   +pull       Fetch from and merge with another repository or a local branch
-    %   +push       Update remote refs along with associated objects
-    %   -rebase     Forward-port local commits to the updated upstream head
-    %   -reset      Reset current HEAD to the specified state
-    %   +rm         Remove files from the working tree and from the index
-    %   -show       Show various types of objects
-    %   +status     Show the working tree status
-    %   -tag        Create, list, delete or verify a tag object signed with GPG
-    %
     %   See `help JGIT.METHOD` for more information on a specific METHOD.
     %
     %   See also ADD, BRANCH, CHECKOUT, CLONE, COMMIT, DIFF, FETCH, INIT, LOG,
@@ -51,8 +28,8 @@ classdef JGit < handle
     %   DOWNLOADJGITJAR, GETEDITOR, SETUSERINFO, GETUSERINFO, SAVESSHPASSPHRASE
     %
     %   Version 0.5 - Egret Release
-    %   2013-09-25 Mark Mikofski
-    %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
+    %   Copyright (c) 2013 Mark Mikofski
+    %   <a href="http://mikofski.github.io/JGit4MATLAB/">JGit4MATLAB on Github Pages</a>
     
     %% constant properties
     properties (Constant)
@@ -102,9 +79,7 @@ classdef JGit < handle
             %
             %   See also: JGIT, GETGITDIR
             %
-            %   Version 0.5 - Egret Release
-            %   2013-09-25 Mark Mikofski
-            %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
+            %   Copyright (c) 2013 Mark Mikofski
             
             %% checkin inputs
             if nargin<1
@@ -125,9 +100,7 @@ classdef JGit < handle
             %
             %   See also: JGIT, GETGITAPI
             %
-            %   Version 0.5 - Egret Release
-            %   2013-09-25 Mark Mikofski
-            %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
+            %   Copyright (c) 2013 Mark Mikofski
             
             %% create full path to gitDir
             gitDir = fullfile(path,JGit.GIT_DIR);
@@ -154,9 +127,7 @@ classdef JGit < handle
             %   See also: JGIT, DOWNLOADJGITJAR, SETUSERINFO, GETUSERINFO,
             %   SAVESSHPASSPHRASE
             %
-            %   Version 0.5 - Egret Release
-            %   2013-09-25 Mark Mikofski
-            %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
+            %   Copyright (c) 2013 Mark Mikofski
             
             %% check JGit package jar-file in @JGit folder
             valid = true;
@@ -341,9 +312,7 @@ classdef JGit < handle
             %
             %   See also: JGIT, URLREAD, URLWRITE
             %
-            %   Version 0.5 - Egret Release
-            %   2013-09-25 Mark Mikofski
-            %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
+            %   Copyright (c) 2013 Mark Mikofski
             
             %% inputs
             % use org.eclipse.jgit as default
@@ -394,9 +363,7 @@ classdef JGit < handle
             %
             %   See also: JGIT, COMMIT
             %
-            %   Version 0.5 - Egret Release
-            %   2013-09-25 Mark Mikofski
-            %   <a href="http://poquitopicante.blogspot.com">poquitopicante.blogspot.com</a>
+            %   Copyright (c) 2013 Mark Mikofski
             
             %% get computer type
             comp = computer;
