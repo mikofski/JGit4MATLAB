@@ -13,6 +13,7 @@ forcenew = strcmp('-B',argopts);
 ours = strcmp('--ours',argopts);
 theirs = strcmp('--theirs',argopts);
 % set upstream mode
+set_upstream = strcmp('--set-upstream',argopts);
 track = strcmp('-t',argopts) | strcmp('--track',argopts);
 no_track = strcmp('--no-track',argopts);
 % paths
@@ -23,6 +24,7 @@ argopts(newbranch) = [];
 argopts(forcenew) = [];
 argopts(ours) = [];
 argopts(theirs) = [];
+argopts(set_upstream) = [];
 argopts(track) = [];
 argopts(no_track) = [];
 %% other options
@@ -39,7 +41,10 @@ if any(newbranch) || any(forcenew)
         parsed_argopts = [parsed_argopts,'force',true];
     end
     % upstream mode
-    if any(track)
+    if any(set_upstream)
+        % set-upstream
+        parsed_argopts = [parsed_argopts,'upstreamMode','SET_UPSTREAM'];
+    elseif any(track)
         % track
         parsed_argopts = [parsed_argopts,'upstreamMode','TRACK'];
     elseif any(no_track)
@@ -69,10 +74,7 @@ elseif any(paths)
     end
     % tree-ish
     assert(numel(argopts)>1,'jgit:parseCheckout','Specify path(s) to checkout.')
-    if strcmp('--',argopts{2})
-        parsed_argopts = [parsed_argopts,'startPoint',argopts(1)];
-        argopts(1:2) = []; % pop tree-ish and '--'
-    elseif strcmp('--',argopts{1})
+    if strcmp('--',argopts{1})
         % no commit
         argopts(1) = []; % pop tree-ish and '--'
     else
