@@ -1,30 +1,8 @@
 function jgit(varargin)
-%JGIT Command line function for JGit4MATLAB.
+%JGIT Command line function and arg/opt parser for JGit4MATLAB.
 %   A command line function to call JGit static methods.
-%   Usage
-%      JGIT <command> <args>    --> JGit.<command>(<args>)
-%      JGIT help                --> help(JGit) or help JGit
-%      JGIT help <command>      --> help(JGit.<command>) or help JGit.<command>
 %
-%   Examples:
-%       >> jgit status
-%       # On branch master
-%       nothing to commit, working directory clean
-%
-%       >> jgit help status
-%        JGit.status Return the status of the repository.
-%           JGit.status(GITDIR) Specify the folder in which Git Repo resides.
-%           JGit.status(GITDIR,FID) Output status to file identifier, FID.
-%           JGit.status(GITDIR,FID,AMEND) Add "Initial commit" text to status.
-%
-%       >> jgit branch list [] ListMode ALL
-%         gitCheckout
-%       * master
-%         origin/master
-%
-%       >> JGit.add({'foo.m','bar.m'}) % only strings used in commands
-%
-%       >> jgit commit all true message 'commit all tracked but not staged'
+%   Copyright (c) 2013 Mark Mikofski
 
 %% initialize and/or return JGit constants
 if nargin==0
@@ -44,16 +22,27 @@ catch
     argopts = {};
 end
 %% help
-if strcmp(cmd,'help')
-    %% help
-    fstr = 'JGit';
-    if nargin==2
-        fstr = [fstr,'.',varargin{2}];
+if any(strcmp(cmd,{'help','-h','--help'}))
+    if isempty(argopts)
+        jgit_help('help') % general help
+    else
+        jgit_help(argopts{1}) % specific subcommand help
     end
-    help(fstr)
     return
 end
-%% brute force each command
+%% version
+if any(strcmp(cmd,{'version','-v','--version'}))
+    JGit.VERSION
+    return
+end
+%% update JGit jar-file
+if any(strcmp(cmd,{'update','-u','--update'}))
+    JGit.downloadJGitJar
+    return
+end
+%% parse subcommands
+% brute force because not just parsing args/opts, also translating git
+% subcommands, args & opts to JGit.
 switch cmd
     case 'status'
         %% status
@@ -81,7 +70,9 @@ switch cmd
     case 'checkout'
         parsed_argopts = parseCheckout(argopts);
     otherwise
-        error('jgit:noCommand','%s is not a jgit command',cmd)
+        error('jgit:noCommand', ...
+            '"%s" is not a JGit command. See <a href="matlab: fprintf(''%s''),jgit help">%s</a>', ...
+            cmd,'>> jgit help\n','jgit help.')
 end
 try
     JGit.(cmd)(parsed_argopts{:})
@@ -89,216 +80,4 @@ catch ME
     rethrow(ME)
 end
 % end
-end
-
-function argopts = filterOpts(argopts, pop)
-%FILTEROPTS Filter out options from literal arguments.
-if nargin<2 || isempty(pop)
-    pop = true;
-end
-%% other options
-% double-hyphen is used to indicate the last option,
-% arguments after lastopt are interpreted literaly.
-lastopt = ~cumsum(strcmp('--',argopts)); % last option
-options = strncmp('-',argopts(lastopt),1) | strncmp('--',argopts(lastopt),2);
-if any(options)
-    warning('jgit:unsupportedOption','Unsupported options.')
-    unsupported_options = argopts(options);
-    fprintf(2,'\t%s\n',unsupported_options{:});
-    argopts(options) = [];
-end
-%% pop double-hyphen
-if pop,argopts(strcmp('--',argopts)) = [];end
-end
-
-function parsed_argopts = parseBranch(argopts)
-%PARSEBRANCH Parse branch arguments and options.
-parsed_argopts = {};
-%% options
-% force
-force = strcmp('-f',argopts) | strcmp('--force',argopts);
-% set-upstream mode
-set_upstream = strcmp('--set-upstream',argopts);
-track = strcmp('-t',argopts) | strcmp('--track',argopts);
-no_track = strcmp('--no-track',argopts);
-% delete branch
-delbranch = strcmp('-d',argopts) | strcmp('--delete',argopts);
-% force delete
-forcedelete = strcmp('-D',argopts);
-% move
-move = strcmp('-m',argopts) | strcmp('--move',argopts);
-% remotes
-remotes = strcmp('-r',argopts) | strcmp('--remotes',argopts);
-% all
-listall = strcmp('-a',argopts) | strcmp('--all',argopts);
-% list
-list = strcmp('--list',argopts);
-% pop upstream mode argopts
-argopts(force) = [];
-argopts(set_upstream) = [];
-argopts(track) = [];
-argopts(no_track) = [];
-argopts(delbranch) = [];
-argopts(forcedelete) = [];
-argopts(move) = [];
-argopts(remotes) = [];
-argopts(listall) = [];
-argopts(list) = [];
-%% other options
-% filter other options and/or double-hyphen
-argopts = filterOpts(argopts);
-% no argument or option checks - jgit checks args/opts
-if any(move)
-    %% rename branch
-    % new and old branch names
-    assert(~isempty(argopts),'jgit:parseBranch','Specify new branch name.')
-    assert(numel(argopts)==2,'jgit:parseBranch','Specify old branch name.')
-    parsed_argopts = {'rename',argopts(1),'oldNames',argopts(2)};
-elseif any(delbranch) || any(forcedelete)
-    %% delete branch
-    parsed_argopts = {'delete',[]};
-    % force delete
-    if any(forcedelete)
-        parsed_argopts = [parsed_argopts,'force',true];
-    end
-    % oldnames
-    assert(~isempty(argopts),'jgit:parseBranch','Specify branch(s) to delete.')
-    if numel(argopts)>1
-        parsed_argopts = [parsed_argopts,'oldNames',{argopts}]; % cell string
-    else
-        parsed_argopts = [parsed_argopts,'oldNames',argopts]; % char
-    end
-elseif any(remotes) || any(listall) || any(list) || isempty(argopts)
-    %% list branch
-    parsed_argopts = {'list'};
-    if any(listall)
-        % all
-        parsed_argopts = [parsed_argopts,{[]},'listMode','ALL'];
-    elseif any(remotes)
-        % remotes
-        parsed_argopts = [parsed_argopts,{[]},'listMode','REMOTE'];
-    end
-else % if any(set_upstream) || any(track) || any(no_track) && ~isempty(argopts)
-    %% create branch
-    if any(set_upstream)
-        % set-upstream
-        parsed_argopts = {'upstreamMode','SET_UPSTREAM'};
-    elseif any(track)
-        % track
-        parsed_argopts = {'upstreamMode','TRACK'};
-    elseif any(no_track)
-        % no-track
-        parsed_argopts = {'upstreamMode','NO_TRACK'};
-    end
-    % force
-    if any(force)
-        parsed_argopts = [parsed_argopts,'force',true];
-    end
-    % branchname
-    assert(~isempty(argopts),'jgit:parseBranch','Specify branch name to create.')
-    parsed_argopts = ['create',argopts(1),parsed_argopts];
-    % start-point
-    if numel(argopts)>1
-        parsed_argopts = [parsed_argopts,'startPoint',argopts(2)];
-    end
-end
-end
-
-function parsed_argopts = parseCheckout(argopts)
-%PARSECHECKOUT Parse checkout arguments and options.
-parsed_argopts = {};
-%% options
-% force
-force = strcmp('-f',argopts) | strcmp('--force',argopts);
-% newbranch
-newbranch = strcmp('-b',argopts);
-% force new branch
-forcenew = strcmp('-B',argopts);
-% stage for unmerged paths
-ours = strcmp('--ours',argopts);
-theirs = strcmp('--theirs',argopts);
-% set upstream mode
-track = strcmp('-t',argopts) | strcmp('--track',argopts);
-no_track = strcmp('--no-track',argopts);
-% paths
-paths = strcmp('--',argopts);
-% pop upstream mode argopts
-argopts(force) = [];
-argopts(newbranch) = [];
-argopts(forcenew) = [];
-argopts(ours) = [];
-argopts(theirs) = [];
-argopts(track) = [];
-argopts(no_track) = [];
-%% other options
-% filter other options and/or double-hyphen
-argopts = filterOpts(argopts,false);
-% no argument or option checks - jgit checks args/opts
-if any(newbranch) || any(forcenew)
-    %% create
-    if any(newbranch) || any(forcenew)
-        parsed_argopts = [parsed_argopts,'createBranch',true];
-    end
-    if any(forcenew) || any(force)
-        % force
-        parsed_argopts = [parsed_argopts,'force',true];
-    end
-    % upstream mode
-    if any(track)
-        % track
-        parsed_argopts = [parsed_argopts,'upstreamMode','TRACK'];
-    elseif any(no_track)
-        % no-track
-        parsed_argopts = [parsed_argopts,'upstreamMode','NO_TRACK'];
-    end
-    % branchname
-    assert(~isempty(argopts),'jgit:parseCheckout','Specify branch name to create.')
-    parsed_argopts = [argopts(1),parsed_argopts];
-    % start-point
-    if numel(argopts)>1
-        parsed_argopts = [parsed_argopts,'startPoint',argopts(2)];
-    end
-elseif any(paths)
-    %% checkout paths
-    parsed_argopts = {[]}; % startPoint specifies commit when checking out paths
-    if any(ours)
-        % stage ours
-        parsed_argopts = [parsed_argopts,'stage','OURS'];
-    elseif any(theirs)
-        % stage theirs
-        parsed_argopts = [parsed_argopts,'stage','THEIRS'];
-    end
-    % force
-    if any(force)
-        parsed_argopts = [parsed_argopts,'force',true];
-    end
-    % tree-ish
-    assert(numel(argopts)>1,'jgit:parseCheckout','Specify path(s) to checkout.')
-    if strcmp('--',argopts{2})
-        parsed_argopts = [parsed_argopts,'startPoint',argopts(1)];
-        argopts(1:2) = []; % pop tree-ish and '--'
-    elseif strcmp('--',argopts{1})
-        % no commit
-        argopts(1) = []; % pop tree-ish and '--'
-    else
-        % ignore '--'
-        argopts(strcmp('--',argopts)) = [];
-        parsed_argopts = [parsed_argopts,'startPoint',argopts(1)];
-        argopts(1) = []; % pop tree-ish
-    end
-    % paths
-    assert(~isempty(argopts),'jgit:parseCheckout','Specify path(s) to checkout.')
-    if numel(argopts)>1
-        parsed_argopts = [parsed_argopts,'path',{argopts}]; % cell string
-    else
-        parsed_argopts = [parsed_argopts,'path',argopts]; % char
-    end
-else
-    %% checkout commit-ish
-    % force
-    if any(force)
-        parsed_argopts = [parsed_argopts,'force',true];
-    end
-    parsed_argopts = [argopts,parsed_argopts];
-end
 end
