@@ -6,7 +6,7 @@ function clone(uri,varargin)
 %   PARAMETER, VALUE pairs.
 %   'bare' <logical> [false] Clone into a bare repository.
 %   'branch' <char> [master] Initial branch to checkout.
-%   'branchesToClone' <cellstr> [master] Show clone of newer commits since this commit.
+%   'branchesToClone' <cellstr> [master] Clone specified branches.
 %   'cloneAllBranches' <logical> [false] Clone all branches.
 %   'cloneSubmodules' <logical> [false] Initialize and update submodules.
 %   'directory' <char> [uriish.humanish] Clone into specified directory.

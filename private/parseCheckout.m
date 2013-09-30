@@ -18,7 +18,7 @@ track = strcmp('-t',argopts) | strcmp('--track',argopts);
 no_track = strcmp('--no-track',argopts);
 % paths
 paths = strcmp('--',argopts);
-% pop upstream mode argopts
+%% pop argopts
 argopts(force) = [];
 argopts(newbranch) = [];
 argopts(forcenew) = [];
@@ -30,6 +30,7 @@ argopts(no_track) = [];
 %% other options
 % filter other options and/or double-hyphen
 argopts = filterOpts(argopts,false);
+%% parse
 % no argument or option checks - jgit checks args/opts
 if any(newbranch) || any(forcenew)
     %% create

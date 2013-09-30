@@ -21,7 +21,7 @@ remotes = strcmp('-r',argopts) | strcmp('--remotes',argopts);
 listall = strcmp('-a',argopts) | strcmp('--all',argopts);
 % list
 list = strcmp('--list',argopts);
-% pop upstream mode argopts
+%% pop argopts
 argopts(force) = [];
 argopts(set_upstream) = [];
 argopts(track) = [];
@@ -35,6 +35,7 @@ argopts(list) = [];
 %% other options
 % filter other options and/or double-hyphen
 argopts = filterOpts(argopts);
+%% parse
 % no argument or option checks - jgit checks args/opts
 if any(move)
     %% rename branch
