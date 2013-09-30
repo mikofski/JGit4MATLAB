@@ -5,6 +5,7 @@ parsed_argopts = {};
 %% options
 % all
 allcommit = strcmp('-a',argopts) | strcmp('--all',argopts);
-
+% amend
+amend = strcmp('--amend',argopts);
 end
 
