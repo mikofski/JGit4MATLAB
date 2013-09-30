@@ -4,9 +4,12 @@ function commit(varargin)
 %   PARAMETER, VALUE pairs.
 %   'all' <logical> [false] Automatically stage files that have been modified or
 %       deleted before commit.
+%   'author' <cellstr 1x2> Set author name & email.
+%   'committer' <cellstr 1x2> Set committer name & email.
 %   'message' <char> [] Commit with the given message. An empty message will
 %       start the editor given by GETENV(EDITOR) or JGIT.EDITOR.
 %   'amend' <logical> [false] Amend the previous commit message.
+%   'only' <char> [''] Commit dedicated path only.
 %   'gitDir' <char> [PWD] Commit to repository in specified folder.
 %
 %   For more information see also
@@ -20,13 +23,16 @@ function commit(varargin)
 %
 %   Copyright (c) 2013 Mark Mikofski
 
+% TODO: Need "detached state" warning
+
 %% check inputs
 p = inputParser;
 p.addParamValue('all',false,@(x)validateattributes(x,{'logical'},{'scalar'}))
-p.addParamValue('author','',@(x)validateattributes(x,{'cell'},{'numel',2}))
-p.addParamValue('committer','',@(x)validateattributes(x,{'cell'},{'numel',2}))
+p.addParamValue('author',{},@(x)validateattributes(x,{'cell'},{'numel',2}))
+p.addParamValue('committer',{},@(x)validateattributes(x,{'cell'},{'numel',2}))
 p.addParamValue('message','',@(x)validateattributes(x,{'char'},{'row'}))
 p.addParamValue('amend',false,@(x)validateattributes(x,{'logical'},{'scalar'}))
+p.addParamValue('only',{},@(x)validatefiles(x))
 p.addParamValue('gitDir',pwd,@(x)validateattributes(x,{'char'},{'row'}))
 p.parse(varargin{:})
 gitDir = p.Results.gitDir;
@@ -55,6 +61,14 @@ if p.Results.amend
     % see https://bugs.eclipse.org/bugs/show_bug.cgi?id=402025
     % revCommit = logCMD.all.setMaxCount(1).call;
     amendcommit = char(revCommit.next.getFullMessage);
+end
+%% only
+if iscellstr(p.Results.only)
+    for n = 1:numel(p.Results.only)
+        commitCMD.setOnly(p.Results.only{n});
+    end
+elseif ischar(p.Results.only)
+    commitCMD.setOnly(p.Results.only)
 end
 %% commit message
 if ~isempty(p.Results.message)
@@ -102,4 +116,11 @@ else
 end
 %% call
 commitCMD.call;
+end
+
+function tf = validatefiles(files)
+if ~iscellstr(files)
+    validateattributes(files,{'char'},{'row'})
+end
+tf = true;
 end
