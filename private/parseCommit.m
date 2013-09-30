@@ -7,5 +7,7 @@ parsed_argopts = {};
 allcommit = strcmp('-a',argopts) | strcmp('--all',argopts);
 % amend
 amend = strcmp('--amend',argopts);
+% message
+message = strcmp('-m',argopts) | strcmp('--message',argopts);
 end
 
