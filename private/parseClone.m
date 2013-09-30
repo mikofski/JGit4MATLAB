@@ -1,12 +1,12 @@
 function parsed_argopts = parseClone(argopts)
-%PARSEBRANCH Parse clone arguments and options.
+%PARSECLONE Parse clone arguments and options.
 %   Copyright (c) 2013 Mark Mikofski
 parsed_argopts = {};
 %% options
 % bare
 bare = strcmp('--bare',argopts);
 % remote name [origin]
-origin = strcmp('-o|--origin',argopts);
+origin = strcmp('-o',argopts) | strcmp('--origin',argopts);
 if any(origin)
     remotename = argopt(circshift(origin,[0,1])); % store remote name
 end

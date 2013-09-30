@@ -66,6 +66,8 @@ switch cmd
         parsed_argopts = parseCheckout(argopts);
     case 'clone'
         parsed_argopts = parseClone(argopts);
+    case 'commit'
+        parsed_argopts = parseCommit(argopts);
     case 'status'
         %% status
         parsed_argopts = {};
