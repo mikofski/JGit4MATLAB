@@ -186,11 +186,10 @@ classdef JGit < handle
                 %% No, jar-files are not on MATLAB static Java class path
                 % check for file called "javaclasspath.txt"
                 valid = false;
-                workhome = userpath;workhome = workhome(1:end-1);
-                javapath = fullfile(workhome,'javaclasspath.txt');
+                javapath = fullfile(prefdir,'javaclasspath.txt');
                 if exist(javapath,'file')~=2
                     %% no "javaclasspath.txt"
-                    fprintf('"javaclasspath.txt" not detected. Writing ...\n');
+                    fprintf('"javaclasspath.txt" not detected. Writing to %s...\n', javapath);
                     try
                         fid = fopen(javapath,'wt');
                         fprintf(fid,'# JGit package\n%s\n',jgitjar,pmjar,SSHjar);
@@ -266,7 +265,7 @@ classdef JGit < handle
                 'shared\nyour public key.'])
             %% check user info
             [user,email] = JGit.getUserInfo;
-            if user.isEmpty || email.isEmpty
+            if isempty(user) || isempty(email)
                 key = org.eclipse.jgit.lib.UserConfig.KEY;
                 cnf = org.eclipse.jgit.lib.Config;
                 usrcnf = cnf.get(key);
@@ -276,7 +275,7 @@ classdef JGit < handle
                     ['\nUser info in global .gitconfig file is missing. Please', ...
                     'set user info using JGIT.SETUSERINFO(NAME,EMAIL), otherwise' ...
                     'the default values will be used.\n\tDEFAULT USER: %s', ...
-                    '\n\tDEFAULT EMAIL: %s'],user,email)
+                    '\n\tDEFAULT EMAIL: %s'],char(user),char(email))
             end
             % check SSH passphrase
             f = fullfile(char(JGit.USERHOME),JGit.JSCH_USERINFO); % savefile path
