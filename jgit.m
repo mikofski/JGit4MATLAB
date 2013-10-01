@@ -38,10 +38,12 @@ if any(strcmp(cmd,{'update','-u','--update'}))
     JGit.downloadJGitJar
     return
 end
-%% remove any equal signs from options
+%% split multicommand short options & remove any equal sign from long options
 % Git doesn't care if equals signs are used (or not) with long options
+% also convert integers to arguments
 if ~isempty(argopts)
-    argopts = splitEqualSigns(argopts);
+    argopts = splitShortOptions(argopts); % split multicommand short options
+    argopts = splitEqualSigns(argopts); % remove equal signs from long options
 end
 %% parse subcommands
 % brute force because not just parsing args/opts, also translating git
