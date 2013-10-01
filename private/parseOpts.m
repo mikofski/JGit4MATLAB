@@ -35,7 +35,8 @@ for n = 1:Nopts
     % store value
     parsed_opts(2).(name) = [];
     if ~isBool && any(parsed_opts(1).(name))
-        parsed_opts(2).(name) = options{circshift(parsed_opts(1).(name),[0,1])};
+        % leave argument string in cell array, easier to concatenate
+        parsed_opts(2).(name) = options(circshift(parsed_opts(1).(name),[0,1]));
         options(parsed_opts(1).(name)) = []; % pop options argument
     end
     % pop options
