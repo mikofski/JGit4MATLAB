@@ -68,7 +68,7 @@ if iscellstr(p.Results.only)
         commitCMD.setOnly(p.Results.only{n});
     end
 elseif ischar(p.Results.only)
-    commitCMD.setOnly(p.Results.only)
+    commitCMD.setOnly(p.Results.only);
 end
 %% commit message
 if ~isempty(p.Results.message)

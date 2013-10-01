@@ -22,16 +22,8 @@ listall = strcmp('-a',argopts) | strcmp('--all',argopts);
 % list
 list = strcmp('--list',argopts);
 %% pop argopts
-argopts(force) = [];
-argopts(set_upstream) = [];
-argopts(track) = [];
-argopts(no_track) = [];
-argopts(delbranch) = [];
-argopts(forcedelete) = [];
-argopts(move) = [];
-argopts(remotes) = [];
-argopts(listall) = [];
-argopts(list) = [];
+argopts(force | set_upstream | track | no_track | delbranch | forcedelete | ...
+    move | remotes | listall | list) = [];
 %% other options
 % filter other options and/or double-hyphen
 argopts = filterOpts(argopts);

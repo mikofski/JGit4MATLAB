@@ -19,14 +19,8 @@ no_track = strcmp('--no-track',argopts);
 % paths
 paths = strcmp('--',argopts);
 %% pop argopts
-argopts(force) = [];
-argopts(newbranch) = [];
-argopts(forcenew) = [];
-argopts(ours) = [];
-argopts(theirs) = [];
-argopts(set_upstream) = [];
-argopts(track) = [];
-argopts(no_track) = [];
+argopts(force | newbranch | forcenew | ours | theirs | set_upstream | ...
+    track | no_track) = [];
 %% other options
 % filter other options and/or double-hyphen
 argopts = filterOpts(argopts,false);
@@ -77,10 +71,10 @@ elseif any(paths)
     assert(numel(argopts)>1,'jgit:parseCheckout','Specify path(s) to checkout.')
     if strcmp('--',argopts{1})
         % no commit
-        argopts(1) = []; % pop tree-ish and '--'
+        argopts(1) = []; % pop '--'
     else
-        % ignore '--'
-        argopts(strcmp('--',argopts)) = [];
+        % ignore '--', assume 1st arg is tree-ish, other args are paths
+        argopts(strcmp('--',argopts)) = []; % pop '--'
         parsed_argopts = [parsed_argopts,'startPoint',argopts(1)];
         argopts(1) = []; % pop tree-ish
     end

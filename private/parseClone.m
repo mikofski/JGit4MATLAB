@@ -8,12 +8,12 @@ bare = strcmp('--bare',argopts);
 % remote name [origin]
 origin = strcmp('-o',argopts) | strcmp('--origin',argopts);
 if any(origin)
-    remotename = argopt(circshift(origin,[0,1])); % store remote name
+    remotename = argopts(circshift(origin,[0,1])); % store remote name
 end
 % branch
 branch = strcmp('-b',argopts) | strcmp('--branch',argopts);
 if any(branch)
-    branchname = argopt(circshift(branch,[0,1])); % store branch name
+    branchname = argopts(circshift(branch,[0,1])); % store branch name
 end
 % clone submodules recursively
 recursive = strcmp('--recursive',argopts) | strcmp('--recurse-submodules',argopts);
@@ -22,13 +22,8 @@ noCheckout = strcmp('-n',argopts) | strcmp('--no-checkout',argopts);
 % Git doesn't have anything like clone [all] branches &
 % --[no-]single-branch is not the same thing
 %% pop argopts
-argopts(bare) = [];
-argopts(origin) = [];
-argopts(circshift(origin,[0,1])) = [];
-argopts(branch) = [];
-argopts(circshift(branch,[0,1])) = [];
-argopts(recursive) = [];
-argopts(noCheckout) = [];
+argopts(bare | origin | circshift(origin,[0,1]) | branch | ...
+    circshift(branch,[0,1]) | recursive | noCheckout) = [];
 %% other options
 % filter other options and/or double-hyphen
 argopts = filterOpts(argopts);
