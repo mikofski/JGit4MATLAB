@@ -31,7 +31,7 @@ function branch(cmd,newName,varargin)
 %       JGit.branch('create','remoteBranch', ...
 %           'startPoint','refs/remotes/origin/remoteBranch', ...
 %           'upstreamMode','TRACK') % track "remoteBranch"
-%       JGIT.BRANCH('delete',[],'oldNames',{'superFeature','remoteBranch})
+%       JGIT.BRANCH('delete',[],'oldNames',{'superFeature','remoteBranch'})
 %
 %   See also JGIT, CHECKOUT
 %

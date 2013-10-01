@@ -3,46 +3,41 @@ function parsed_argopts = parseCheckout(argopts)
 %   Copyright (c) 2013 Mark Mikofski
 parsed_argopts = {};
 %% options
-% force
-force = strcmp('-f',argopts) | strcmp('--force',argopts);
-% newbranch
-newbranch = strcmp('-b',argopts);
-% force new branch
-forcenew = strcmp('-B',argopts);
-% stage for unmerged paths
-ours = strcmp('--ours',argopts);
-theirs = strcmp('--theirs',argopts);
-% set upstream mode
-set_upstream = strcmp('--set-upstream',argopts);
-track = strcmp('-t',argopts) | strcmp('--track',argopts);
-no_track = strcmp('--no-track',argopts);
+dictionary = { ...
+    'force',{'-f','--force'},true; ...
+    'newBranch',{'-b'},true; ...
+    'forceNew',{'-B'},true; ...
+    'ours',{'--ours'},true; ...
+    'theirs',{'--theirs'},true; ...
+    'set_upstream',{'--set-upstream'},true; ...
+    'track',{'-t','--track'},true; ...
+    'no_track',{'--no-track'},true; ...
+    };
+[options,argopts] = parseOpts(argopts,dictionary);
 % paths
 paths = strcmp('--',argopts);
-%% pop argopts
-argopts(force | newbranch | forcenew | ours | theirs | set_upstream | ...
-    track | no_track) = [];
 %% other options
 % filter other options and/or double-hyphen
 argopts = filterOpts(argopts,false);
 %% parse
 % no argument or option checks - jgit checks args/opts
-if any(newbranch) || any(forcenew)
+if options(1).('newBranch') || options(1).('forceNew')
     %% create
-    if any(newbranch) || any(forcenew)
+    if options(1).('newBranch') || options(1).('forceNew')
         parsed_argopts = [parsed_argopts,'createBranch',true];
     end
-    if any(forcenew) || any(force)
+    if options(1).('forceNew') || options(1).('force')
         % force
         parsed_argopts = [parsed_argopts,'force',true];
     end
     % upstream mode
-    if any(set_upstream)
+    if options(1).('set_upstream')
         % set-upstream
         parsed_argopts = [parsed_argopts,'upstreamMode','SET_UPSTREAM'];
-    elseif any(track)
+    elseif options(1).('track')
         % track
         parsed_argopts = [parsed_argopts,'upstreamMode','TRACK'];
-    elseif any(no_track)
+    elseif options(1).('no_track')
         % no-track
         parsed_argopts = [parsed_argopts,'upstreamMode','NO_TRACK'];
     end
@@ -56,15 +51,15 @@ if any(newbranch) || any(forcenew)
 elseif any(paths)
     %% checkout paths
     parsed_argopts = {[]}; % startPoint specifies commit when checking out paths
-    if any(ours)
+    if options(1).('ours')
         % stage ours
         parsed_argopts = [parsed_argopts,'stage','OURS'];
-    elseif any(theirs)
+    elseif options(1).('theirs')
         % stage theirs
         parsed_argopts = [parsed_argopts,'stage','THEIRS'];
     end
     % force
-    if any(force)
+    if options(1).('force')
         parsed_argopts = [parsed_argopts,'force',true];
     end
     % tree-ish
@@ -88,7 +83,7 @@ elseif any(paths)
 else
     %% checkout commit-ish
     % force
-    if any(force)
+    if options(1).('force')
         parsed_argopts = [parsed_argopts,'force',true];
     end
     parsed_argopts = [argopts,parsed_argopts];

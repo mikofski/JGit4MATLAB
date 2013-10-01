@@ -67,15 +67,18 @@ switch cmd
         else
             parsed_argopts = [argopts,parsed_argopts]; % char
         end
-    case 'branch'
+    case {'branch','br'}
+        cmd = 'branch';
         parsed_argopts = parseBranch(argopts);
-    case 'checkout'
+    case {'checkout','co'}
+        cmd = 'checkout';
         parsed_argopts = parseCheckout(argopts);
     case 'clone'
         parsed_argopts = parseClone(argopts);
     case 'commit'
         parsed_argopts = parseCommit(argopts);
-    case 'status'
+    case {'status','st'}
+        cmd = 'status';
         %% status
         parsed_argopts = {};
     otherwise
