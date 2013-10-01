@@ -236,18 +236,28 @@ classdef JGit < handle
                 'pulling and pushing (to) private repositories with which you''ve ', ...
                 'shared\nyour public key.'])
             %% check user info
-            [user,email] = JGit.getUserInfo;
-            if user.isEmpty || email.isEmpty
+            [name,email] = JGit.getUserInfo;
+            try
+                noUserInfo = name.isEmpty; % try Java, necessary if false
+            catch
+                noUserInfo = isempty(name); % try MATLAB, necessary if true
+            end
+            try
+                noUserInfo = noUserInfo || email.isEmpty; % try Java, necessary if false
+            catch
+                noUserInfo = noUserInfo || isempty(email); % try MATLAB, necessary if true
+            end
+            if noUserInfo
                 key = org.eclipse.jgit.lib.UserConfig.KEY;
                 cnf = org.eclipse.jgit.lib.Config;
                 usrcnf = cnf.get(key);
-                user = usrcnf.getAuthorEmail;
-                email = usrcnf.getAuthorName;
+                name = usrcnf.getAuthorName;
+                email = usrcnf.getAuthorEmail;
                 warning('jgit:noUserInfo', ...
-                    ['\nUser info in global .gitconfig file is missing. Please', ...
-                    'set user info using JGIT.SETUSERINFO(NAME,EMAIL), otherwise' ...
-                    'the default values will be used.\n\tDEFAULT USER: %s', ...
-                    '\n\tDEFAULT EMAIL: %s'],user,email)
+                    ['\nUser info in global .gitconfig file is missing or incomplete.\n', ...
+                    'Please set user info using JGIT.SETUSERINFO(NAME,EMAIL), or\n' ...
+                    'default values will be used for missing user name and/or email.\n', ...
+                    '\tDEFAULT NAME:\t%s\n\tDEFAULT EMAIL:\t%s'],char(name),char(email))
             end
             % check SSH passphrase
             f = fullfile(char(JGit.USERHOME),JGit.JSCH_USERINFO); % savefile path
