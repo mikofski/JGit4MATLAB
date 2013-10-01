@@ -265,7 +265,7 @@ classdef JGit < handle
                 'shared\nyour public key.'])
             %% check user info
             [user,email] = JGit.getUserInfo;
-            if user.isEmpty || email.isEmpty
+            if isempty(user) || isempty(email)
                 key = org.eclipse.jgit.lib.UserConfig.KEY;
                 cnf = org.eclipse.jgit.lib.Config;
                 usrcnf = cnf.get(key);
