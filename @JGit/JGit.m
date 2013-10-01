@@ -189,7 +189,7 @@ classdef JGit < handle
                 javapath = fullfile(prefdir,'javaclasspath.txt');
                 if exist(javapath,'file')~=2
                     %% no "javaclasspath.txt"
-                    fprintf('"javaclasspath.txt" not detected. Writing ...\n');
+                    fprintf('"javaclasspath.txt" not detected. Writing to %s...\n', javapath);
                     try
                         fid = fopen(javapath,'wt');
                         fprintf(fid,'# JGit package\n%s\n',jgitjar,pmjar,SSHjar);
