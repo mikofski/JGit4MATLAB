@@ -1,7 +1,7 @@
 function argopts = splitShortOptions(argopts)
 %SPLITSHORTOPTIONS Split short options with multiple commands
 %   Copyright (c) 2013 Mark Mikofski
-shortOpts = strncmp('-',argopts,1); % shortoptions
+shortOpts = ~strncmp('--',argopts,2) & strncmp('-',argopts,1); % only short options
 Ncmd = (cellfun(@numel,argopts)-1).*shortOpts; % number of commands per short op
 has_multi = Ncmd>1; % are there any multi-command short options?
 Nmulti = sum(has_multi.*(Ncmd-1)); % number of multi option commands

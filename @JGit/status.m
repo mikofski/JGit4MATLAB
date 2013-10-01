@@ -39,7 +39,7 @@ if statusCall.isClean
     %% status message if clean
     fprintf('nothing to commit, working directory clean\n')
 else
-    %% staged fils
+    %% staged files
     added = statusCall.getAdded;
     changed = statusCall.getChanged;
     removed = statusCall.getRemoved;
@@ -110,15 +110,9 @@ else
         if fid==2,fid = 1;end
         fprintf(fid,'#\n');
     end
-    %% untracked and/or ignored
-    untracked = statusCall.getUntracked;
-    ignored = statusCall.getIgnoredNotInIndex;
-    ignoreFlag = false(untracked.size,1);
-    iter = untracked.iterator;
-    for n = 1:untracked.size
-        ignoreFlag(n) = ignored.contains(iter.next);
-    end
-    if ~untracked.isEmpty && ~all(ignoreFlag)
+    %% untracked
+    untracked = statusCall.getUntracked; % list of files that are not ignored, and not in the index.
+    if ~untracked.isEmpty
         fprintf(fid,[ ...
             '# Untracked files:\n', ...
             '#   (use "git add <file>..." to include in what will be committed)\n', ...
@@ -127,13 +121,17 @@ else
         if fid==1,fid = 2;end
         iter = untracked.iterator;
         for n = 1:untracked.size
-            if ~ignoreFlag
-                fprintf(2,fmtStr,iter.next);
-            end
+            fprintf(fid,fmtStr,iter.next);
         end
         if fid==2,fid = 1;end
         fprintf(fid,'#\n');
     end
-    fprintf(fid,'# no changes added to commit (use "git add" and/or "git commit -a")\n');
+    if added.isEmpty && changed.isEmpty && removed.isEmpty
+        if ~modified.isEmpty || ~missing.isEmpty
+            fprintf(fid,'no changes added to commit (use "git add" and/or "git commit -a")\n');
+        elseif ~untracked.isEmpty
+            fprintf(fid,'nothing added to commit but untracked files present (use "git add" to track)\n');
+        end
+    end
 end
 end

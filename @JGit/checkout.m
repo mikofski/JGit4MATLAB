@@ -46,8 +46,9 @@ NOTRACK = javaMethod('valueOf','org.eclipse.jgit.api.CreateBranchCommand$SetupUp
 SET_UPSTREAM = javaMethod('valueOf','org.eclipse.jgit.api.CreateBranchCommand$SetupUpstreamMode','SET_UPSTREAM');
 TRACK = javaMethod('valueOf','org.eclipse.jgit.api.CreateBranchCommand$SetupUpstreamMode','TRACK');
 %% check inputs
+[~,pathCheckout] = fileparts(tempname);
 if isempty(name) && (any(strcmpi('path', varargin)) || any(strcmpi('allPaths',varargin)))
-    name = 'n/a';
+    name = pathCheckout;
 end
 p = inputParser;
 p.addRequired('name',@(x)validateattributes(x,{'char'},{'row'}))
@@ -65,7 +66,9 @@ gitDir = p.Results.gitDir;
 gitAPI = JGit.getGitAPI(gitDir);
 checkoutCMD = gitAPI.checkout;
 %% set name
-checkoutCMD.setName(p.Results.name);
+if ~strcmp(pathCheckout,p.Results.name)
+    checkoutCMD.setName(p.Results.name);
+end
 %% add paths
 if iscellstr(p.Results.path)
     for n = 1:numel(path)
@@ -122,7 +125,7 @@ end
 checkoutCMD.call;
 %% get results
 if nargout>0 && p.Results.getResults
-    results = checkoutCMD.getResults;
+    results = checkoutCMD.getResult;
 end
 end
 

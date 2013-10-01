@@ -1,48 +1,53 @@
-function [parsed_opts,options] = parseOpts(options,dictionary)
-%PARSEOPTS Parse OPTIONS according to a DICTIONARY.
+function [options,argopts] = parseOpts(argopts,dictionary)
+%PARSEOPTS Parse ARGOPTS according to a DICTIONARY.
 %   DICTIONARY is an array of options definitions. Each row contains the
 %   name of the option, the command-line options and a logical indicating
 %   whether the option has an argument or is boolean.
-%   PARSEOPTS returns a structure whose keys are the names of the parsed
-%   options and whose values are a logical indicating whether the option
+%   PARSEOPTS returns, OPTIONS, a structure whose keys are the names of the
+%   parsed options and whose values are a logical indicating whether the option
 %   was given and its value if not boolean.
 %
 %   Example:
-%       popts = parseOpts({'-a','-m','this is a commit message', ...
+%
+%       [opts,args] = parseOpts({'-a','-m','this is a commit message'}, ...
 %           {'all',{'-a','--all'},true;'amend',{'--amend'},true; ...
-%           'author',{'--author'},false;'message',{'-m','--message'},false}
-%       struct
-%           all:    true
-%           amend:  false
-%           author: false
-%           message:'this is a commit message'
+%           'author',{'--author'},false;'message',{'-m','--message'},false});
+%
+%       opts = 2x1 struct array with fields:
+%           fieldnames  opts(1) opts(2)
+%           all:        true,   []
+%           amend:      false,  []
+%           author:     false,  []
+%           message:    true,   {'this is a commit message'}
+%
+%       args = Empty cell array: 1-by-0
 %   
 %   Copyright (c) 2013 Mark Mikofski
 
 % no arguments checks
 Nopts = size(dictionary,1); % number of options
-parsed_opts = cell2struct(dictionary(:,2:3),dictionary(:,1));
+options = cell2struct(dictionary(:,2:3),dictionary(:,1));
 % loop over option definitions
 for n = 1:Nopts
     optDef = dictionary(n,:); % option definition
     name = optDef{1};commands = optDef{2};isBool = optDef{3}; 
     % loop over commands
-    parsed_opts(1).(name) = false;
+    options(1).(name) = false;
     assert(~isempty(commands),'jgit:parseOpts')
     for cmd = commands
-        parsed_opts(1).(name) = parsed_opts(1).(name) | strcmp(cmd,options);
+        options(1).(name) = options(1).(name) | strcmp(cmd,argopts);
     end
     % store value
-    parsed_opts(2).(name) = [];
-    if ~isBool && any(parsed_opts(1).(name))
+    options(2).(name) = [];
+    if ~isBool && any(options(1).(name))
         % leave argument string in cell array, easier to concatenate
-        parsed_opts(2).(name) = options(circshift(parsed_opts(1).(name),[0,1]));
-        options(parsed_opts(1).(name)) = []; % pop options argument
+        options(2).(name) = argopts(circshift(options(1).(name),[0,1]));
+        argopts(options(1).(name)) = []; % pop options argument
     end
     % pop options
-    options(parsed_opts(1).(name)) = [];
+    argopts(options(1).(name)) = [];
     % don't care about the option position
-    parsed_opts(1).(name) = any(parsed_opts(1).(name)); % convert to scalar
+    options(1).(name) = any(options(1).(name)); % convert to scalar
 end
 end
 

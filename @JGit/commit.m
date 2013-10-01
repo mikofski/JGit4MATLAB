@@ -70,6 +70,37 @@ if iscellstr(p.Results.only)
 elseif ischar(p.Results.only)
     commitCMD.setOnly(p.Results.only);
 end
+%% nothing to commit
+statusCall = gitAPI.status.call;
+if statusCall.isClean
+    %% status message if clean
+    fprintf('nothing to commit, working directory clean\n')
+    return
+else
+    %% staged files
+    added = statusCall.getAdded;
+    changed = statusCall.getChanged;
+    removed = statusCall.getRemoved;
+    %% tracked but not staged
+    modified = statusCall.getModified;
+    missing = statusCall.getMissing;
+    %% untracked
+    untracked = statusCall.getUntracked; % list of files that are not ignored, and not in the index.
+    onlyModified = false(modified.size,1); % modified files listed at command line using --only
+    iter = modified.iterator;
+    for n = 1:modified.size
+        onlyModified(n) = any(strcmp(iter.next,p.Results.only)); % only can be cellstr or char
+    end
+    %% quit commit show status
+    % no staged files but modified files && ~setAll && ~any(onlyModified)
+    % or not and untracked files
+    if added.isEmpty && changed.isEmpty && removed.isEmpty && ... no staged files
+            (((~modified.isEmpty || ~missing.isEmpty) && ~p.Results.all && ~any(onlyModified)) || ... but modified files and ~setAll && ~any(onlyModified)
+            (modified.isEmpty && missing.isEmpty && ~untracked.isEmpty)) % or no modified files but untracked
+        JGit.status
+        return
+    end
+end
 %% commit message
 if ~isempty(p.Results.message)
     commitCMD.setMessage(p.Results.message);
@@ -106,11 +137,13 @@ else
         msglines = textscan(msg,'%s','Delimiter','\n','CommentStyle','#');
         msglines = msglines{1};
         msglines = [msglines,repmat({sprintf('\n')},numel(msglines),1)]';
+        % strtrim removes whitespace incl. char([9 10 11 12 13 32])
+        % char(10) == sprintf('\n')
         msg = strtrim([msglines{:}]);
-        if numel(msg)==1 && strcmp(msg,sprintf('\n'))
+        if isempty(msg)
             fprintf(2,'Aborting commit due to empty commit message.\n\n');
         else
-            commitCMD.setMessage(msg);
+            commitCMD.setMessage(sprintf('%s\n',msg));
         end
     end
 end

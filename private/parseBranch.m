@@ -3,43 +3,34 @@ function parsed_argopts = parseBranch(argopts)
 %   Copyright (c) 2013 Mark Mikofski
 parsed_argopts = {};
 %% options
-% force
-force = strcmp('-f',argopts) | strcmp('--force',argopts);
-% set-upstream mode
-set_upstream = strcmp('--set-upstream',argopts);
-track = strcmp('-t',argopts) | strcmp('--track',argopts);
-no_track = strcmp('--no-track',argopts);
-% delete branch
-delbranch = strcmp('-d',argopts) | strcmp('--delete',argopts);
-% force delete
-forcedelete = strcmp('-D',argopts);
-% move
-move = strcmp('-m',argopts) | strcmp('--move',argopts);
-% remotes
-remotes = strcmp('-r',argopts) | strcmp('--remotes',argopts);
-% all
-listall = strcmp('-a',argopts) | strcmp('--all',argopts);
-% list
-list = strcmp('--list',argopts);
-%% pop argopts
-argopts(force | set_upstream | track | no_track | delbranch | forcedelete | ...
-    move | remotes | listall | list) = [];
+dictionary = { ...
+    'force',{'-f','--force'},true; ...
+    'set_upstream',{'--set-upstream'},true; ...
+    'track',{'-t','--track'},true; ...
+    'no_track',{'--no-track'},true; ...
+    'delete',{'-d','--delete'},true; ...
+    'forceDelete',{'-D'},true; ...
+    'move',{'-m','--move'},true; ...
+    'remotes',{'-r','--remotes'},true; ...
+    'listAll',{'-a','--all'},true; ...
+    'list',{'--list'},true};
+[options,argopts] = parseOpts(argopts,dictionary);
 %% other options
 % filter other options and/or double-hyphen
 argopts = filterOpts(argopts);
 %% parse
 % no argument or option checks - jgit checks args/opts
-if any(move)
+if options(1).('move')
     %% rename branch
     % new and old branch names
     assert(~isempty(argopts),'jgit:parseBranch','Specify new branch name.')
     assert(numel(argopts)==2,'jgit:parseBranch','Specify old branch name.')
     parsed_argopts = {'rename',argopts(1),'oldNames',argopts(2)};
-elseif any(delbranch) || any(forcedelete)
+elseif options(1).('delete') || options(1).('forceDelete')
     %% delete branch
     parsed_argopts = {'delete',[]};
     % force delete
-    if any(forcedelete)
+    if options(1).('forceDelete')
         parsed_argopts = [parsed_argopts,'force',true];
     end
     % oldnames
@@ -49,30 +40,31 @@ elseif any(delbranch) || any(forcedelete)
     else
         parsed_argopts = [parsed_argopts,'oldNames',argopts]; % char
     end
-elseif any(remotes) || any(listall) || any(list) || isempty(argopts)
+elseif options(1).('remotes') || options(1).('listAll') || ...
+        options(1).('list') || isempty(argopts)
     %% list branch
     parsed_argopts = {'list'};
-    if any(listall)
+    if options(1).('listAll')
         % all
         parsed_argopts = [parsed_argopts,{[]},'listMode','ALL'];
-    elseif any(remotes)
+    elseif options(1).('remotes')
         % remotes
         parsed_argopts = [parsed_argopts,{[]},'listMode','REMOTE'];
     end
 else % if any(set_upstream) || any(track) || any(no_track) && ~isempty(argopts)
     %% create branch
-    if any(set_upstream)
+    if options(1).('set_upstream')
         % set-upstream
         parsed_argopts = {'upstreamMode','SET_UPSTREAM'};
-    elseif any(track)
+    elseif options(1).('track')
         % track
         parsed_argopts = {'upstreamMode','TRACK'};
-    elseif any(no_track)
+    elseif options(1).('no_track')
         % no-track
         parsed_argopts = {'upstreamMode','NO_TRACK'};
     end
     % force
-    if any(force)
+    if options(1).('force')
         parsed_argopts = [parsed_argopts,'force',true];
     end
     % branchname

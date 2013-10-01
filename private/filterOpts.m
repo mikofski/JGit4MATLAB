@@ -8,7 +8,7 @@ end
 % double-hyphen is used to indicate the last option,
 % arguments after lastopt are interpreted literaly.
 lastopt = ~cumsum(strcmp('--',argopts)); % last option
-options = strncmp('-',argopts(lastopt),1) | strncmp('--',argopts(lastopt),2);
+options = strncmp('-',argopts(lastopt),1); % catches strncmp('--',argopts(lastopt),2)
 if any(options)
     warning('jgit:unsupportedOption','Unsupported options.')
     unsupported_options = argopts(options);
