@@ -41,7 +41,7 @@ end
 %% remove any equal signs from options
 % Git doesn't care if equals signs are used (or not) with long options
 if ~isempty(argopts)
-    argopts = splitequalsigns(argopts);
+    argopts = splitEqualSigns(argopts);
 end
 %% parse subcommands
 % brute force because not just parsing args/opts, also translating git

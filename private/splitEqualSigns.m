@@ -1,4 +1,4 @@
-function argopts = splitequalsigns(argopts)
+function argopts = splitEqualSigns(argopts)
 %SPLITEQUALSIGNS Split long options with equal signs into 2 args
 %   Copyright (c) 2013 Mark Mikofski
 eqs_idx = strfind(argopts,'='); % indices of equal signs in arguments with them
