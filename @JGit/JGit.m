@@ -186,8 +186,7 @@ classdef JGit < handle
                 %% No, jar-files are not on MATLAB static Java class path
                 % check for file called "javaclasspath.txt"
                 valid = false;
-                workhome = userpath;workhome = workhome(1:end-1);
-                javapath = fullfile(workhome,'javaclasspath.txt');
+                javapath = fullfile(prefdir,'javaclasspath.txt');
                 if exist(javapath,'file')~=2
                     %% no "javaclasspath.txt"
                     fprintf('"javaclasspath.txt" not detected. Writing ...\n');
