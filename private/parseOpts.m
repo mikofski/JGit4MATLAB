@@ -1,4 +1,4 @@
-function parsed_opts = parseOpts(options, dictionary)
+function [parsed_opts,options] = parseOpts(options,dictionary)
 %PARSEOPTS Parse OPTIONS according to a DICTIONARY.
 %   DICTIONARY is an array of options definitions. Each row contains the
 %   name of the option, the command-line options and a logical indicating
@@ -35,8 +35,13 @@ for n = 1:Nopts
     % store value
     parsed_opts(2).(name) = [];
     if ~isBool && any(parsed_opts(1).(name))
-        parsed_opts(2).(name) = options(circshift(parsed_opts(1).(name),[0,1]));
+        parsed_opts(2).(name) = options{circshift(parsed_opts(1).(name),[0,1])};
+        options(parsed_opts(1).(name)) = []; % pop options argument
     end
+    % pop options
+    options(parsed_opts(1).(name)) = [];
+    % don't care about the option position
+    parsed_opts(1).(name) = any(parsed_opts(1).(name)); % convert to scalar
 end
 end
 
