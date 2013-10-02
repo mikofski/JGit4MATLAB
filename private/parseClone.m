@@ -24,11 +24,11 @@ if options(1).('bare')
 end
 % branch
 if options(1).('branch')
-    parsed_argopts = [parsed_argopts,'branch',branchname];
+    parsed_argopts = [parsed_argopts,'branch',options(2).('branch')];
 end
 % name remote
 if options(1).('origin')
-    parsed_argopts = [parsed_argopts,'remote',remotename];
+    parsed_argopts = [parsed_argopts,'remote',options(2).('origin')];
 end
 % submodules
 if options(1).('recursive')
