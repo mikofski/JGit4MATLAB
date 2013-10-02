@@ -416,7 +416,7 @@ classdef JGit < handle
                 case 'MACI64'
                     %% MAC
                     editor = 'textedit';
-                case 'GLNXA64'
+                case {'GLNX86','GLNXA64'}
                     %% LINUX
                     editor = 'gedit';
                 otherwise
