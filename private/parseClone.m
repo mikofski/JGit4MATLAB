@@ -3,50 +3,39 @@ function parsed_argopts = parseClone(argopts)
 %   Copyright (c) 2013 Mark Mikofski
 parsed_argopts = {};
 %% options
-% bare
-bare = strcmp('--bare',argopts);
-% remote name [origin]
-origin = strcmp('-o',argopts) | strcmp('--origin',argopts);
-if any(origin)
-    remotename = argopts(circshift(origin,[0,1])); % store remote name
-end
-% branch
-branch = strcmp('-b',argopts) | strcmp('--branch',argopts);
-if any(branch)
-    branchname = argopts(circshift(branch,[0,1])); % store branch name
-end
-% clone submodules recursively
-recursive = strcmp('--recursive',argopts) | strcmp('--recurse-submodules',argopts);
-% no checkout
-noCheckout = strcmp('-n',argopts) | strcmp('--no-checkout',argopts);
+dictionary = { ...
+    'bare',{'--bare'},true; ...
+    'origin',{'-o','--origin'},false; ...
+    'branch',{'-b','--branch'},false; ...
+    'recursive',{'--recursive','--recurse-submodules'},true; ...
+    'noCheckout',{'-n','--no-checkout'},true; ...
+    };
 % Git doesn't have anything like clone [all] branches &
 % --[no-]single-branch is not the same thing
-%% pop argopts
-argopts(bare | origin | circshift(origin,[0,1]) | branch | ...
-    circshift(branch,[0,1]) | recursive | noCheckout) = [];
+[options,argopts] = parseOpts(argopts,dictionary);
 %% other options
 % filter other options and/or double-hyphen
 argopts = filterOpts(argopts);
 %% parse
 % no argument or option checks - jgit checks args/opts
 % bare
-if any(bare)
+if options(1).('bare')
     parsed_argopts = [parsed_argopts,'bare',true];
 end
 % branch
-if any(branch)
+if options(1).('branch')
     parsed_argopts = [parsed_argopts,'branch',branchname];
 end
 % name remote
-if any(origin)
+if options(1).('origin')
     parsed_argopts = [parsed_argopts,'remote',remotename];
 end
 % submodules
-if any(recursive)
+if options(1).('recursive')
     parsed_argopts = [parsed_argopts,'cloneSubmodules',true];
 end
 % no-checkout
-if any(noCheckout)
+if options(1).('noCheckout')
     parsed_argopts = [parsed_argopts,'noCheckout',true];
 end
 % uri-ish
