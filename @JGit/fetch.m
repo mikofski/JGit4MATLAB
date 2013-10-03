@@ -5,6 +5,8 @@ function fetch(varargin)
 %   'refSpecs' <char|cellstr> sets ref specs used in fetch.
 %   'setDryRun' <logical> Sets a dry run.
 %   'remote' <char> Set remote.
+%   'tagOpt' <char> Set tag option: AUTO_FOLLOW, FETCH_TAGS or NO_TAGS.
+%   'prune' <logical> Remove deleted refs
 %   'progressMonitor' <ProgressMonitor> [MATLABProgressMonitor] Display progress.
 %   'gitDir' <char> [PWD] Applies to the repository in specified folder.
 %
@@ -20,12 +22,18 @@ function fetch(varargin)
 %
 %   Copyright (c) 2013 Mark Mikofski
 
+%% constants
+AUTO_FOLLOW = org.eclipse.jgit.transport.TagOpt.AUTO_FOLLOW;
+FETCH_TAGS = org.eclipse.jgit.transport.TagOpt.FETCH_TAGS;
+NO_TAGS = org.eclipse.jgit.transport.TagOpt.NO_TAGS;
 %% check inputs
 p = inputParser;
 p.addParamValue('refSpecs','',@(x)validateRefSpecs(x))
 p.addParamValue('setDryRun',false,@(x)validateattributes(x,{'logical'},{'scalar'}))
 p.addParamValue('progressMonitor',com.mikofski.jgit4matlab.MATLABProgressMonitor,@(x)isjava(x))
 p.addParamValue('remote','',@(x)validateattributes(x,{'char'},{'row'}))
+p.addParamValue('tagOpt','',@(x)validateattributes(x,{'char'},{'row'}))
+p.addParamValue('prune',false,@(x)validateattributes(x,{'logical'},{'scalar'}))
 p.addParamValue('gitDir',pwd,@(x)validateattributes(x,{'char'},{'row'}))
 p.parse(varargin{:})
 gitDir = p.Results.gitDir;
@@ -55,6 +63,25 @@ fetchCMD.setProgressMonitor(p.Results.progressMonitor);
 %% set remote
 if ~isempty(p.Results.remote)
     fetchCMD.setRemote(p.Results.remote);
+end
+%% set tag option
+if ~isempty(p.Results.tagOpt)
+    switch upper(p.Results.tagOpt)
+        case 'AUTO_FOLLOW'
+            fetchCMD.setTagOpt(AUTO_FOLLOW);
+        case 'FETCH_TAGS'
+            fetchCMD.setTagOpt(FETCH_TAGS);
+        case 'NO_TAGS'
+            fetchCMD.setTagOpt(NO_TAGS);
+        otherwise
+            error('jgit:fetch:badTagOpt', ...
+                'Fetch tag options are ''AUTO_FOLLOW'', ''FETCH_TAGS'' or ''NO_TAGS''.')
+    end
+    fetchCMD.setRemote(p.Results.tag);
+end
+%% prune
+if p.Results.prune
+    fetchCMD.setRemoveDeletedRefs(true)
 end
 %% call
 % UserInfoSshSessionFactory is a customized SshSessionFactory that

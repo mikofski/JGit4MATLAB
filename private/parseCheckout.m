@@ -80,6 +80,10 @@ else
     if options(1).('force')
         parsed_argopts = [parsed_argopts,'force',true];
     end
+    assert(numel(argopts)==1,'jgit:parseCheckout', ...
+        ['error: pathspec %s did not match any file(s) known to git.\n', ...
+        'Use "--" to separate paths from revisions, like this:\n', ...
+        '"git <command> [<revision>...] -- [<file>...]"'],argopts{2})
     parsed_argopts = [argopts,parsed_argopts];
 end
 end
