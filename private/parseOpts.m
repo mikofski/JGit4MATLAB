@@ -50,4 +50,3 @@ for n = 1:Nopts
     options(1).(name) = any(options(1).(name)); % convert to scalar
 end
 end
-

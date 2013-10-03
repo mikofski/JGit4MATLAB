@@ -13,7 +13,7 @@ function commit(varargin)
 %   'gitDir' <char> [PWD] Commit to repository in specified folder.
 %
 %   For more information see also
-%   <a href="https://www.kernel.org/pub/software/scm/git/docs/git-commit.html">Git Commit Documentation</a>
+%   <a href="https://git-scm.com/docs/git-commit.html">Git Commit Documentation</a>
 %   <a href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/api/CommitCommand.html">JGit Git API Class CommitCommand</a>
 %
 %   Example:

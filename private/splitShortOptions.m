@@ -30,3 +30,4 @@ for n = 1:Nargs
 end
 %% replace argopts with newopts
 argopts = newargs;
+end

@@ -142,7 +142,8 @@ classdef JGit < handle
                 if status==1
                     fprintf('Saved as:\n\t%s.\n... Done.\n\n',f);
                 else
-                    error('jgit:validateJavaClassPath:downloadError',status)
+                    error('jgit:validateJavaClassPath:downloadError', ...
+                        'Download failed with status code %d.',status)
                 end
             end
             %% check MATLAB static Java class path

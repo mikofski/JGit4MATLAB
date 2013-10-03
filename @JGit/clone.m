@@ -15,7 +15,7 @@ function clone(uri,varargin)
 %   'remote' <char> [origin] Name of remote to track of upstream repository.
 %
 %   For more information see also
-%   <a href="https://www.kernel.org/pub/software/scm/git/docs/git-clone.html">Git Clone Documentation</a>
+%   <a href="https://git-scm.com/docs/git-clone.html">Git Clone Documentation</a>
 %   <a href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/api/CloneCommand.html">JGit Git API Class CloneCommand</a>
 %
 %   Example:

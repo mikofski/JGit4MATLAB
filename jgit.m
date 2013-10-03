@@ -77,6 +77,12 @@ switch cmd
         parsed_argopts = parseClone(argopts);
     case 'commit'
         parsed_argopts = parseCommit(argopts);
+    case {'diff','difftool'}
+        difftool = strcmp(cmd,'difftool');
+        cmd = 'diff';
+        parsed_argopts = parseDiff(argopts,difftool);
+    case 'fetch'
+        parsed_argopts = parseFetch(argopts);
     case {'status','st'}
         cmd = 'status';
         %% status

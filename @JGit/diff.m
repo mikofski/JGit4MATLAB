@@ -8,7 +8,8 @@ function diff(varargin)
 %       commit.
 %   'previous' <char> '' The previous state.
 %   'updated' <char> '' The updated state.
-%   'path' <char|cellstr> ['']  Limit the diff to the named path(s).
+%   'path' <char|cellstr> ['']  Limit the diff to the named path(s) relative to GITDIR,
+%       must use "/" to delimit directories.
 %   'showNameAndStatusOnly' <logical> [false] return only names and status of changed files.
 %   'contextLines' <integer> [3] Set number of context lines instead of the usual three.
 %   'srcPrefix' <char> ['a/'] Set the given source prefix instead of "a/".
@@ -18,8 +19,14 @@ function diff(varargin)
 %   'gitDir' <char> [PWD] Applies to the repository in specified folder.
 %
 %   For more information see also
-%   <a href="https://www.kernel.org/pub/software/scm/git/docs/git-diff.html">Git Diff Documentation</a>
+%   <a href="https://git-scm.com/docs/git-diff.html">Git Diff Documentation</a>
 %   <a href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/api/DiffCommand.html">JGit Git API Class DifftCommand</a>
+%   <a href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/treewalk/filter/PathFilterGroup.html">JGit Path Filter Group</a>
+%   <a href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/treewalk/filter/TreeFilter.html">JGit Tree Filter</a>
+%   <a href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/treewalk/CanonicalTreeParser.html">JGit Canonical Tree Parser</a>
+%
+%   Note:
+%       Paths must be relative to GITDIR and use "/" to delimit directories on all platforms.
 %
 %   Example:
 %       JGIT.DIFF('previous','master',updated','feature', ...
@@ -87,7 +94,7 @@ if ~isempty(p.Results.path)
 end
 %% set Outpit stream
 % TODO: wrap with buffered writer or string builder for very large files
-DIFF_FILE = fullfile(TMP_DIFF_DIR,[p.Results.previous,p.Results.updated,'.diff']);
+DIFF_FILE = fullfile(TMP_DIFF_DIR,[p.Results.previous,'-',p.Results.updated,'.diff']);
 diffFileOS = java.io.FileOutputStream(DIFF_FILE);
 diffCMD.setOutputStream(diffFileOS);
 %% show progress
@@ -113,7 +120,19 @@ end
 %% call
 diffs = diffCMD.call;
 if ~diffs.isEmpty
-    edit(DIFF_FILE);
+    if p.Results.showNameAndStatusOnly
+        for n = 1:diffs.size
+            changeType = char(diffs.get(n-1).getChangeType);
+            oldPath = char(diffs.get(n-1).getOldPath);
+            oldMode = char(diffs.get(n-1).getOldMode);
+            newPath = char(diffs.get(n-1).getNewPath);
+            newMode = char(diffs.get(n-1).getNewMode);
+            fprintf('%-10s %25s (%6s) --> %25s (%6s)\n', ...
+                changeType,oldPath,oldMode,newPath,newMode)
+        end
+    else
+        edit(DIFF_FILE);
+    end
 end
 diffFileOS.close
 %% show MATLAB visual comparison tool

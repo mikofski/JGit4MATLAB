@@ -14,11 +14,9 @@ dictionary = { ...
     'no_track',{'--no-track'},true; ...
     };
 [options,argopts] = parseOpts(argopts,dictionary);
-% paths
-paths = strcmp('--',argopts);
 %% other options
 % filter other options and/or double-hyphen
-argopts = filterOpts(argopts,false);
+[argopts,paths] = filterOpts(argopts);
 %% parse
 % no argument or option checks - jgit checks args/opts
 if options(1).('newBranch') || options(1).('forceNew')
@@ -48,7 +46,7 @@ if options(1).('newBranch') || options(1).('forceNew')
     if numel(argopts)>1
         parsed_argopts = [parsed_argopts,'startPoint',argopts(2)];
     end
-elseif any(paths)
+elseif ~isempty(paths)
     %% checkout paths
     parsed_argopts = {[]}; % startPoint specifies commit when checking out paths
     if options(1).('ours')
@@ -63,22 +61,14 @@ elseif any(paths)
         parsed_argopts = [parsed_argopts,'force',true];
     end
     % tree-ish
-    assert(numel(argopts)>1,'jgit:parseCheckout','Specify path(s) to checkout.')
-    if strcmp('--',argopts{1})
-        % no commit
-        argopts(1) = []; % pop '--'
-    else
-        % ignore '--', assume 1st arg is tree-ish, other args are paths
-        argopts(strcmp('--',argopts)) = []; % pop '--'
-        parsed_argopts = [parsed_argopts,'startPoint',argopts(1)];
-        argopts(1) = []; % pop tree-ish
+    if ~isempty(argopts)
+        parsed_argopts = [parsed_argopts,'startPoint',argopts];
     end
     % paths
-    assert(~isempty(argopts),'jgit:parseCheckout','Specify path(s) to checkout.')
-    if numel(argopts)>1
-        parsed_argopts = [parsed_argopts,'path',{argopts}]; % cell string
+    if numel(paths)>1
+        parsed_argopts = [parsed_argopts,'path',{paths}]; % cell string
     else
-        parsed_argopts = [parsed_argopts,'path',argopts]; % char
+        parsed_argopts = [parsed_argopts,'path',paths]; % char
     end
 else
     %% checkout commit-ish
