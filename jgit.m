@@ -83,6 +83,8 @@ switch cmd
         parsed_argopts = parseDiff(argopts,difftool);
     case 'fetch'
         parsed_argopts = parseFetch(argopts);
+    case 'init'
+        parsed_argopts = parseInit(argopts);
     case {'status','st'}
         cmd = 'status';
         %% status

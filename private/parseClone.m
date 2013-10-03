@@ -8,8 +8,7 @@ dictionary = { ...
     'origin',{'-o','--origin'},false; ...
     'branch',{'-b','--branch'},false; ...
     'recursive',{'--recursive','--recurse-submodules'},true; ...
-    'noCheckout',{'-n','--no-checkout'},true; ...
-    };
+    'noCheckout',{'-n','--no-checkout'},true};
 % Git doesn't have anything like clone [all] branches &
 % --[no-]single-branch is not the same thing
 [options,argopts] = parseOpts(argopts,dictionary);
@@ -41,8 +40,11 @@ end
 % uri-ish
 assert(~isempty(argopts),'jgit:parseClone','Specify repository to clone.')
 parsed_argopts = [argopts(1),parsed_argopts];
-% start-point
-if numel(argopts)>1
+% directory
+if numel(argopts)>2
+    jgit_help('clone')
+    return
+elseif numel(argopts)>1
     parsed_argopts = [parsed_argopts,'directory',argopts(2)];
 end
 end

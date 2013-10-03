@@ -71,7 +71,10 @@ else % if any(set_upstream) || any(track) || any(no_track) && ~isempty(argopts)
     assert(~isempty(argopts),'jgit:parseBranch','Specify branch name to create.')
     parsed_argopts = ['create',argopts(1),parsed_argopts];
     % start-point
-    if numel(argopts)>1
+    if numel(argopts)>2
+        jgit_help('branch')
+        return
+    elseif numel(argopts)>1
         parsed_argopts = [parsed_argopts,'startPoint',argopts(2)];
     end
 end

@@ -34,7 +34,7 @@ if ~isempty(argopts)
 end
 % refspecs
 if argopts>2
-    parsed_argopts = [parsed_argopts,'refSpecs',{argopts(2:end)];
+    parsed_argopts = [parsed_argopts,'refSpecs',{argopts(2:end)}];
 else
     parsed_argopts = [parsed_argopts,'refSpecs',argopts(2)];
 end
