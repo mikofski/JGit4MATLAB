@@ -62,6 +62,10 @@ elseif ~isempty(paths)
     end
     % tree-ish
     if ~isempty(argopts)
+        assert(numel(argopts)==1,'jgit:parseCheckout', ...
+            ['error: pathspec %s did not match any file(s) known to git.\n', ...
+            'Use "--" to separate paths from revisions, like this:\n', ...
+            '"git <command> [<revision>...] -- [<file>...]"'],argopts{2})
         parsed_argopts = [parsed_argopts,'startPoint',argopts];
     end
     % paths
