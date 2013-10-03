@@ -5,11 +5,11 @@ parsed_argopts = {};
 %% options
 dictionary = { ...
     'cached',{'--cached'},true; ...
-    'nameStatus',{'----name-status'},true; ...
+    'nameStatus',{'--name-status'},true; ...
     'contextLines',{'--inter-hunk-context'},false; ...
     'srcPrefix',{'--src-prefix'},false; ...
     'destPrefix',{'--dst-prefix'},false; ...
-    };
+    'noPrefix',{'--no-prefix'},true};
 [options,argopts] = parseOpts(argopts,dictionary);
 %% other options
 % filter other options and/or double-hyphen
@@ -35,6 +35,11 @@ end
 % destPrefix
 if options(1).('destPrefix')
     parsed_argopts = [parsed_argopts,'destPrefix',options(2).('destPrefix')];
+end
+% noPrefix
+if options(1).('noPrefix')
+    parsed_argopts = [parsed_argopts,'srcPrefix',' '];
+    parsed_argopts = [parsed_argopts,'destPrefix',' '];
 end
 % difftool
 if difftool
