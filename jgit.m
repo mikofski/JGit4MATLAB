@@ -42,8 +42,8 @@ end
 % Git doesn't care if equals signs are used (or not) with long options
 % also convert integers to arguments
 if ~isempty(argopts)
-    argopts = splitShortOptions(argopts); % split multicommand short options
     argopts = splitEqualSigns(argopts); % remove equal signs from long options
+    argopts = splitShortOptions(argopts); % split multicommand short options
 end
 %% parse subcommands
 % brute force because not just parsing args/opts, also translating git
@@ -85,6 +85,8 @@ switch cmd
         parsed_argopts = parseFetch(argopts);
     case 'init'
         parsed_argopts = parseInit(argopts);
+    case 'log'
+        parsed_argopts = parseLog(argopts);
     case {'status','st'}
         cmd = 'status';
         %% status

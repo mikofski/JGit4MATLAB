@@ -71,7 +71,7 @@ if ~strcmp(pathCheckout,p.Results.name)
 end
 %% add paths
 if iscellstr(p.Results.path)
-    for n = 1:numel(path)
+    for n = 1:numel(p.Results.path)
         checkoutCMD.addPath(p.Results.path{n});
     end
 elseif ~isempty(p.Results.path)

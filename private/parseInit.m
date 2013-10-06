@@ -4,7 +4,7 @@ function parsed_argopts = parseInit(argopts)
 parsed_argopts = {};
 %% options
 dictionary = { ...
-    'bare',{'--bare'},true;};
+    'bare',{'--bare'},true};
 % Git doesn't have anything like init [all] branches &
 % --[no-]single-branch is not the same thing
 [options,argopts] = parseOpts(argopts,dictionary);

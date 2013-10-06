@@ -41,8 +41,11 @@ for n = 1:Nopts
     options(2).(name) = [];
     if ~isBool && any(options(1).(name))
         % leave argument string in cell array, easier to concatenate
-        options(2).(name) = argopts(circshift(options(1).(name),[0,1]));
-        argopts(options(1).(name)) = []; % pop options argument
+        hasArgs = circshift(options(1).(name),[0,1]);
+        args = argopts(hasArgs); % option arguments
+        options(2).(name) = args(end); % only take the last arg if more than one
+        argopts(hasArgs) = []; % pop option args
+        options(1).(name)(hasArgs) = []; % pop option indices too
     end
     % pop options
     argopts(options(1).(name)) = [];

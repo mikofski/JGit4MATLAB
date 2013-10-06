@@ -51,10 +51,11 @@ if isempty(argopts) && isempty(paths)
     return
 end
 % ambiguous argument
+if ~isempty(argopts), ambiguousArg = argopts{end};else ambiguousArg = [];end
 assert(numel(argopts)<3,'jgit:parseDiff', ...
     ['fatal: ambiguous argument "%s": unknown revision or path not in the working tree.\n', ...
     'Use "--" to separate paths from revisions, like this:\n', ...
-    '"git <command> [<revision>...] -- [<file>...]"'],argopts{end})
+    '"git <command> [<revision>...] -- [<file>...]"'],ambiguousArg)
 % paths
 if numel(paths)>1
     parsed_argopts = [parsed_argopts,'path',{paths}]; % cell string

@@ -16,16 +16,20 @@ for n = 1:Nargs
             % check last option for integers arg
             if ~isnan(str2double(argopts{n}(m+1:end)))
                 newargs{n+nextra(n)+m-1} = str2double(argopts{n}(m+1:end));
-                Ndigits = (Ncmd(n)-m); % offset by number of digits
-                nextra = nextra-Ndigits;newargs(end-Ndigits:end) = [];
+                Ndigits = (Ncmd(n)+1-m); % offset by number of digits
+                nextra = nextra-Ndigits+1;newargs(end-Ndigits+2:end) = [];
                 break
+            elseif strcmp('-',argopts{n}(m+1))
+                newargs{n+nextra(n)+m-1} = '-';
             else
                 newargs{n+nextra(n)+m-1} = ['-',argopts{n}(m+1)];
             end
         end
+    elseif shortOpts(n) && ~isnan(str2double(argopts{n}(2)))
+        newargs{n+nextra(n)} = str2double(argopts{n}(2));
     else
         %% not multi
-        newargs{n+nextra(n)} = argopts{n};
+        newargs(n+nextra(n)) = argopts(n);
     end
 end
 %% replace argopts with newopts
