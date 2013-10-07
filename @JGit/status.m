@@ -128,9 +128,13 @@ else
     end
     if added.isEmpty && changed.isEmpty && removed.isEmpty
         if ~modified.isEmpty || ~missing.isEmpty
-            fprintf(fid,'no changes added to commit (use "git add" and/or "git commit -a")\n');
+            if fid==1
+                fprintf(fid,'no changes added to commit (use "git add" and/or "git commit -a")\n');
+            end
         elseif ~untracked.isEmpty
-            fprintf(fid,'nothing added to commit but untracked files present (use "git add" to track)\n');
+            if fid==1
+                fprintf(fid,'nothing added to commit but untracked files present (use "git add" to track)\n');
+            end
         end
     end
 end

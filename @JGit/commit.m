@@ -142,6 +142,7 @@ else
         msg = strtrim([msglines{:}]);
         if isempty(msg)
             fprintf(2,'Aborting commit due to empty commit message.\n\n');
+            return
         else
             commitCMD.setMessage(sprintf('%s\n',msg));
         end
