@@ -7,6 +7,7 @@ function results = merge(include,varargin)
 %   'fastForward' <FastForwardMode> ['FF'] Set fast forward mode.
 %       Options are 'FF','FF_ONLY' and 'NO_FF'.
 %   'squash' <logical> [false] If true do not commit or move HEAD.
+%   'commit' <logical> [true] Automatically commit after a successful merge.
 %   'strategy' <MergeStrategy> Set the merge strategy to use. Options
 %       are 'OURS', 'RECURSIVE', 'RESOLVE', 'SIMPLE_TWO_WAY_IN_CORE' and 'THEIRS'.
 %   'gitDir' <char> [PWD] Applies to the repository in specified folder.
@@ -45,6 +46,7 @@ p = inputParser;
 p.addRequired('include',@(x)validateattributes(x,{'char'},{'row'}))
 p.addParamValue('name','',@(x)validateattributes(x,{'char'},{'row'}))
 p.addParamValue('squash',false,@(x)validateattributes(x,{'logical'},{'scalar'}))
+p.addParamValue('commit',true,@(x)validateattributes(x,{'logical'},{'scalar'}))
 p.addParamValue('fastForward','',@(x)validateattributes(x,{'char'},{'row'}))
 p.addParamValue('strategy','',@(x)validateattributes(x,{'char'},{'row'}))
 p.addParamValue('gitDir',pwd,@(x)validateattributes(x,{'char'},{'row'}))
@@ -77,6 +79,11 @@ end
 %% set squash
 if p.Results.squash
     mergeCMD.setSquash(true);
+end
+%% set commit
+% default is true, only set if false
+if ~p.Results.commit
+    mergeCMD.setSquash(false);
 end
 %% set fast forward mode
 if ~isempty(p.Results.strategy)
