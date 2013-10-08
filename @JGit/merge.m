@@ -8,7 +8,7 @@ function results = merge(include,varargin)
 %       Options are 'FF','FF_ONLY' and 'NO_FF'.
 %   'squash' <logical> [false] If true do not commit or move HEAD.
 %   'strategy' <MergeStrategy> Set the merge strategy to use. Options
-%       are 'OURS', 'RESOLVE', 'SIMPLE_TWO_WAY_IN_CORE' and 'THEIRS'.
+%       are 'OURS', 'RECURSIVE', 'RESOLVE', 'SIMPLE_TWO_WAY_IN_CORE' and 'THEIRS'.
 %   'gitDir' <char> [PWD] Applies to the repository in specified folder.
 %
 %   For more information see also
@@ -36,6 +36,7 @@ FF_ONLY = javaMethod('valueOf','org.eclipse.jgit.api.MergeCommand$FastForwardMod
 NO_FF = javaMethod('valueOf','org.eclipse.jgit.api.MergeCommand$FastForwardMode','NO_FF');
 %% Merge Strategies
 OURS = org.eclipse.jgit.merge.MergeStrategy.OURS;
+RECURSIVE = org.eclipse.jgit.merge.MergeStrategy.RECURSIVE;
 RESOLVE = org.eclipse.jgit.merge.MergeStrategy.RESOLVE;
 SIMPLE_TWO_WAY_IN_CORE = org.eclipse.jgit.merge.MergeStrategy.SIMPLE_TWO_WAY_IN_CORE;
 THEIRS = org.eclipse.jgit.merge.MergeStrategy.THEIRS;
@@ -82,6 +83,8 @@ if ~isempty(p.Results.strategy)
     switch upper(p.Results.strategy)
         case 'OURS'
             mergeCMD.setStrategy(OURS);
+        case 'RECURSIVE'
+            mergeCMD.setStrategy(RECURSIVE);
         case 'RESOLVE'
             mergeCMD.setStrategy(RESOLVE);
         case 'SIMPLE_TWO_WAY_IN_CORE'
@@ -90,7 +93,8 @@ if ~isempty(p.Results.strategy)
             mergeCMD.setStrategy(THEIRS);
         otherwise
             error('jgit:merge:badMergeStrategy', ...
-                'Stages are ''OURS'', ''RESOLVE'', ''SIMPLE_TWO_WAY_IN_CORE'' or ''THEIRS''.')
+                ['Stages are ''OURS'', ''RECURSIVE'', ''RESOLVE'',', ...
+                ' ''SIMPLE_TWO_WAY_IN_CORE'' or ''THEIRS''.'])
     end
 end
 %% call CMD

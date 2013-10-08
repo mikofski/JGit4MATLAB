@@ -68,9 +68,11 @@ switch cmd
             parsed_argopts = [argopts,parsed_argopts]; % char
         end
     case {'branch','br'}
+        %% branch
         cmd = 'branch';
         parsed_argopts = parseBranch(argopts);
     case {'checkout','co'}
+        %% checkout
         cmd = 'checkout';
         parsed_argopts = parseCheckout(argopts);
     case 'clone'
@@ -78,6 +80,7 @@ switch cmd
     case 'commit'
         parsed_argopts = parseCommit(argopts);
     case {'diff','difftool'}
+        %% diff/difftool
         difftool = strcmp(cmd,'difftool');
         cmd = 'diff';
         parsed_argopts = parseDiff(argopts,difftool);
@@ -88,14 +91,14 @@ switch cmd
     case 'log'
         parsed_argopts = parseLog(argopts);
     case 'merge'
-        parsed_argopts = parseLog(argopts);
+        parsed_argopts = parseMerge(argopts);
     case 'pull'
-        parsed_argopts = parseLog(argopts);
+        parsed_argopts = parsePull(argopts);
     case 'push'
-        parsed_argopts = parseLog(argopts);
+        parsed_argopts = parsePush(argopts);
     case {'status','st'}
-        cmd = 'status';
         %% status
+        cmd = 'status';
         parsed_argopts = {};
     otherwise
         error('jgit:noCommand', ...

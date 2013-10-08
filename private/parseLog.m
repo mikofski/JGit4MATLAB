@@ -5,7 +5,8 @@ parsed_argopts = {};
 %% options
 dictionary = { ...
     'maxCount',{'-n','--max-count'},false; ...
-    'skip',{'--skip'},false};
+    'skip',{'--skip'},false; ...
+    'all',{'--all'},true};
 [options,argopts] = parseOpts(argopts,dictionary);
 %% other options
 % filter other options and/or double-hyphen
@@ -31,8 +32,13 @@ end
 if ~isempty(path)
     parsed_argopts = [parsed_argopts,'path',path];
 end
+% all
+if options(1).('all')
+    parsed_argopts = [parsed_argopts,'all',true];
+end
 % revision range
-if numel(argopts)==1
+Nargopts = numel(argopts); % number of argopts
+if Nargopts==1
     range = regexp(argopts{1},'(?<since>.*)\.\.(?<until>.*)','names');
     if ~isempty(range)
         if ~isempty(range.since)
@@ -46,9 +52,22 @@ if numel(argopts)==1
     else
         parsed_argopts = [parsed_argopts,'add',argopts];
     end
-elseif numel(argopts)>1
+elseif Nargopts>1
     notRevIdx = strncmp('^',argopts,1);
     notRev = cellfun(@(x)x(2:end),argopts(notRevIdx),'UniformOutput',false);
-    parsed_argopts = [parsed_argopts,'not',notRev,'add',argopts(~notRevIdx)];
+    % pass notRev and revs as cell strings, if more than one
+    % don't add argument if notRev or revs is empty
+    numNotRev = numel(notRev); % number of ^REV
+    if numNotRev
+        parsed_argopts = [parsed_argopts,'not',{notRev}];
+    elseif numNotRev==1
+        parsed_argopts = [parsed_argopts,'not',notRev];
+    end
+    Nrevs = Nargopts-numNotRev; % number of revs to include w/o --not (or ^)
+    if Nrevs>1
+        parsed_argopts = [parsed_argopts,'add',{argopts(~notRevIdx)}];
+    elseif Nrevs==1
+        parsed_argopts = [parsed_argopts,'add',argopts(~notRevIdx)];
+    end
 end
 end
