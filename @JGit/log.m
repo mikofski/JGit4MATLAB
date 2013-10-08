@@ -61,11 +61,6 @@ elseif ~isempty(p.Results.since) && isempty(p.Results.until)
 elseif isempty(p.Results.since) && ~isempty(p.Results.until)
     start = repo.resolve(p.Results.until);
     logCMD.add(start);
-else
-    HEAD = repo.resolve('HEAD');
-    logCMD.add(HEAD);
-    % use `add()` instead of `all()` since it has problems with peeled tags
-    % see https://bugs.eclipse.org/bugs/show_bug.cgi?id=402025
 end
 %% set path
 if iscellstr(p.Results.path)
@@ -95,6 +90,9 @@ end
 if p.Results.all
     logCMD.all
 end
+%% no revision range
+% this is the default - mark traversal start at HEAD
+% end
 %% call
 revwalker = logCMD.call;
 %% display log
