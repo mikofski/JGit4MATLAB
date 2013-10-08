@@ -7,8 +7,9 @@ function log(varargin)
 %   'since' <char> [] Show log of newer commits since this commit.
 %   'until' <char> [] Show log of older commits until this commit.
 %   'path' <char|cellstr> [] Show log of files on specified paths.
-%   'not' <char> [] same as git --not start or ^start
-%   'start' <char> [] mark start of traversal, same a until start
+%   'not' <char> [] Same as git --not start or ^start.
+%   'start' <char> [] Mark start of traversal, same a until start
+%   'all' <logitcal> Add all refs as commits to start the graph traversal from.
 %   'gitDir' <char> [PWD] Specify the folder in which Git Repo resides.
 %
 %   For more information see also
@@ -33,6 +34,7 @@ p.addParamValue('until','',@(x)validateattributes(x,{'char'},{'row'}))
 p.addParamValue('path','',@(x)validatepaths(x))
 p.addParamValue('add','',@(x)validatepaths(x))
 p.addParamValue('not','',@(x)validatepaths(x))
+p.addParamValue('all',false,@(x)validateattributes(x,{'logical'},{'scalar'}))
 p.addParamValue('gitDir',pwd,@(x)validateattributes(x,{'char'},{'row'}))
 p.parse(varargin{:})
 gitDir = p.Results.gitDir;
@@ -88,6 +90,10 @@ if iscellstr(p.Results.not)
     end
 elseif ~isempty(p.Results.not)
     logCMD.not(repo.resolve(p.Results.not));
+end
+%% all
+if p.Results.all
+    logCMD.all
 end
 %% call
 revwalker = logCMD.call;

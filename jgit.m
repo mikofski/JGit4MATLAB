@@ -87,6 +87,12 @@ switch cmd
         parsed_argopts = parseInit(argopts);
     case 'log'
         parsed_argopts = parseLog(argopts);
+    case 'merge'
+        parsed_argopts = parseLog(argopts);
+    case 'pull'
+        parsed_argopts = parseLog(argopts);
+    case 'push'
+        parsed_argopts = parseLog(argopts);
     case {'status','st'}
         cmd = 'status';
         %% status
