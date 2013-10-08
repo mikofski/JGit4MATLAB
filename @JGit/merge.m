@@ -83,7 +83,7 @@ end
 %% set commit
 % default is true, only set if false
 if ~p.Results.commit
-    mergeCMD.setSquash(false);
+    mergeCMD.setCommit(false);
 end
 %% set fast forward mode
 if ~isempty(p.Results.strategy)
