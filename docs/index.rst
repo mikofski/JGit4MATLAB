@@ -9,13 +9,31 @@ JGit4MATLAB is a wrapper for `JGit <http://www.eclipse.org/jgit/>`_ in MATLAB.
 It is meant to be used in the MATLAB command window.
 
 Contents:
+---------
 
 .. toctree::
    :maxdepth: 2
 
    installation
+
+Usage
++++++
+
+.. toctree::
+   :maxdepth: 2
+
    usage/usage
+   usage/add
+
+Developers
+++++++++++
+
+.. toctree::
+   :maxdepth: 2
+
    developers/developers
+   developers/JGit/jgit
+   developers/JGit/jgit.add
 
 Indices and tables
 ==================
@@ -23,4 +41,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-

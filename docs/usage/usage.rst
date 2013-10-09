@@ -18,7 +18,7 @@ wrapper around the `JGit Git API
 
 Commands
 --------
-* add
+* :ref:`add`
 * branch
 * checkout
 * clone
