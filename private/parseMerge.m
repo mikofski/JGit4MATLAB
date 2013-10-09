@@ -18,15 +18,12 @@ dictionary = { ...
 [argopts] = filterOpts(argopts);
 %% parse
 % no argument or option checks - jgit checks args/opts
+% TODO: add abort otion
 % commit or no commit
 if options(1).('commit')
     parsed_argopts = [parsed_argopts,'commit',true];
 elseif options(1).('noCommit')
     parsed_argopts = [parsed_argopts,'commit',false];
-end
-% squash
-if options(1).('squash')
-    parsed_argopts = [parsed_argopts,'squash',true];
 end
 % FF mode
 if options(1).('fastForward')
@@ -38,4 +35,20 @@ elseif options(1).('noFastForward')
 elseif options(1).('onlyFastForward')
     % fast forward only
     parsed_argopts = [parsed_argopts,'fastForward','NO_FF'];
+end
+% squash
+if options(1).('squash')
+    parsed_argopts = [parsed_argopts,'squash',true];
+end
+% strategy
+if options(1).('strategy')
+    parsed_argopts = [parsed_argopts,'strategy',options(2).('strategy')];
+end
+% message
+if options(1).('message')
+    parsed_argopts = [parsed_argopts,'name',options(2).('message')];
+end
+% commit
+assert(numel(argopts)==1, 'jgit:parseMerge','Specify single commit to merge.')
+parsed_argopts = [argopts,parsed_argopts];
 end
