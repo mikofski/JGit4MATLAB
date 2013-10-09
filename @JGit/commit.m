@@ -38,6 +38,8 @@ p.parse(varargin{:})
 gitDir = p.Results.gitDir;
 gitAPI = JGit.getGitAPI(gitDir);
 commitCMD = gitAPI.commit;
+%% repository
+repo = gitAPI.getRepository;
 %% set all
 if p.Results.all
     commitCMD.setAll(true);
@@ -54,13 +56,16 @@ amendcommit = '';
 if p.Results.amend
     commitCMD.setAmend(true);
     logCMD = gitAPI.log;
-    repo = gitAPI.getRepository;
-    HEAD = repo.resolve('HEAD');
-    revCommit = logCMD.add(HEAD).setMaxCount(1).call;
-    % use `add()` instead of `all()` since it has problems with peeled tags
-    % see https://bugs.eclipse.org/bugs/show_bug.cgi?id=402025
-    % revCommit = logCMD.all.setMaxCount(1).call;
+    revCommit = logCMD.setMaxCount(1).call;
     amendcommit = char(revCommit.next.getFullMessage);
+end
+%% merge message
+if repo.getRepositoryState.equals(repo.getRepositoryState.MERGING_RESOLVED)
+    if isempty(amendcommit)
+        amendcommit = char(repo.readMergeCommitMsg);
+    else
+        amendcommit = [amendcommit,char(10),char(repo.readMergeCommitMsg)];
+    end
 end
 %% only
 if iscellstr(p.Results.only)
@@ -71,12 +76,16 @@ elseif ischar(p.Results.only)
     commitCMD.setOnly(p.Results.only);
 end
 %% nothing to commit
+% TODO: try replacing this with repo.getRepositoryState.canCheckout, &c.
 statusCall = gitAPI.status.call;
 if statusCall.isClean
     %% status message if clean
     fprintf('nothing to commit, working directory clean\n')
     return
 else
+    %% conflicting
+%     conflicting = statusCall.getConflicting; 
+    % FIXME: if conflicting and --all, need to change repo state
     %% staged files
     added = statusCall.getAdded;
     changed = statusCall.getChanged;
