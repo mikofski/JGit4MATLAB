@@ -1,0 +1,157 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Developers &mdash; JGit4MATLAB 0.6 (Falcon) documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.6 (Falcon)',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="JGit4MATLAB 0.6 (Falcon) documentation" href="../index.html" />
+    <link rel="next" title="JGit" href="JGit/jgit.html" />
+    <link rel="prev" title="Add" href="../usage/add.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../mat-modindex.html" title="MATLAB Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="JGit/jgit.html" title="JGit"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../usage/add.html" title="Add"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">JGit4MATLAB 0.6 (Falcon) documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="developers">
+<h1>Developers<a class="headerlink" href="#developers" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference internal" href="JGit/jgit.html#module-JGit4MATLAB" title="JGit4MATLAB"><tt class="xref mat mat-mod docutils literal"><span class="pre">JGit4MATLAB</span></tt></a> is composed of a single class, <a class="reference internal" href="JGit/jgit.html#JGit4MATLAB.JGit" title="JGit4MATLAB.JGit"><tt class="xref mat mat-class docutils literal"><span class="pre">JGit</span></tt></a>,
+and a collection of private functions called from <tt class="xref mat mat-func docutils literal"><span class="pre">jgit()</span></tt>.</p>
+<p>The <a class="reference internal" href="JGit/jgit.html#JGit4MATLAB.JGit" title="JGit4MATLAB.JGit"><tt class="xref mat mat-class docutils literal"><span class="pre">JGit</span></tt></a> class is a thin wrapper around the <a class="reference external" href="http://download.eclipse.org/jgit/docs/latest/apidocs/">JGit Git API</a>. It&#8217;s sole purpose is
+to port the JGit Git API Java classes and methods to MATLAB, and provide
+whatever additional support needed for this task.</p>
+<p>The <tt class="xref mat mat-func docutils literal"><span class="pre">jgit()</span></tt> function is meant to be used in the MATLAB command window. It
+parses a subset of Git commands for the interface expected by the
+<a class="reference internal" href="JGit/jgit.html#JGit4MATLAB.JGit" title="JGit4MATLAB.JGit"><tt class="xref mat mat-class docutils literal"><span class="pre">JGit</span></tt></a> class. Ideally, no new functionality should be
+introduced in the <tt class="xref mat mat-func docutils literal"><span class="pre">jgit()</span></tt> function; new functionality should be added to
+the <a class="reference internal" href="JGit/jgit.html#JGit4MATLAB.JGit" title="JGit4MATLAB.JGit"><tt class="xref mat mat-class docutils literal"><span class="pre">JGit</span></tt></a> class.</p>
+<div class="section" id="developing-new-jgit-methods">
+<h2>Developing new JGit methods<a class="headerlink" href="#developing-new-jgit-methods" title="Permalink to this headline">¶</a></h2>
+<p>There are many JGit and Git features that have not been ported to JGit4MATLAB.
+<a class="reference external" href="www.eclipse.org/jgit/">JGit</a> is rapidly changing project, so there are
+always new features to add or modify.</p>
+<p>Most of the <a class="reference internal" href="JGit/jgit.html#module-JGit4MATLAB" title="JGit4MATLAB"><tt class="xref mat mat-mod docutils literal"><span class="pre">JGit4MATLAB</span></tt></a> methods are derived from the JGit Porcelain Git
+API Commands classes, which correspond to Git commands such as <tt class="docutils literal"><span class="pre">add</span></tt>,
+<tt class="docutils literal"><span class="pre">branch</span></tt>, <tt class="docutils literal"><span class="pre">checkout</span></tt>, &amp;c. Each command (or JGit class) is a method in the
+<tt class="xref mat mat-class docutils literal"><span class="pre">JGit</span></tt> class. The methods are in separate files so the interface must be
+added to the main JGit file. The <tt class="xref mat mat-class docutils literal"><span class="pre">JGit</span></tt> class and all of its methods are
+located in a class folder called <tt class="docutils literal"><span class="pre">&#64;JGit</span></tt>.</p>
+<p>Each <tt class="xref mat mat-class docutils literal"><span class="pre">JGit</span></tt> class method corresponding to a JGit class or git command
+takes <tt class="docutils literal"><span class="pre">varargin</span></tt> and uses the builtin MATLAB inputparser class.</p>
+<p>Any Java constants and enumerations are derived up top. If necessary
+<tt class="docutils literal"><span class="pre">JavaMethod</span></tt> or <tt class="docutils literal"><span class="pre">JavaObject</span></tt> is used to reveal nested classes to MATLAB.</p>
+<p>Whenever possible JGit defaults are used and JGit exceptions are not caught. As
+much as possible, the <tt class="xref mat mat-class docutils literal"><span class="pre">JGit</span></tt> class is meant to be a very thin wrapper.</p>
+</div>
+<div class="section" id="parsing-new-git-commands">
+<h2>Parsing new Git commands<a class="headerlink" href="#parsing-new-git-commands" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Developers</a><ul>
+<li><a class="reference internal" href="#developing-new-jgit-methods">Developing new JGit methods</a></li>
+<li><a class="reference internal" href="#parsing-new-git-commands">Parsing new Git commands</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../usage/add.html"
+                        title="previous chapter">Add</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="JGit/jgit.html"
+                        title="next chapter">JGit</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/developers/developers.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../mat-modindex.html" title="MATLAB Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="JGit/jgit.html" title="JGit"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../usage/add.html" title="Add"
+             >previous</a> |</li>
+        <li><a href="../index.html">JGit4MATLAB 0.6 (Falcon) documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Mark Mikofski.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

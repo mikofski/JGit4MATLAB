@@ -1,0 +1,225 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>JGit &mdash; JGit4MATLAB 0.6 (Falcon) documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.6 (Falcon)',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="JGit4MATLAB 0.6 (Falcon) documentation" href="../../index.html" />
+    <link rel="next" title="JGit.add" href="jgit.add.html" />
+    <link rel="prev" title="Developers" href="../developers.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../mat-modindex.html" title="MATLAB Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="jgit.add.html" title="JGit.add"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../developers.html" title="Developers"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">JGit4MATLAB 0.6 (Falcon) documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <span class="target" id="module-JGit4MATLAB"><span id="jgit"></span></span><div class="section" id="id1">
+<h1>JGit<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="JGit4MATLAB.JGit">
+<em class="property">class </em><tt class="descclassname">JGit4MATLAB.</tt><tt class="descname">JGit</tt><a class="headerlink" href="#JGit4MATLAB.JGit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>The JGit class is a thin wrapper around the <a class="reference external" href="http://download.eclipse.org/jgit/docs/latest/apidocs/">JGit Git API</a>.</p>
+<div class="section" id="properties">
+<h2>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h2>
+<p>All of <a class="reference internal" href="#JGit4MATLAB.JGit" title="JGit4MATLAB.JGit"><tt class="xref mat mat-class docutils literal"><span class="pre">JGit</span></tt></a> properties are constant.</p>
+<blockquote>
+<div><dl class="attribute">
+<dt id="JGit4MATLAB.JGit.VALID">
+<tt class="descclassname">JGit.</tt><tt class="descname">VALID</tt><a class="headerlink" href="#JGit4MATLAB.JGit.VALID" title="Permalink to this definition">¶</a></dt>
+<dd><p>State of <a class="reference internal" href="#module-JGit4MATLAB" title="JGit4MATLAB"><tt class="xref mat mat-mod docutils literal"><span class="pre">JGit4MATLAB</span></tt></a>. True if state is valid. Calls
+<a class="reference internal" href="#JGit4MATLAB.JGit.validateJavaClassPath" title="JGit4MATLAB.JGit.validateJavaClassPath"><tt class="xref mat mat-meth docutils literal"><span class="pre">validateJavaClassPath()</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="JGit4MATLAB.JGit.EDITOR">
+<tt class="descclassname">JGit.</tt><tt class="descname">EDITOR</tt><a class="headerlink" href="#JGit4MATLAB.JGit.EDITOR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Editor used for commit messages. Calls
+<tt class="xref mat mat-meth docutils literal"><span class="pre">getEDITOR()</span></tt>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="JGit4MATLAB.JGit.GIT_DIR">
+<tt class="descclassname">JGit.</tt><tt class="descname">GIT_DIR</tt><a class="headerlink" href="#JGit4MATLAB.JGit.GIT_DIR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Git repository folder, set to <tt class="docutils literal"><span class="pre">.git</span></tt>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="JGit4MATLAB.JGit.JGIT">
+<tt class="descclassname">JGit.</tt><tt class="descname">JGIT</tt><a class="headerlink" href="#JGit4MATLAB.JGit.JGIT" title="Permalink to this definition">¶</a></dt>
+<dd><p>JGit package name, set to <tt class="docutils literal"><span class="pre">org.eclipse.jgit</span></tt>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="JGit4MATLAB.JGit.PROGRESSMONITOR">
+<tt class="descclassname">JGit.</tt><tt class="descname">PROGRESSMONITOR</tt><a class="headerlink" href="#JGit4MATLAB.JGit.PROGRESSMONITOR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Java jar package with <tt class="xref mat mat-mod docutils literal"><span class="pre">MATLABProgressMonitor</span></tt>, replaces <tt class="docutils literal"><span class="pre">\r</span></tt>
+with <tt class="docutils literal"><span class="pre">\b</span></tt> in progress reports.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="JGit4MATLAB.JGit.USERINFOSSHSESSIONFACTORY">
+<tt class="descclassname">JGit.</tt><tt class="descname">USERINFOSSHSESSIONFACTORY</tt><a class="headerlink" href="#JGit4MATLAB.JGit.USERINFOSSHSESSIONFACTORY" title="Permalink to this definition">¶</a></dt>
+<dd><p>Java jar package with <tt class="xref mat mat-mod docutils literal"><span class="pre">UserInfoSshSessionFactory</span></tt>, a custom
+SshSessionFactory, configures a CredentialProvider to provide SSH
+passphrase for Jsch, registers itself as the default SshSessionFactory
+instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="JGit4MATLAB.JGit.VERFILE">
+<tt class="descclassname">JGit.</tt><tt class="descname">VERFILE</tt><a class="headerlink" href="#JGit4MATLAB.JGit.VERFILE" title="Permalink to this definition">¶</a></dt>
+<dd><p>File storing JGit package version.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="JGit4MATLAB.JGit.VERSION">
+<tt class="descclassname">JGit.</tt><tt class="descname">VERSION</tt><a class="headerlink" href="#JGit4MATLAB.JGit.VERSION" title="Permalink to this definition">¶</a></dt>
+<dd><p>JGit version string.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="JGit4MATLAB.JGit.USERHOME">
+<tt class="descclassname">JGit.</tt><tt class="descname">USERHOME</tt><a class="headerlink" href="#JGit4MATLAB.JGit.USERHOME" title="Permalink to this definition">¶</a></dt>
+<dd><p>User home,  set to <a class="reference external" href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/util/FS.html#DETECTED">org.eclipse.jgit.util.FS.DETECTED.userHome</a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="JGit4MATLAB.JGit.GITCONFIG">
+<tt class="descclassname">JGit.</tt><tt class="descname">GITCONFIG</tt><a class="headerlink" href="#JGit4MATLAB.JGit.GITCONFIG" title="Permalink to this definition">¶</a></dt>
+<dd><p>Global git config file found in <a class="reference internal" href="#JGit4MATLAB.JGit.USERHOME" title="JGit4MATLAB.JGit.USERHOME"><tt class="xref mat mat-attr docutils literal"><span class="pre">USERHOME</span></tt></a>, set to <tt class="docutils literal"><span class="pre">.gitconfig</span></tt>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="JGit4MATLAB.JGit.JSCH_USERINFO">
+<tt class="descclassname">JGit.</tt><tt class="descname">JSCH_USERINFO</tt><a class="headerlink" href="#JGit4MATLAB.JGit.JSCH_USERINFO" title="Permalink to this definition">¶</a></dt>
+<dd><p>Global Jsch userinfo file with SSH passphrase, set to <tt class="docutils literal"><span class="pre">.jsch-userinfo</span></tt></p>
+</dd></dl>
+
+</div></blockquote>
+</div>
+<div class="section" id="methods">
+<h2>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<p>All of <a class="reference internal" href="#JGit4MATLAB.JGit" title="JGit4MATLAB.JGit"><tt class="xref mat mat-class docutils literal"><span class="pre">JGit</span></tt></a> methods are static.</p>
+<blockquote>
+<div><dl class="method">
+<dt id="JGit4MATLAB.JGit.validateJavaClassPath">
+<tt class="descclassname">JGit.</tt><tt class="descname">validateJavaClassPath</tt><big>(</big><big>)</big><a class="headerlink" href="#JGit4MATLAB.JGit.validateJavaClassPath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate MATLAB static Java class path. Returns true if the JGit
+package jar-file is in the &#64;JGit folder and on the MATLAB static Java
+class path. Downloads current version of JGit and/or adds it to the
+MATLAB static Java class path if false.</p>
+</dd></dl>
+
+</div></blockquote>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">JGit</a><ul>
+<li><a class="reference internal" href="#properties">Properties</a></li>
+<li><a class="reference internal" href="#methods">Methods</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../developers.html"
+                        title="previous chapter">Developers</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="jgit.add.html"
+                        title="next chapter">JGit.add</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/developers/JGit/jgit.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../mat-modindex.html" title="MATLAB Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="jgit.add.html" title="JGit.add"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../developers.html" title="Developers"
+             >previous</a> |</li>
+        <li><a href="../../index.html">JGit4MATLAB 0.6 (Falcon) documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Mark Mikofski.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

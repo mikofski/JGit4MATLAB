@@ -42,6 +42,7 @@ clean:
 	-rm -rf $(BUILDDIR)/*
 	mkdir $(BUILDDIR)/html
 	echo gitdir: ../../../.git/modules/docs/_build/html >> $(BUILDDIR)/html/.git
+    echo >> $(BUILDDIR)/html/.nojekyll
 
 html:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
