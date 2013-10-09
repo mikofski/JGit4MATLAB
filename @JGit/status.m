@@ -39,6 +39,31 @@ if statusCall.isClean
     %% status message if clean
     fprintf('nothing to commit, working directory clean\n')
 else
+    %% conflicting
+    conflicting = statusCall.getConflicting; % list of conflicting files
+    conflictingStageState = statusCall.getConflictingStageState; % map of conflicting files states
+    if ~conflicting.isEmpty
+        fprintf(fid,[ ...
+            '# You have unmerged paths.\n', ...
+            '#   (fix conflicts and run "git commit")\n', ...
+            '#\n', ...
+            '# Unmerged paths:\n', ...
+            '#   (use "git add <file>..." to mark resolution)\n', ...
+            '#\n']);
+        if fid==1
+            fmtStr = '#       <a href="matlab: edit(''%s'')">%s: %15s</a>\n';
+        else
+            fmtStr = '#       %s: %15s\n';
+        end
+        iter = conflictingStageState.entrySet.iterator;
+        for n = 1:conflicting.size
+            item = iter.next;
+            value = lower(char(item.getValue.toString));key = item.getKey;
+            if fid==1;str = {key,value,key};else str = {value,key};end
+            fprintf(fid,fmtStr,str{:});
+        end
+        fprintf(fid,'#\n');
+    end
     %% staged files
     added = statusCall.getAdded;
     changed = statusCall.getChanged;
@@ -96,7 +121,7 @@ else
         fprintf(fid,[ ...
             '#   (use "git checkout -- <file>..." to discard changes in working directory)\n', ...
             '#\n']);
-        if fid==1,fid = 2;end
+        if fid==1,fid = 2;end % print in red
         fmtStr = '#       modified:   %s\n';
         iter = modified.iterator;
         for n = 1:modified.size
@@ -118,7 +143,7 @@ else
             '#   (use "git add <file>..." to include in what will be committed)\n', ...
             '#\n']);
         fmtStr = '#       %s\n';
-        if fid==1,fid = 2;end
+        if fid==1,fid = 2;end % print in red
         iter = untracked.iterator;
         for n = 1:untracked.size
             fprintf(fid,fmtStr,iter.next);
@@ -126,6 +151,8 @@ else
         if fid==2,fid = 1;end
         fprintf(fid,'#\n');
     end
+    %% summary line
+    % only add to status call, not to commit message
     if added.isEmpty && changed.isEmpty && removed.isEmpty
         if ~modified.isEmpty || ~missing.isEmpty
             if fid==1
