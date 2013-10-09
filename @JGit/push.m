@@ -19,7 +19,7 @@ function push(varargin)
 %   Example:
 %       JGIT.PUSH('ref','feature') % push 'feature' ref to default remote
 %       JGIT.PUSH('ref','fad9663b23d59332fd5387ba6f506c54167a6707')
-%       JGIT.PUSH('ref','feature', 'setRemote', 'upstream') % push upstream
+%       JGIT.PUSH('ref','feature', 'remote', 'upstream') % push upstream
 %       JGIT.PUSH('ref','feature','setForce',true) % force push master to default
 %
 %   See also JGIT, COMMIT
