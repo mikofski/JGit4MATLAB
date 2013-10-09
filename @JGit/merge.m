@@ -29,8 +29,17 @@ function results = merge(include,varargin)
 %
 %   Copyright (c) 2013 Mark Mikofski
 
+%% Tasks
+% TODO: include should be paramValue, not required, and should be char or
+% cellstring, even though JGit can't do octopus now, it may in future, and
+% making include optional will make adding abort easier, since abort has no
+% arguments.
+% TODO: add --abort option. Check repository state, MERGING? then use
+% 'git reset --hard HEAD'
 %% constants
 % TODO: move all constants to JGIT class definition.
+% Merge status
+CONFLICTING = javaMethod('valueOf','org.eclipse.jgit.api.MergeResult$MergeStatus','CONFLICTING');
 % Fast Forward Modes
 FF = javaMethod('valueOf','org.eclipse.jgit.api.MergeCommand$FastForwardMode','FF');
 FF_ONLY = javaMethod('valueOf','org.eclipse.jgit.api.MergeCommand$FastForwardMode','FF_ONLY');
@@ -100,7 +109,7 @@ if ~isempty(p.Results.strategy)
             mergeCMD.setStrategy(THEIRS);
         otherwise
             error('jgit:merge:badMergeStrategy', ...
-                ['Stages are ''OURS'', ''RECURSIVE'', ''RESOLVE'',', ...
+                ['Valid strategies: ''OURS'', ''RECURSIVE'', ''RESOLVE'',', ...
                 ' ''SIMPLE_TWO_WAY_IN_CORE'' or ''THEIRS''.'])
     end
 end
@@ -111,4 +120,39 @@ fprintf('%s\n',char(mergeResult.getMergeStatus))
 if nargout>0
     results = mergeResult;
 end
+%% status
+s = mergeResult.getMergeStatus;
+if s.isSuccessful
+    return
+elseif s.equals(CONFLICTING)
+    % get conflicts
+    conflicts = mergeResult.getConflicts; % hashmap of paths: [mergeConflict][line#]
+    paths = conflicts.keySet.toArray; % array of paths with conflicts
+    % write a BASE file if it exists
+    base = mergeResult.getBase; % RevCommit common base for merged commits
+    baseTree = base.getTree; % RevTree
+    mergeCommits = mergeResult.getMergedCommits; % array of RevCommits of merged commits
+    local = mergeCommits(1);remote = mergeCommits(2); % RevCommit, assume [local,remove]
+    localTree = local.getTree;remoteTree = remote.getTree; % RevTree
+    for p = 1:numel(paths)
+        % base paths
+        writeConflictPath(repo,paths(p),baseTree,'BASE');
+        % local paths
+        writeConflictPath(repo,paths(p),localTree,'LOCAL');
+        % remote paths
+        writeConflictPath(repo,paths(p),remoteTree,'REMOTE');
+        % backup conflict markers
+        copyfile(paths(p),[paths(p),'.orig']);
+    end
+end
+end
+
+function writeConflictPath(repo,path,tree,commit)
+treewalk = org.eclipse.jgit.treewalk.TreeWalk.forPath(repo,path,tree);
+fileOS = java.io.FileOutputStream([path,'.',commit]);
+if ~isempty(treewalk)
+    repo.open(treewalk.getObjectId(0)).copyTo(fileOS)
+end
+% if treewalk is empty, path is /dev/null, so file is empty
+fileOS.close;
 end
