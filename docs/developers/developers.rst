@@ -32,5 +32,11 @@ located in a class folder called ``@JGit``.
 Each :class:`JGit` class method corresponding to a JGit class or git command
 takes ``varargin`` and uses the builtin MATLAB inputparser class.
 
-Any Java constants and enumerations are derived up top, using ``JavaMethod`` or
-``JavaObject``
+Any Java constants and enumerations are derived up top. If necessary
+``JavaMethod`` or ``JavaObject`` is used to reveal nested classes to MATLAB.
+
+Whenever possible JGit defaults are used and JGit exceptions are not caught. As
+much as possible, the :class:`JGit` class is meant to be a very thin wrapper.
+
+Parsing new Git commands
+------------------------
