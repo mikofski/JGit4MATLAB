@@ -1,126 +1,140 @@
-<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>JGit4MATLAB by mikofski</title>
 
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="javascripts/scale.fix.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Welcome to JGit4MATLAB’s documentation! &mdash; JGit4MATLAB 0.6 (Falcon) documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.6 (Falcon)',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="JGit4MATLAB 0.6 (Falcon) documentation" href="#" />
+    <link rel="next" title="Installation" href="installation.html" /> 
   </head>
   <body>
-    <div class="wrapper">
-      <header>
-        <h1 class="header">JGit4MATLAB</h1>
-        <p class="header">JGit wrapper for MATLAB</p>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="installation.html" title="Installation"
+             accesskey="N">next</a> |</li>
+        <li><a href="#">JGit4MATLAB 0.6 (Falcon) documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
 
-        <ul>
-          <li class="download"><a class="buttons" href="https://github.com/mikofski/JGit4MATLAB/zipball/master">Download ZIP</a></li>
-          <li class="download"><a class="buttons" href="https://github.com/mikofski/JGit4MATLAB/tarball/master">Download TAR</a></li>
-          <li><a class="buttons github" href="https://github.com/mikofski/JGit4MATLAB">View On GitHub</a></li>
-        </ul>
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="welcome-to-jgit4matlab-s-documentation">
+<h1>Welcome to JGit4MATLAB&#8217;s documentation!<a class="headerlink" href="#welcome-to-jgit4matlab-s-documentation" title="Permalink to this headline">¶</a></h1>
+<p>JGit4MATLAB is a wrapper for <a class="reference external" href="http://www.eclipse.org/jgit/">JGit</a> in MATLAB.
+It is meant to be used in the MATLAB command window.</p>
+<p>Contents:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#user-info">User Info</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#ssh">SSH</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="usage/usage.html">Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="usage/usage.html#commands">Commands</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="usage/add.html">Add</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="usage/add.html#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="developers/developers.html">Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developers/jgit.add.html">JGit.add</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><em>Index</em></a></li>
+<li><a class="reference internal" href="mat-modindex.html"><em>Module Index</em></a></li>
+<li><a class="reference internal" href="search.html"><em>Search Page</em></a></li>
+</ul>
+</div>
 
-        <p class="header">This project is maintained by <a class="header name" href="https://github.com/mikofski">mikofski</a></p>
 
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Welcome to JGit4MATLAB&#8217;s documentation!</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
 
-      </header>
-      <section>
-        <h1>
-<a name="jgit4matlab" class="anchor" href="#jgit4matlab"><span class="octicon octicon-link"></span></a>JGit4MATLAB</h1>
-
-<p>JGit4MATLAB is a wrapper for JGit in MATLAB. It is meant to be used from the
-command line.</p>
-
-<h1>
-<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h1>
-
-<p>Download the full zip-file from <a href="http://www.mathworks.com/matlabcentral/fileexchange/">MATLAB Central File Exchange</a>, extract to your working
-MATLAB folder, usually <code>C:\Users\&lt;username&gt;\Documents\MATLAB</code> and type <code>JGit</code>.
-This will download the latest version of JGit and edit your Java class path file
-called <code>javaclasspath.txt</code> that is also in your MATLAB working folder, making a
-copy called <code>javaclasspath.txt.JGitSaved</code> of <code>javaclasspath.txt</code> if it already exists.</p>
-
-<p>After this you must restart MATLAB for the changes to your MATLAB Java static
-class path to take effect.</p>
-
-<h1>
-<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h1>
-
-<p>In general usage is the same as in <a href="http://git-scm.com/docs/git-help">Git</a> and
-<a href="http://download.eclipse.org/jgit/docs/latest/apidocs/"><code>org.eclipse.jgit.api.Git</code></a>.</p>
-
-<h2>
-<a name="add" class="anchor" href="#add"><span class="octicon octicon-link"></span></a>Add</h2>
-
-<p>Stage files to git repo.</p>
-
-<pre><code>JGit.add('file')
-JGit.add({'list','of','files'})
-</code></pre>
-
-<h2>
-<a name="commit" class="anchor" href="#commit"><span class="octicon octicon-link"></span></a>Commit</h2>
-
-<p>Commit files to git repo. Any combination of commands will work. If <code>getenv('EDITOR')</code>
-is empty then <code>notepad</code> is used. An empty commit message throws a Java JGit exception.</p>
-
-<pre><code>JGit.commit
-JGit.commit('all',true)
-JGit.commit('message','your commit message')
-JGit.commit('amend',true)
-JGit.commit('author',{'name','email'})
-JGit.commit('committer',{'name','email'})
-</code></pre>
-
-<h2>
-<a name="log" class="anchor" href="#log"><span class="octicon octicon-link"></span></a>Log</h2>
-
-<p>Return commit log. Any combination of commands will work. Commits are entered as strings which can be SHA1 of the commit, HEAD~N, where N is the number of commits from HEAD or as refs/heads/branch, where branch is the branch of the commit. You can use 'since' and 'until' independently or together. 'Since' shows commits newer than a given commit, and 'until' shows older commits. Commits are always shown from newest to oldest. Push the enter key to advance and q+enter to quit.</p>
-
-<pre><code>JGit.log
-JGit.log('maxCount',number_of_commits_to_show)
-JGit.log('since','commit_to_start')
-JGit.log('until','commit_to_stop')
-JGit.log('skip',number_of_commits_to_skip)
-</code></pre>
-
-<h2>
-<a name="status" class="anchor" href="#status"><span class="octicon octicon-link"></span></a>Status</h2>
-
-<p>Return status of git repo. Staged files are links which will open them in the MATLAB editor.</p>
-
-<pre><code>JGit.status
-</code></pre>
-
-<h2>
-<a name="other" class="anchor" href="#other"><span class="octicon octicon-link"></span></a>Other</h2>
-
-<p>Create an <code>org.eclipse.jgit.api.Git</code> instance. With this you can do almost
-anything. EG: <code>git.reset.setRef('HEAD').addPath('JGit.m').call</code> will unstage the
-file <code>JGit.m</code> from the current commit.</p>
-
-<pre><code>git = JGit.getGitAPI
-</code></pre>
-
-<h1>
-<a name="todo" class="anchor" href="#todo"><span class="octicon octicon-link"></span></a>TODO</h1>
-
-<p>There are many porcelain functions that would be quick to implement: <code>help</code>, <code>init</code>, <code>clone</code>,<code>reset</code>, <code>push</code>, <code>pull</code>, etc. All functions should call the getGitAPI class function. Then they can use that instance to do whatever. For other methods, use the appropriate org.eclipse.jgit package directly.</p>
-
-<p>A GUI to mimic gitk and git-gui. GUI options for some porcelain commands like log might also be nice. A log GUI that shows a banch graph would be especially nice.</p>
-
-<p>Contributions are welcome. Please make fork and send me your pull requests. I will add your name to the AUTHOR list to credit you for your contribution.</p>
-      </section>
-      <footer>
-        <p><small>Hosted on <a href="http://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
-      </footer>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="installation.html"
+                        title="next chapter">Installation</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/index.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
     </div>
-    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
-		
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="installation.html" title="Installation"
+             >next</a> |</li>
+        <li><a href="#">JGit4MATLAB 0.6 (Falcon) documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Mark Mikofski.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
   </body>
 </html>
