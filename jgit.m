@@ -93,7 +93,14 @@ switch cmd
     case 'merge'
         parsed_argopts = parseMerge(argopts);
     case 'pull'
-        parsed_argopts = parsePull(argopts);
+        %% pull
+        % rebase
+        rebase = strcmp('-r',argopts) | strcmp('--rebase',argopts);
+        if any(rebase)
+            parsed_argopts = {'setRebase',true};
+        else
+            parsed_argopts = {};
+        end
     case 'push'
         parsed_argopts = parsePush(argopts);
     case {'status','st'}
