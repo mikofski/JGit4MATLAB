@@ -2,7 +2,7 @@
 
 Add
 ===
-Add file contents to the index::
+Add file contents to the index ::
 
     jgit add [-u|--update] [<pathspec>...]
 
@@ -12,7 +12,7 @@ Stage files to git repo. ::
 
     jgit add file1 file2 file3
 
-Using class :ref:`jgit.add` method.
+Using class :ref:`jgit.add` method. ::
 
     JGit.add({'file1','file2,'file3'})
 

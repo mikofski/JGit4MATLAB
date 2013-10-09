@@ -19,7 +19,7 @@ Set your global gitconfig user name and email using the following::
 
     jgit setUserInfo '<John Doe>' <John.Doe@email.com>
 
-You can retrieve your global gitconfig settings as well::
+You can retrieve your global gitconfig settings as well. ::
 
     [name,email] = JGit.getUserInfo
 
