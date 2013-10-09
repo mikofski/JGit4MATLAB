@@ -92,7 +92,7 @@ if ~isempty(p.Results.path)
     treefilter = pathfilter.createFromStrings(p.Results.path);
     diffCMD.setPathFilter(treefilter);
 end
-%% set Outpit stream
+%% set Output stream
 % TODO: wrap with buffered writer or string builder for very large files
 DIFF_FILE = fullfile(TMP_DIFF_DIR,[p.Results.previous,'-',p.Results.updated,'.diff']);
 diffFileOS = java.io.FileOutputStream(DIFF_FILE);
@@ -127,7 +127,7 @@ if ~diffs.isEmpty
             oldMode = char(diffs.get(n-1).getOldMode);
             newPath = char(diffs.get(n-1).getNewPath);
             newMode = char(diffs.get(n-1).getNewMode);
-            fprintf('%-10s %25s (%6s) --> %25s (%6s)\n', ...
+            fprintf('%-10s %15s (%6s) --> %15s (%6s)\n', ...
                 changeType,oldPath,oldMode,newPath,newMode)
         end
     else
