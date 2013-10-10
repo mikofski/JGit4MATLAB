@@ -7,7 +7,7 @@ and a collection of private functions called from :func:`jgit`.
 
 The :class:`~JGit4MATLAB.JGit` class is a thin wrapper around the `JGit Git API
 <http://download.eclipse.org/jgit/docs/latest/apidocs/>`_. It's sole purpose is
-to port the JGit Git API Java classes and methods to MATLAB, and provide
+to port the JGit Git API Java classes and methods to MATLAB and to provide
 whatever additional support needed for this task.
 
 The :func:`jgit` function is meant to be used in the MATLAB command window. It
@@ -51,13 +51,13 @@ fullname of the command or :class:`JGit` won't recognize it. Then call the
 parsing function.
 
 Parsing functions live in a private folder so that they will always be on the
-same path as :func:`jgit` and :class:`JGit`. Each funciton is called
+same path as :func:`jgit` and :class:`JGit`. Each function is called
 ``parseXx.m`` in camelCase where ``Xx`` is the command. *EG: checkout is*
 ``parseCheckout.m``.
 
-The parsing functions are passed in all of the arguments and options called
-``argopts`` and return ``parsed_argopts``, which is a cell array suitable for
-the corresponding method in :class:`JGit`.
+The parsing functions are passed all of the arguments and options, collectively
+called ``argopts``, and return ``parsed_argopts``, which is a cell array
+suitable for the corresponding method in :class:`JGit`.
 
 Each parsing function has a dictionary of Git command line options. For
 example, the dictionary for ``parseCheckout.m`` is as follows::
@@ -82,10 +82,10 @@ the options in the dictionary are in ``argopts``. Identified options are
 returned as ``options`` and popped from ``argopts``. Next :func:`filterOpts` is
 used to scan for a double-hyphen, which is often used in Git to separate paths
 from references. If :func:`filterOpts` second output argument is ``paths`` then
-any ``argopts`` left of the double-hyphen, if it is present, are returned as
+any ``argopts`` right of the double-hyphen, if present, are returned as
 ``paths`` and popped from ``argopts``. Otherwise ``argopts`` contains all of
 arguments minus the double-hyphen if present. A warning is given by
-:func:`filterOpts`if any options (preceded by single or double dash) are still
+:func:`filterOpts` if any options (preceded by single or double dash) are still
 present in ``argopts`` after passing through :func:`parseOpts`. These are
 options that were not in the dictionary.
 
@@ -116,4 +116,6 @@ Unittest framework
 
 Documentation
 -------------
-
+These documents were created using `Sphinx <http://www.sphinx.org>`_ with the
+`MATLAB Sphinx domain
+<https://pypi.python.org/pypi/sphinxcontrib-matlabdomain/0.1dev-20130620>`_.

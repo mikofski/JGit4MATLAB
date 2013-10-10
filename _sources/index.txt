@@ -8,8 +8,8 @@ Welcome to JGit4MATLAB's documentation!
 JGit4MATLAB is a wrapper for `JGit <http://www.eclipse.org/jgit/>`_ in MATLAB.
 It is meant to be used in the MATLAB command window.
 
-Contents:
----------
+Quickstart
+----------
 
 .. toctree::
    :maxdepth: 2
@@ -17,7 +17,7 @@ Contents:
    installation
 
 Usage
-+++++
+-----
 
 .. toctree::
    :maxdepth: 2
@@ -26,7 +26,7 @@ Usage
    usage/add
 
 Developers
-++++++++++
+----------
 
 .. toctree::
    :maxdepth: 2
