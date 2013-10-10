@@ -85,6 +85,74 @@ much as possible, the <tt class="xref mat mat-class docutils literal"><span clas
 </div>
 <div class="section" id="parsing-new-git-commands">
 <h2>Parsing new Git commands<a class="headerlink" href="#parsing-new-git-commands" title="Permalink to this headline">¶</a></h2>
+<p>As new features are added to the <tt class="xref mat mat-class docutils literal"><span class="pre">JGit</span></tt> class, new parsing functions
+should be added to the private JGit4MATLAB folder and to the
+<tt class="xref mat mat-func docutils literal"><span class="pre">jgit()</span></tt> function.</p>
+<p>The parse functions are added to <tt class="xref mat mat-func docutils literal"><span class="pre">jgit()</span></tt> in a <tt class="docutils literal"><span class="pre">switch-case</span></tt> block, that
+switches cases based on the command initially parsed from the command window.
+Aliases may be added as extra cases, but make sure to set the cmd to the
+fullname of the command or <tt class="xref mat mat-class docutils literal"><span class="pre">JGit</span></tt> won&#8217;t recognize it. Then call the
+parsing function.</p>
+<p>Parsing functions live in a private folder so that they will always be on the
+same path as <tt class="xref mat mat-func docutils literal"><span class="pre">jgit()</span></tt> and <tt class="xref mat mat-class docutils literal"><span class="pre">JGit</span></tt>. Each funciton is called
+<tt class="docutils literal"><span class="pre">parseXx.m</span></tt> in camelCase where <tt class="docutils literal"><span class="pre">Xx</span></tt> is the command. <em>EG: checkout is</em>
+<tt class="docutils literal"><span class="pre">parseCheckout.m</span></tt>.</p>
+<p>The parsing functions are passed in all of the arguments and options called
+<tt class="docutils literal"><span class="pre">argopts</span></tt> and return <tt class="docutils literal"><span class="pre">parsed_argopts</span></tt>, which is a cell array suitable for
+the corresponding method in <tt class="xref mat mat-class docutils literal"><span class="pre">JGit</span></tt>.</p>
+<p>Each parsing function has a dictionary of Git command line options. For
+example, the dictionary for <tt class="docutils literal"><span class="pre">parseCheckout.m</span></tt> is as follows:</p>
+<div class="highlight-python"><pre>%% options
+dictionary = { ...
+    'force',{'-f','--force'},true; ...
+    'newBranch',{'-b'},true; ...
+    'forceNew',{'-B'},true; ...
+    'ours',{'--ours'},true; ...
+    'theirs',{'--theirs'},true; ...
+    'set_upstream',{'--set-upstream'},true; ...
+    'track',{'-t','--track'},true; ...
+    'no_track',{'--no-track'},true};</pre>
+</div>
+<p>The size of the dictionary is N x 3 for N options. The first column is a unique
+name the option will be called only within the parsing function, the 2nd column
+is a cell string of Git command options, and the 3rd column is a logical to
+indicate if the option is logical, <em>IE: true or false</em>. The dictionary and
+<tt class="docutils literal"><span class="pre">argopts</span></tt> are first filtered through <tt class="xref mat mat-func docutils literal"><span class="pre">parseOpts()</span></tt> to determine if any of
+the options in the dictionary are in <tt class="docutils literal"><span class="pre">argopts</span></tt>. Identified options are
+returned as <tt class="docutils literal"><span class="pre">options</span></tt> and popped from <tt class="docutils literal"><span class="pre">argopts</span></tt>. Next <tt class="xref mat mat-func docutils literal"><span class="pre">filterOpts()</span></tt> is
+used to scan for a double-hyphen, which is often used in Git to separate paths
+from references. If <tt class="xref mat mat-func docutils literal"><span class="pre">filterOpts()</span></tt> second output argument is <tt class="docutils literal"><span class="pre">paths</span></tt> then
+any <tt class="docutils literal"><span class="pre">argopts</span></tt> left of the double-hyphen, if it is present, are returned as
+<tt class="docutils literal"><span class="pre">paths</span></tt> and popped from <tt class="docutils literal"><span class="pre">argopts</span></tt>. Otherwise <tt class="docutils literal"><span class="pre">argopts</span></tt> contains all of
+arguments minus the double-hyphen if present. A warning is given by
+<tt class="xref mat mat-func docutils literal"><span class="pre">filterOpts`if</span> <span class="pre">any</span> <span class="pre">options</span> <span class="pre">(preceded</span> <span class="pre">by</span> <span class="pre">single</span> <span class="pre">or</span> <span class="pre">double</span> <span class="pre">dash)</span> <span class="pre">are</span> <span class="pre">still</span>
+<span class="pre">present</span> <span class="pre">in</span> <span class="pre">``argopts`()</span></tt> after passing through <tt class="xref mat mat-func docutils literal"><span class="pre">parseOpts()</span></tt>. These are
+options that were not in the dictionary.</p>
+<p>Two helper functions in <tt class="xref mat mat-func docutils literal"><span class="pre">jgit()</span></tt> take care of equalsigns and integers in
+options. <tt class="xref mat mat-func docutils literal"><span class="pre">splitEqualSigns()</span></tt> removes equalsigns which are sometimes used in
+long options (preceded by double dash) to pass an option-argument, <em>EG:</em>
+<tt class="docutils literal"><span class="pre">--name=&lt;name&gt;</span></tt>, but which Git doesn&#8217;t care about. <tt class="xref mat mat-func docutils literal"><span class="pre">splitShortOptions()</span></tt>
+takes care of clustered short options (preceded by single dash) and integer
+option arguments, <em>EG:</em> <tt class="docutils literal"><span class="pre">git</span> <span class="pre">commit</span> <span class="pre">-am</span> <span class="pre">'my</span> <span class="pre">message'</span></tt> <em>and</em>
+<tt class="docutils literal"><span class="pre">git</span> <span class="pre">tag</span> <span class="pre">-ln100</span></tt>. If these helper functions are working you shouldn&#8217;t have to
+use them, but it&#8217;s important to know that equalsigns are removed, separating
+the option from its argument, clustered short options are separated, and
+integer arguments are separated from their short options. If an interger
+argument is given as an option, <em>IE:</em> <tt class="docutils literal"><span class="pre">git</span> <span class="pre">log</span> <span class="pre">-10</span></tt> then option is omitted,
+there isn&#8217;t an option anyway, and only the integer is returned in <tt class="docutils literal"><span class="pre">argopts</span></tt>.
+Since the rest of <tt class="docutils literal"><span class="pre">argopts</span></tt> are strings, it should be easy to find.</p>
+<p>Every parsed command has an entry in <tt class="xref mat mat-func docutils literal"><span class="pre">jgit_help()</span></tt> which is prints thes
+subset of git commands available, the command syntax and any other basic
+relevant info. These are displayed whenever <tt class="docutils literal"><span class="pre">jgit</span> <span class="pre">help</span> <span class="pre">&lt;command&gt;</span></tt> is used and
+should be relatively short.</p>
+</div>
+<div class="section" id="unittests">
+<h2>Unittests<a class="headerlink" href="#unittests" title="Permalink to this headline">¶</a></h2>
+<p>There should be unittests for as many changes as possible, using the <a class="reference external" href="http://www.mathworks.com/help/matlab/matlab-unit-test-framework.html">MATLAB
+Unittest framework</a>.</p>
+</div>
+<div class="section" id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 
@@ -99,6 +167,8 @@ much as possible, the <tt class="xref mat mat-class docutils literal"><span clas
 <li><a class="reference internal" href="#">Developers</a><ul>
 <li><a class="reference internal" href="#developing-new-jgit-methods">Developing new JGit methods</a></li>
 <li><a class="reference internal" href="#parsing-new-git-commands">Parsing new Git commands</a></li>
+<li><a class="reference internal" href="#unittests">Unittests</a></li>
+<li><a class="reference internal" href="#documentation">Documentation</a></li>
 </ul>
 </li>
 </ul>

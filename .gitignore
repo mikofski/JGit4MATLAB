@@ -2,10 +2,9 @@ org.eclipse.jgit.jar
 jsch-0.1.50.jar
 *.orig
 *.zip
+!tests/testRepo.zip
 *.png
-jgit.misc
 version
 @JGit/older-versions
-README.html
-JGIT4MATLAB.sublime-project
-JGIT4MATLAB.sublime-workspace
+*.sublime-project
+*.sublime-workspace
