@@ -17,7 +17,7 @@ User Info
 ---------
 Set your global gitconfig user name and email using the following::
 
-    jgit setUserInfo '<John Doe>' <John.Doe@email.com>
+    jgit setUserInfo '<name>' <email@address.com>
 
 You can retrieve your global gitconfig settings as well. ::
 

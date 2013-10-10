@@ -58,7 +58,7 @@
 <p><a class="reference internal" href="JGit/jgit.html#module-JGit4MATLAB" title="JGit4MATLAB"><tt class="xref mat mat-mod docutils literal"><span class="pre">JGit4MATLAB</span></tt></a> is composed of a single class, <a class="reference internal" href="JGit/jgit.html#JGit4MATLAB.JGit" title="JGit4MATLAB.JGit"><tt class="xref mat mat-class docutils literal"><span class="pre">JGit</span></tt></a>,
 and a collection of private functions called from <tt class="xref mat mat-func docutils literal"><span class="pre">jgit()</span></tt>.</p>
 <p>The <a class="reference internal" href="JGit/jgit.html#JGit4MATLAB.JGit" title="JGit4MATLAB.JGit"><tt class="xref mat mat-class docutils literal"><span class="pre">JGit</span></tt></a> class is a thin wrapper around the <a class="reference external" href="http://download.eclipse.org/jgit/docs/latest/apidocs/">JGit Git API</a>. It&#8217;s sole purpose is
-to port the JGit Git API Java classes and methods to MATLAB, and provide
+to port the JGit Git API Java classes and methods to MATLAB and to provide
 whatever additional support needed for this task.</p>
 <p>The <tt class="xref mat mat-func docutils literal"><span class="pre">jgit()</span></tt> function is meant to be used in the MATLAB command window. It
 parses a subset of Git commands for the interface expected by the
@@ -94,12 +94,12 @@ Aliases may be added as extra cases, but make sure to set the cmd to the
 fullname of the command or <tt class="xref mat mat-class docutils literal"><span class="pre">JGit</span></tt> won&#8217;t recognize it. Then call the
 parsing function.</p>
 <p>Parsing functions live in a private folder so that they will always be on the
-same path as <tt class="xref mat mat-func docutils literal"><span class="pre">jgit()</span></tt> and <tt class="xref mat mat-class docutils literal"><span class="pre">JGit</span></tt>. Each funciton is called
+same path as <tt class="xref mat mat-func docutils literal"><span class="pre">jgit()</span></tt> and <tt class="xref mat mat-class docutils literal"><span class="pre">JGit</span></tt>. Each function is called
 <tt class="docutils literal"><span class="pre">parseXx.m</span></tt> in camelCase where <tt class="docutils literal"><span class="pre">Xx</span></tt> is the command. <em>EG: checkout is</em>
 <tt class="docutils literal"><span class="pre">parseCheckout.m</span></tt>.</p>
-<p>The parsing functions are passed in all of the arguments and options called
-<tt class="docutils literal"><span class="pre">argopts</span></tt> and return <tt class="docutils literal"><span class="pre">parsed_argopts</span></tt>, which is a cell array suitable for
-the corresponding method in <tt class="xref mat mat-class docutils literal"><span class="pre">JGit</span></tt>.</p>
+<p>The parsing functions are passed all of the arguments and options, collectively
+called <tt class="docutils literal"><span class="pre">argopts</span></tt>, and return <tt class="docutils literal"><span class="pre">parsed_argopts</span></tt>, which is a cell array
+suitable for the corresponding method in <tt class="xref mat mat-class docutils literal"><span class="pre">JGit</span></tt>.</p>
 <p>Each parsing function has a dictionary of Git command line options. For
 example, the dictionary for <tt class="docutils literal"><span class="pre">parseCheckout.m</span></tt> is as follows:</p>
 <div class="highlight-python"><pre>%% options
@@ -122,11 +122,11 @@ the options in the dictionary are in <tt class="docutils literal"><span class="p
 returned as <tt class="docutils literal"><span class="pre">options</span></tt> and popped from <tt class="docutils literal"><span class="pre">argopts</span></tt>. Next <tt class="xref mat mat-func docutils literal"><span class="pre">filterOpts()</span></tt> is
 used to scan for a double-hyphen, which is often used in Git to separate paths
 from references. If <tt class="xref mat mat-func docutils literal"><span class="pre">filterOpts()</span></tt> second output argument is <tt class="docutils literal"><span class="pre">paths</span></tt> then
-any <tt class="docutils literal"><span class="pre">argopts</span></tt> left of the double-hyphen, if it is present, are returned as
+any <tt class="docutils literal"><span class="pre">argopts</span></tt> right of the double-hyphen, if present, are returned as
 <tt class="docutils literal"><span class="pre">paths</span></tt> and popped from <tt class="docutils literal"><span class="pre">argopts</span></tt>. Otherwise <tt class="docutils literal"><span class="pre">argopts</span></tt> contains all of
 arguments minus the double-hyphen if present. A warning is given by
-<tt class="xref mat mat-func docutils literal"><span class="pre">filterOpts`if</span> <span class="pre">any</span> <span class="pre">options</span> <span class="pre">(preceded</span> <span class="pre">by</span> <span class="pre">single</span> <span class="pre">or</span> <span class="pre">double</span> <span class="pre">dash)</span> <span class="pre">are</span> <span class="pre">still</span>
-<span class="pre">present</span> <span class="pre">in</span> <span class="pre">``argopts`()</span></tt> after passing through <tt class="xref mat mat-func docutils literal"><span class="pre">parseOpts()</span></tt>. These are
+<tt class="xref mat mat-func docutils literal"><span class="pre">filterOpts()</span></tt> if any options (preceded by single or double dash) are still
+present in <tt class="docutils literal"><span class="pre">argopts</span></tt> after passing through <tt class="xref mat mat-func docutils literal"><span class="pre">parseOpts()</span></tt>. These are
 options that were not in the dictionary.</p>
 <p>Two helper functions in <tt class="xref mat mat-func docutils literal"><span class="pre">jgit()</span></tt> take care of equalsigns and integers in
 options. <tt class="xref mat mat-func docutils literal"><span class="pre">splitEqualSigns()</span></tt> removes equalsigns which are sometimes used in
@@ -153,6 +153,8 @@ Unittest framework</a>.</p>
 </div>
 <div class="section" id="documentation">
 <h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
+<p>These documents were created using <a class="reference external" href="http://www.sphinx.org">Sphinx</a> with the
+<a class="reference external" href="https://pypi.python.org/pypi/sphinxcontrib-matlabdomain/0.1dev-20130620">MATLAB Sphinx domain</a>.</p>
 </div>
 </div>
 

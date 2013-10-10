@@ -55,14 +55,15 @@
             
   <div class="section" id="usage">
 <span id="id1"></span><h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
-<p>There are two ways to use JGit4MATLAB. It can be used a command:</p>
+<p>There are two ways to use JGit4MATLAB. It can be used as a command similar to
+<a class="reference external" href="http://git-scm.com/docs/git-help">Git</a>.</p>
 <div class="highlight-python"><pre>jgit &lt;command&gt; [&lt;options&gt;] [&lt;args&gt;...] -- [&lt;args&gt;...]</pre>
 </div>
-<p>similar to <a class="reference external" href="http://git-scm.com/docs/git-help">Git</a>. JGit4MATLAB parses a
-subset of Git commands, options and arguments. Use <tt class="docutils literal"><span class="pre">jgit</span> <span class="pre">help</span> <span class="pre">&lt;command&gt;</span></tt> to
-see what Git commands are available.</p>
-<p>JGit4MATLAB can also be used be calling methods from the class <tt class="docutils literal"><span class="pre">JGit</span></tt>, a thin
-wrapper around the <a class="reference external" href="http://download.eclipse.org/jgit/docs/latest/apidocs/">JGit Git API</a>.:</p>
+<p>JGit4MATLAB parses a subset of Git commands, options and arguments. Use
+<tt class="docutils literal"><span class="pre">jgit</span> <span class="pre">help</span> <span class="pre">[&lt;command&gt;]</span></tt> to see what Git commands are available and to get
+help for a particular command.</p>
+<p>JGit4MATLAB can also be used by calling methods from the <tt class="xref mat mat-class docutils literal"><span class="pre">JGit</span></tt> class, a
+thin wrapper around the <a class="reference external" href="http://download.eclipse.org/jgit/docs/latest/apidocs/">JGit Git API</a>.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">JGit</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">args</span><span class="p">,</span><span class="n">param</span><span class="p">,</span><span class="n">key</span><span class="p">,</span><span class="o">...</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -70,18 +71,18 @@ wrapper around the <a class="reference external" href="http://download.eclipse.o
 <h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><a class="reference internal" href="add.html#add"><em>Add</em></a></li>
-<li>branch</li>
-<li>checkout</li>
-<li>clone</li>
-<li>commit</li>
-<li>diff</li>
-<li>fetch</li>
-<li>init</li>
-<li>log</li>
-<li>merge</li>
-<li>pull</li>
-<li>push</li>
-<li>status</li>
+<li><em class="xref std std-ref">branch</em></li>
+<li><em class="xref std std-ref">checkout</em></li>
+<li><em class="xref std std-ref">clone</em></li>
+<li><em class="xref std std-ref">commit</em></li>
+<li><em class="xref std std-ref">diff</em></li>
+<li><em class="xref std std-ref">fetch</em></li>
+<li><em class="xref std std-ref">init</em></li>
+<li><em class="xref std std-ref">log</em></li>
+<li><em class="xref std std-ref">merge</em></li>
+<li><em class="xref std std-ref">pull</em></li>
+<li><em class="xref std std-ref">push</em></li>
+<li><em class="xref std std-ref">status</em></li>
 </ul>
 </div>
 </div>
