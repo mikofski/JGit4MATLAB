@@ -1,4 +1,0 @@
-[submodule "docs/_build/html"]
-	path = docs/_build/html
-	url = git@github.com:mikofski/JGit4MATLAB.git
-	branch = gh-pages
