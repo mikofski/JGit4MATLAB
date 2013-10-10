@@ -6,6 +6,8 @@ Add file contents to the index ::
 
     jgit add [-u|--update] [<pathspec>...]
 
+Reference: `git-add <http://git-scm.com/docs/git-add>`_
+
 Examples
 --------
 Stage files to git repo. ::
@@ -15,5 +17,3 @@ Stage files to git repo. ::
 Using class :ref:`jgit.add` method. ::
 
     JGit.add({'file1','file2,'file3'})
-
-Reference: `git-add <http://git-scm.com/docs/git-add>`_
