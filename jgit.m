@@ -77,7 +77,9 @@ switch cmd
         parsed_argopts = parseCheckout(argopts);
     case 'clone'
         parsed_argopts = parseClone(argopts);
-    case 'commit'
+    case {'commit', 'ci'}
+        %% commit
+        cmd = 'commit';
         parsed_argopts = parseCommit(argopts);
     case {'diff','difftool'}
         %% diff/difftool

@@ -26,10 +26,13 @@ function push(varargin)
 %
 %   Copyright (c) 2013 Mark Mikofski
 
+%% constants
+REJECTED_NONFASTFORWARD = javaMethod('valueOf', ...
+    'org.eclipse.jgit.transport.RemoteRefUpdate$Status','REJECTED_NONFASTFORWARD');
 %% check inputs
 p = inputParser;
-p.addParamValue('ref','',@(x)validateattributes(x,{'char'},{'row'}))
-p.addParamValue('refSpecs','',@(x)validateRefSpecs(x))
+p.addParamValue('ref','',@(x)validateRefs(x))
+p.addParamValue('refSpecs','',@(x)validateRefs(x))
 p.addParamValue('setDryRun',false,@(x)validateattributes(x,{'logical'},{'scalar'}))
 p.addParamValue('setForce',false,@(x)validateattributes(x,{'logical'},{'scalar'}))
 p.addParamValue('setPushAll',false,@(x)validateattributes(x,{'logical'},{'scalar'}))
@@ -45,7 +48,13 @@ pushCMD = gitAPI.push;
 % repo = gitAPI.getRepository;
 %% add ref
 if ~isempty(p.Results.ref)
-    pushCMD.add(p.Results.ref);
+    if iscellstr(p.Results.ref)
+        for n = 1:numel(p.Results.ref)
+            pushCMD.add(p.Results.ref{n});
+        end
+    elseif ischar(p.Results.ref)
+        pushCMD.add(p.Results.ref);
+    end
 end
 %% add refSpecs
 if ~isempty(p.Results.refSpecs)
@@ -87,12 +96,34 @@ end
 % configures a CredentialProvider to provide SSH passphrase for Jsch and
 % registers itself as the default instance of SshSessionFactory.
 com.mikofski.jgit4matlab.UserInfoSshSessionFactory;
-pushCMD.call;
+r = pushCMD.call;
+rArray = r.toArray;
+for nResult = 1:r.size
+    result = rArray(nResult);
+    remoteUpdate = result.getRemoteUpdates;
+    remoteUpdateArray = remoteUpdate.toArray;
+    for nRemote = 1:remoteUpdate.size
+        remoteN = remoteUpdateArray(nRemote);
+        if remoteN.getStatus.equals(REJECTED_NONFASTFORWARD)
+            error('JGit:push',[ ...
+                'To %s\n', ...
+                ' ! [rejected]        %s -> %s (fetch first)\n', ...
+                'error: failed to push some refs to "%s"\n', ...
+                'hint: Updates were rejected because the remote contains work that you do\n', ...
+                'hint: not have locally. This is usually caused by another repository pushing\n', ...
+                'hint: to the same ref. You may want to first integrate the remote changes\n', ...
+                'hint: (e.g., "jgit pull ...") before pushing again.\n'],char(result.getURI), ...
+                char(remoteN.getRemoteName),char(remoteN.getSrcRef),char(result.getURI))
+        else
+            fprintf('%s\n',char(remoteN.getStatus))
+        end
+    end  
+end
 end
 
-function tf = validateRefSpecs(refspecs)
-if ~iscellstr(refspecs)
-    validateattributes(refspecs,{'char'},{'row'})
+function tf = validateRefs(refs)
+if ~iscellstr(refs)
+    validateattributes(refs,{'char'},{'row'})
 end
 tf = true;
 end

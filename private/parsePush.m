@@ -31,15 +31,16 @@ end
 if options(1).('tags')
     parsed_argopts = [parsed_argopts,'setPushTags',true];
 end
-% directory
+% remote
 if isempty(argopts)
     return
-elseif numel(argopts)==1
+elseif numel(argopts)>=1
     parsed_argopts = [parsed_argopts,'remote',argopts(1)];
 end
+% refs
 if numel(argopts)==2
-    parsed_argopts = [parsed_argopts,'refSpecs',argopts(2)];
+    parsed_argopts = [parsed_argopts,'ref',argopts(2)];
 elseif numel(argopts)>2
-    parsed_argopts = [parsed_argopts,'refSpecs',{argopts(2:end)}];
+    parsed_argopts = [parsed_argopts,'ref',{argopts(2:end)}];
 end
 end
