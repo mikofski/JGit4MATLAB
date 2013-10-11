@@ -27,7 +27,7 @@ classdef JGit < handle
     %   MERGE, PULL, PUSH, STATUS, GETGITAPI, GETGITDIR, VALIDATEJAVACLASSPATH,
     %   DOWNLOADJGITJAR, GETEDITOR, SETUSERINFO, GETUSERINFO, SAVESSHPASSPHRASE
     %
-    %   Version 0.5 - Egret Release
+    %   Version 0.6 - Falcon Release
     %   Copyright (c) 2013 Mark Mikofski
     %   <a href="http://mikofski.github.io/JGit4MATLAB/">JGit4MATLAB on Github Pages</a>
     
