@@ -19,6 +19,9 @@ function results = pull(varargin)
 %
 %   Copyright (c) 2013 Mark Mikofski
 
+%% Constants
+% Merge status
+CONFLICTING = javaMethod('valueOf','org.eclipse.jgit.api.MergeResult$MergeStatus','CONFLICTING');
 %% check inputs
 p = inputParser;
 p.addParamValue('setRebase',false,@(x)validateattributes(x,{'logical'},{'scalar'}))
