@@ -19,6 +19,10 @@ function results = pull(varargin)
 %
 %   Copyright (c) 2013 Mark Mikofski
 
+%% Constants
+% TODO: move all constants to JGIT class definition.
+% Merge status
+CONFLICTING = javaMethod('valueOf','org.eclipse.jgit.api.MergeResult$MergeStatus','CONFLICTING');
 %% check inputs
 p = inputParser;
 p.addParamValue('setRebase',false,@(x)validateattributes(x,{'logical'},{'scalar'}))
@@ -29,7 +33,7 @@ gitDir = p.Results.gitDir;
 gitAPI = JGit.getGitAPI(gitDir);
 pullCMD = gitAPI.pull;
 %% repository
-% repo = gitAPI.getRepository;
+repo = gitAPI.getRepository;
 %% set rebase
 if p.Results.setRebase
     pullCMD.setRebase(true);
@@ -47,5 +51,42 @@ fprintf('%s\n',char(pullResult.getMergeResult.getMergeStatus))
 if nargout>0
     results = pullResult;
 end
+%% status
 mergeResult = pullResult.getMergeResult;
+if ~isempty(mergeResult)
+    s = mergeResult.getMergeStatus;
+    if s.isSuccessful
+        return
+    elseif s.equals(CONFLICTING)
+        % get conflicts
+        conflicts = mergeResult.getConflicts; % hashmap of paths: [mergeConflict][line#]
+        paths = conflicts.keySet.toArray; % array of paths with conflicts
+        % write a BASE file if it exists
+        base = mergeResult.getBase; % RevCommit common base for merged commits
+        baseTree = base.getTree; % RevTree
+        mergeCommits = mergeResult.getMergedCommits; % array of RevCommits of merged commits
+        local = mergeCommits(1);remote = mergeCommits(2); % RevCommit, assume [local,remove]
+        localTree = local.getTree;remoteTree = remote.getTree; % RevTree
+        for p = 1:numel(paths)
+            % base paths
+            writeConflictPath(repo,paths(p),baseTree,'BASE');
+            % local paths
+            writeConflictPath(repo,paths(p),localTree,'LOCAL');
+            % remote paths
+            writeConflictPath(repo,paths(p),remoteTree,'REMOTE');
+            % backup conflict markers
+            copyfile(paths(p),[paths(p),'.orig']);
+        end
+    end
+end
+end
+
+function writeConflictPath(repo,path,tree,commit)
+treewalk = org.eclipse.jgit.treewalk.TreeWalk.forPath(repo,path,tree);
+fileOS = java.io.FileOutputStream([path,'.',commit]);
+if ~isempty(treewalk)
+    repo.open(treewalk.getObjectId(0)).copyTo(fileOS)
+end
+% if treewalk is empty, path is /dev/null, so file is empty
+fileOS.close;
 end
