@@ -20,6 +20,7 @@ function results = pull(varargin)
 %   Copyright (c) 2013 Mark Mikofski
 
 %% Constants
+% TODO: move all constants to JGIT class definition.
 % Merge status
 CONFLICTING = javaMethod('valueOf','org.eclipse.jgit.api.MergeResult$MergeStatus','CONFLICTING');
 %% check inputs
