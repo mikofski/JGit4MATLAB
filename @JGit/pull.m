@@ -47,4 +47,5 @@ fprintf('%s\n',char(pullResult.getMergeResult.getMergeStatus))
 if nargout>0
     results = pullResult;
 end
+mergeResult = pullResult.getMergeResult;
 end
