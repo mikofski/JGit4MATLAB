@@ -47,4 +47,32 @@ fprintf('%s\n',char(pullResult.getMergeResult.getMergeStatus))
 if nargout>0
     results = pullResult;
 end
+%% status
+mergeResult = pullResult.getMergeResult;
+if ~isempty(mergeResult)
+    s = mergeResult.getMergeStatus;
+    if s.isSuccessful
+        return
+    elseif s.equals(CONFLICTING)
+        % get conflicts
+        conflicts = mergeResult.getConflicts; % hashmap of paths: [mergeConflict][line#]
+        paths = conflicts.keySet.toArray; % array of paths with conflicts
+        % write a BASE file if it exists
+        base = mergeResult.getBase; % RevCommit common base for merged commits
+        baseTree = base.getTree; % RevTree
+        mergeCommits = mergeResult.getMergedCommits; % array of RevCommits of merged commits
+        local = mergeCommits(1);remote = mergeCommits(2); % RevCommit, assume [local,remove]
+        localTree = local.getTree;remoteTree = remote.getTree; % RevTree
+        for p = 1:numel(paths)
+            % base paths
+            writeConflictPath(repo,paths(p),baseTree,'BASE');
+            % local paths
+            writeConflictPath(repo,paths(p),localTree,'LOCAL');
+            % remote paths
+            writeConflictPath(repo,paths(p),remoteTree,'REMOTE');
+            % backup conflict markers
+            copyfile(paths(p),[paths(p),'.orig']);
+        end
+    end
+end
 end
