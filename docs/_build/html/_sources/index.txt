@@ -24,6 +24,7 @@ Usage
 
    usage/usage
    usage/add
+   usage/branch
 
 Developers
 ----------
