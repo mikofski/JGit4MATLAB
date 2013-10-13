@@ -20,7 +20,7 @@ Usage
 -----
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    usage/usage
    usage/add
