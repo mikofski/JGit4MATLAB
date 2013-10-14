@@ -51,6 +51,48 @@
             
   <div class="section" id="jgit-add">
 <span id="id1"></span><h1>JGit.add<a class="headerlink" href="#jgit-add" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="JGit4MATLAB.JGit.add">
+<tt class="descclassname">JGit.</tt><tt class="descname">add</tt><big>(</big><em>files</em><span class="optional">[</span>, <em>varargin</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#JGit4MATLAB.JGit.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add files to the index.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>files</strong> (<em>char or cell-string</em>) &#8211; Files or pathspecs to be added to the index.</li>
+<li><strong>varargin</strong> (<em>comma-separated list of strings</em>) &#8211; Parameter-value pairs of options and option arguments.</li>
+<li><strong>update</strong> (<em>logical</em>) &#8211; (Optional) Only stage tracked files. New files will not be staged.</li>
+<li><strong>gitDir</strong> (<em>char</em>) &#8211; (Optional) Add to index of the repository in specified folder.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<div class="section" id="see-also">
+<h2>See also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="jgit.html#JGit4MATLAB.JGit" title="JGit4MATLAB.JGit"><tt class="xref mat mat-class docutils literal"><span class="pre">JGit</span></tt></a>, <tt class="xref mat mat-meth docutils literal"><span class="pre">JGit.commit()</span></tt></p>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference external" href="http://git-scm.com/docs/git-add">git-add</a></li>
+<li><a class="reference external" href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/api/AddCommand.html">org.eclipse.jgit.api.AddCommand</a></li>
+</ul>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p>Add <tt class="docutils literal"><span class="pre">myfile.m</span></tt> to index.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">JGit</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&#39;myfile.m&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Add <tt class="docutils literal"><span class="pre">myclass.m</span></tt> and <tt class="docutils literal"><span class="pre">myfun.m</span></tt>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">JGit</span><span class="o">.</span><span class="n">add</span><span class="p">({</span><span class="s">&#39;myclass.m&#39;</span><span class="p">,</span><span class="s">&#39;myfun.m&#39;</span><span class="p">})</span>
+</pre></div>
+</div>
+</div>
 </div>
 
 
@@ -59,6 +101,16 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">JGit.add</a><ul>
+<li><a class="reference internal" href="#see-also">See also</a></li>
+<li><a class="reference internal" href="#references">References</a></li>
+<li><a class="reference internal" href="#examples">Examples</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="jgit.html"
                         title="previous chapter">JGit</a></p>
