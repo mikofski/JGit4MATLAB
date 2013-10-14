@@ -11,25 +11,30 @@ List, create, move or delete branches ::
 
 Reference: `git-branch <http://git-scm.com/docs/git-branch">`_
 
+Alias
+-----
+br ::
+
+    jgit br -a
+
 Examples
 --------
-
-List all branches ::
+List all branches. ::
 
     jgit branch --all
 
-Create new branch from a tag ::
+Create new branch from a tag. ::
 
     jgit branch jgit4matlab-0.6 version-0.6
 
-Create new tracking branch from remote upstream dev branch ::
+Create new tracking branch from remote upstream dev branch. ::
 
     jgit branch -t upstream_dev upstream/dev
 
-Delete branch forcefully ::
+Delete branch forcefully. ::
 
     jgit -D jgit4matlab-0.6
 
-Rename branch ::
+Rename branch. ::
 
     jgit -m upstream_dev dev

@@ -25,6 +25,7 @@ Usage
    usage/usage
    usage/add
    usage/branch
+   usage/checkout
 
 Developers
 ----------
