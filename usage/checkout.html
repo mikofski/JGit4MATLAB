@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Add &mdash; JGit4MATLAB 0.6 (Falcon) documentation</title>
+    <title>Checkout &mdash; JGit4MATLAB 0.6 (Falcon) documentation</title>
     
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -25,8 +25,8 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="JGit4MATLAB 0.6 (Falcon) documentation" href="../index.html" />
-    <link rel="next" title="Branch" href="branch.html" />
-    <link rel="prev" title="Usage" href="usage.html" /> 
+    <link rel="next" title="Developers" href="../developers/developers.html" />
+    <link rel="prev" title="Branch" href="branch.html" /> 
   </head>
   <body>
     <div class="related">
@@ -39,10 +39,10 @@
           <a href="../mat-modindex.html" title="MATLAB Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="branch.html" title="Branch"
+          <a href="../developers/developers.html" title="Developers"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="usage.html" title="Usage"
+          <a href="branch.html" title="Branch"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">JGit4MATLAB 0.6 (Falcon) documentation</a> &raquo;</li> 
       </ul>
@@ -53,19 +53,35 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="add">
-<span id="id1"></span><h1>Add<a class="headerlink" href="#add" title="Permalink to this headline">¶</a></h1>
-<p>Add file contents to the index</p>
-<div class="highlight-python"><pre>jgit add [-u|--update] [&lt;pathspec&gt;...]</pre>
+  <div class="section" id="checkout">
+<span id="id1"></span><h1>Checkout<a class="headerlink" href="#checkout" title="Permalink to this headline">¶</a></h1>
+<p>Checkout a branch or paths to the working tree</p>
+<div class="highlight-python"><pre>jgit checkout [-f|--force] [&lt;branch&gt;]
+jgit checkout [-f|--force] [&lt;commit&gt;]
+jgit checkout [--set-upstream|-t|--track|--no-track] [-f|--force] [[-b|-B] &lt;new_branch&gt;] [&lt;start_point&gt;]
+jgit checkout [-f|--force|--ours|--theirs|-m] [&lt;tree-ish&gt;] [--] &lt;paths&gt;...
+jgit checkout [&lt;tree-ish&gt;] [--] [&lt;paths&gt;...]</pre>
 </div>
-<p>Reference: <a class="reference external" href="http://git-scm.com/docs/git-add">git-add</a></p>
+<p>Reference: <a class="reference external" href="http://git-scm.com/docs/git-checkout">git-checkout</a></p>
+<div class="section" id="alias">
+<h2>Alias<a class="headerlink" href="#alias" title="Permalink to this headline">¶</a></h2>
+<p>co</p>
+<div class="highlight-python"><pre>jgit co -b newfeature</pre>
+</div>
+</div>
 <div class="section" id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
-<p>Stage files to git repo.</p>
-<div class="highlight-python"><pre>jgit add file1 file2 file3</pre>
+<p>Checkout branch.</p>
+<div class="highlight-python"><pre>jgit checkout master</pre>
 </div>
-<p>Using class <a class="reference internal" href="../developers/JGit/jgit.add.html#jgit-add"><em>JGit.add</em></a> method.</p>
-<div class="highlight-python"><pre>JGit.add({'file1','file2,'file3'})</pre>
+<p>Checkout commit. NOTE: This will put you in a detached state.</p>
+<div class="highlight-python"><pre>jgit checkout 971ae60</pre>
+</div>
+<p>Checkout upstream branch as local.</p>
+<div class="highlight-python"><pre>jgit checkout -b feature origin/feature</pre>
+</div>
+<p>Revert changes in unstaged file.</p>
+<div class="highlight-python"><pre>jgit checkout -- file</pre>
 </div>
 </div>
 </div>
@@ -78,21 +94,22 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Add</a><ul>
+<li><a class="reference internal" href="#">Checkout</a><ul>
+<li><a class="reference internal" href="#alias">Alias</a></li>
 <li><a class="reference internal" href="#examples">Examples</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="usage.html"
-                        title="previous chapter">Usage</a></p>
-  <h4>Next topic</h4>
   <p class="topless"><a href="branch.html"
-                        title="next chapter">Branch</a></p>
+                        title="previous chapter">Branch</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../developers/developers.html"
+                        title="next chapter">Developers</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="../_sources/usage/add.txt"
+    <li><a href="../_sources/usage/checkout.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
@@ -122,10 +139,10 @@
           <a href="../mat-modindex.html" title="MATLAB Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="branch.html" title="Branch"
+          <a href="../developers/developers.html" title="Developers"
              >next</a> |</li>
         <li class="right" >
-          <a href="usage.html" title="Usage"
+          <a href="branch.html" title="Branch"
              >previous</a> |</li>
         <li><a href="../index.html">JGit4MATLAB 0.6 (Falcon) documentation</a> &raquo;</li> 
       </ul>
