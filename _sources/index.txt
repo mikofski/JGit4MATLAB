@@ -34,6 +34,14 @@ Developers
    :maxdepth: 2
 
    developers/developers
+
+
+API
+---
+
+.. toctree::
+   :maxdepth: 1
+
    developers/JGit/jgit
    developers/JGit/jgit.add
 
