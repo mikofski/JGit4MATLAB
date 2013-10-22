@@ -78,7 +78,7 @@ end
 %% nothing to commit
 % TODO: try replacing this with repo.getRepositoryState.canCheckout, &c.
 statusCall = gitAPI.status.call;
-if statusCall.isClean
+if statusCall.isClean && ~p.Results.amend
     %% status message if clean
     fprintf('nothing to commit, working directory clean\n')
     return
