@@ -73,13 +73,33 @@ reader = repo.newObjectReader;
 %% set old tree
 if ~isempty(p.Results.previous)
     oldTreeId = repo.resolve([p.Results.previous,'^{tree}']);
-    oldTree = org.eclipse.jgit.treewalk.CanonicalTreeParser([],reader,oldTreeId);
+    try
+        oldTree = org.eclipse.jgit.treewalk.CanonicalTreeParser([],reader,oldTreeId);
+    catch ME
+        if strcmp(ME.identifier,'MATLAB:Java:GenericException')
+            fprintf(['fatal: ambiguous argument "%s": unknown revision or path not in the working tree.\n', ...
+                'Use "--" to separate paths from revisions, like this:\n', ...
+                '"jgit <command> [<revision>...] -- [<file>...]"\n'], ...
+                p.Results.previous)
+            return
+        end
+    end
     diffCMD.setOldTree(oldTree);
 end
 %% set new tree
 if ~isempty(p.Results.updated)
     newTreeId = repo.resolve([p.Results.updated,'^{tree}']);
-    newTree = org.eclipse.jgit.treewalk.CanonicalTreeParser([],reader,newTreeId);
+    try
+        newTree = org.eclipse.jgit.treewalk.CanonicalTreeParser([],reader,newTreeId);
+    catch ME
+        if strcmp(ME.identifier,'MATLAB:Java:GenericException')
+            fprintf(['fatal: ambiguous argument "%s": unknown revision or path not in the working tree.\n', ...
+                'Use "--" to separate paths from revisions, like this:\n', ...
+                '"jgit <command> [<revision>...] -- [<file>...]"\n'], ...
+                p.Results.updated)
+            return
+        end
+    end
     diffCMD.setNewTree(newTree);
 end
 %% set cached flag

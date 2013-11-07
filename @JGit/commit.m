@@ -164,9 +164,6 @@ abbrevSHA = char(r.abbreviate(7).name);
 shortMsg = char(r.getShortMessage);
 fprintf('[%s %s] %s\n',branch,abbrevSHA,shortMsg)
 JGit.diff('previous','HEAD~1','showNameAndStatusOnly',true)
-% [parse_jgit 05138e1] add parseFetch and add error for trying to checkout 2 branches, ha
-%  4 files changed, 77 insertions(+)
-%  create mode 100644 private/parseFetch.m
 end
 
 function tf = validatefiles(files)
