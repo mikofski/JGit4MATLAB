@@ -8,3 +8,7 @@ version
 @JGit/older-versions
 *.sublime-project
 *.sublime-workspace
+.classpath
+.settings/
+.project
+bin/
