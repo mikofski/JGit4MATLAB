@@ -33,8 +33,8 @@ classdef JGit < handle
     
     %% constant properties
     properties (Constant)
-        VALID = JGit.validateJavaClassPath
-        EDITOR = JGit.getEDITOR % an editor
+        VALID = JGIT4MATLAB.JGit.validateJavaClassPath
+        EDITOR = JGIT4MATLAB.JGit.getEDITOR % an editor
         GIT_DIR = '.git' % git repository folder
         JGIT = 'org.eclipse.jgit' % JGit package name
         % package with MATLABProgressMonitor, replaces \r with \b
@@ -44,7 +44,7 @@ classdef JGit < handle
         % registers itself as the default SshSessionFactory instance
         USERINFOSSHSESSIONFACTORY = 'UserInfoSshSessionFactory'
         VERFILE = fullfile(fileparts(mfilename('fullpath')),'version') % file storing JGit package version
-        VERSION = strtrim(fileread(JGit.VERFILE)) % JGit version string
+        VERSION = strtrim(fileread(JGIT4MATLAB.JGit.VERFILE)) % JGit version string
         USERHOME = org.eclipse.jgit.util.FS.DETECTED.userHome % user home
         GITCONFIG = '.gitconfig' % global git config file found in USERHOME
         JSCH_USERINFO = '.jsch-userinfo' % global Jsch userinfo file with SSH passphrase
@@ -86,7 +86,7 @@ classdef JGit < handle
                 gitDir = pwd;
             end
             %% get gitDir
-            gitDir = JGit.getGitDir(gitDir);
+            gitDir = JGIT4MATLAB.JGit.getGitDir(gitDir);
             assert(~isempty(gitDir),'jgit:notGitRepo', ...
                 ['fatal: Not a git repository (or any of the parent', ...
                 'directories): .git'])
@@ -103,7 +103,7 @@ classdef JGit < handle
             %   Copyright (c) 2013 Mark Mikofski
             
             %% create full path to gitDir
-            gitDir = fullfile(path,JGit.GIT_DIR);
+            gitDir = fullfile(path,JGIT4MATLAB.JGit.GIT_DIR);
             %% walk directory tree to find gitDir
             s = dir(gitDir);
             while isempty(s)
@@ -113,7 +113,7 @@ classdef JGit < handle
                     break
                 end
                 path = parent;
-                gitDir = fullfile(path,JGit.GIT_DIR);
+                gitDir = fullfile(path,JGIT4MATLAB.JGit.GIT_DIR);
                 s = dir(gitDir);
             end
         end
@@ -132,13 +132,13 @@ classdef JGit < handle
             %% check JGit package jar-file in @JGit folder
             valid = true;
             githome =  fileparts(mfilename('fullpath'));
-            jgitjar = fullfile(githome,[JGit.JGIT,'.jar']);
-            pmjar = fullfile(githome,[JGit.PROGRESSMONITOR,'.jar']);
-            SSHjar = fullfile(githome,[JGit.USERINFOSSHSESSIONFACTORY,'.jar']);
+            jgitjar = fullfile(githome,[JGIT4MATLAB.JGit.JGIT,'.jar']);
+            pmjar = fullfile(githome,[JGIT4MATLAB.JGit.PROGRESSMONITOR,'.jar']);
+            SSHjar = fullfile(githome,[JGIT4MATLAB.JGit.USERINFOSSHSESSIONFACTORY,'.jar']);
             if exist(jgitjar,'file')~=2
                 valid = false;
                 fprintf('JGit jar-file doesn''t exist. Downloading ...\n');
-                [f,status] = JGit.downloadJGitJar(jgitjar);
+                [f,status] = JGIT4MATLAB.JGit.downloadJGitJar(jgitjar);
                 if status==1
                     fprintf('Saved as:\n\t%s.\n... Done.\n\n',f);
                 else
@@ -236,7 +236,7 @@ classdef JGit < handle
                 'pulling and pushing (to) private repositories with which you''ve ', ...
                 'shared\nyour public key.'])
             %% check user info
-            [name,email] = JGit.getUserInfo;
+            [name,email] = JGIT4MATLAB.JGit.getUserInfo;
             try
                 noUserInfo = name.isEmpty; % try Java, necessary if false
             catch
@@ -260,7 +260,7 @@ classdef JGit < handle
                     '\tDEFAULT NAME:\t%s\n\tDEFAULT EMAIL:\t%s'],char(name),char(email))
             end
             % check SSH passphrase
-            f = fullfile(char(JGit.USERHOME),JGit.JSCH_USERINFO); % savefile path
+            f = fullfile(char(JGIT4MATLAB.JGit.USERHOME),JGIT4MATLAB.JGit.JSCH_USERINFO); % savefile path
             if exist(f, 'file')~=2
                 warning('jgit:noSSHpassphrase', ...
                     'Please use SAVESSHPASSPHRASE(PASSPHRASE) to save your passphrase.')
@@ -271,7 +271,7 @@ classdef JGit < handle
             %   JGIT.SETUSERINFO(NAME,EMAIL)
             %
             %   See also: JGIT, GETUSERINFO
-            cnfile = java.io.File(JGit.USERHOME,JGit.GITCONFIG); % java File
+            cnfile = java.io.File(JGIT4MATLAB.JGit.USERHOME,JGIT4MATLAB.JGit.GITCONFIG); % java File
             % create gitconfig obj and load it
             gitconfig = org.eclipse.jgit.storage.file.FileBasedConfig(cnfile, ...
                 org.eclipse.jgit.util.FS.DETECTED);
@@ -285,7 +285,7 @@ classdef JGit < handle
             %   [NAME,EMAIL] = JGIT.GETUSERINFO
             %
             %   See also: JGIT, SETUSERINFO
-            cnfile = java.io.File(JGit.USERHOME,JGit.GITCONFIG); % java File
+            cnfile = java.io.File(JGIT4MATLAB.JGit.USERHOME,JGIT4MATLAB.JGit.GITCONFIG); % java File
             % create gitconfig obj and load it
             gitconfig = org.eclipse.jgit.storage.file.FileBasedConfig(cnfile, ...
                 org.eclipse.jgit.util.FS.DETECTED);
@@ -301,7 +301,7 @@ classdef JGit < handle
             %   successful.
             %
             %   See also: JGIT, CLONE, FETCH, PULL, PUSH
-            f = fullfile(char(JGit.USERHOME),JGit.JSCH_USERINFO); % savefile path
+            f = fullfile(char(JGIT4MATLAB.JGit.USERHOME),JGIT4MATLAB.JGit.JSCH_USERINFO); % savefile path
             fid = fopen(f,'wt'); % open file for writing text
             try
                 fprintf(fid,'%s\n',passphrase); % write passphrase to file
@@ -328,7 +328,7 @@ classdef JGit < handle
             % use org.eclipse.jgit as default
             githome =  fileparts(mfilename('fullpath'));
             if nargin<1
-                jgitjar = fullfile(githome,[JGit.JGIT,'.jar']);
+                jgitjar = fullfile(githome,[JGIT4MATLAB.JGit.JGIT,'.jar']);
             end
             % copy old org.eclipse.jgit with version info as backup
             if exist(jgitjar,'file')==2
@@ -336,14 +336,14 @@ classdef JGit < handle
                 if exist(oldver,'dir')~=7
                     mkdir(oldver)
                 end
-                oldver = fullfile(oldver,[JGit.JGIT,'-',JGit.VERSION,'-r.jar']);
+                oldver = fullfile(oldver,[JGIT4MATLAB.JGit.JGIT,'-',JGIT4MATLAB.JGit.VERSION,'-r.jar']);
                 copyfile(jgitjar,oldver)
             end
             %% get version number and jar download url from eclipse
             ver = '[0-9].[0-9].[0-9].[0-9]{12}'; % regex for version number
             expr = ['<a href="(https://repo.eclipse.org/content/groups/releases/', ...
-                '/org/eclipse/jgit/',JGit.JGIT,'/',ver,'-r/',JGit.JGIT,'-', ...
-                ver,'-r.jar)">',JGit.JGIT,'.jar</a>']; % regex for url
+                '/org/eclipse/jgit/',JGIT4MATLAB.JGit.JGIT,'/',ver,'-r/',JGIT4MATLAB.JGit.JGIT,'-', ...
+                ver,'-r.jar)">',JGIT4MATLAB.JGit.JGIT,'.jar</a>']; % regex for url
             str = urlread('http://www.eclipse.org/jgit/download/');
             assert(~isempty(str),'jgit:downloadJGitJar:badURL', ...
                 'Can''t read from jgit download page.')
@@ -356,7 +356,7 @@ classdef JGit < handle
             %% write version number to file if successful
             if status==1
                 try
-                    fid = fopen(JGit.VERFILE,'wt');
+                    fid = fopen(JGIT4MATLAB.JGit.VERFILE,'wt');
                     fprintf(fid,'%s\n',version{1});
                 catch ME
                     fclose(fid);

@@ -58,7 +58,7 @@ p.addParamValue('showProgress',false,@(x)validateattributes(x,{'logical'},{'scal
 p.addParamValue('difftool',false,@(x)validateattributes(x,{'logical'},{'scalar'}))
 p.addParamValue('gitDir',pwd,@(x)validateattributes(x,{'char'},{'row'}))
 p.parse(varargin{:})
-gitAPI = JGit.getGitAPI(p.Results.gitDir);
+gitAPI = JGIT4MATLAB.JGit.getGitAPI(p.Results.gitDir);
 diffCMD = gitAPI.diff;
 %% flush jgit diff tmp dir
 % TODO: move these to JGIT as Static method so JGIT.COMMIT can use too

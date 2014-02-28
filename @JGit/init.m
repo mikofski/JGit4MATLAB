@@ -29,7 +29,7 @@ if p.Results.bare
 end
 %% change message to reinitialized if gitDir already exists
 msg = 'Initialized';
-if exist(fullfile(p.Results.directory,JGit.GIT_DIR),'dir')==7
+if exist(fullfile(p.Results.directory,JGIT4MATLAB.JGit.GIT_DIR),'dir')==7
     msg = 'Reinitialized';
 end
 %% set directory

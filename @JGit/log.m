@@ -38,7 +38,7 @@ p.addParamValue('all',false,@(x)validateattributes(x,{'logical'},{'scalar'}))
 p.addParamValue('gitDir',pwd,@(x)validateattributes(x,{'char'},{'row'}))
 p.parse(varargin{:})
 gitDir = p.Results.gitDir;
-gitAPI = JGit.getGitAPI(gitDir);
+gitAPI = JGIT4MATLAB.JGit.getGitAPI(gitDir);
 logCMD = gitAPI.log;
 %% set max count
 if p.Results.maxCount>0

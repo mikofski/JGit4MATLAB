@@ -30,7 +30,7 @@ p.addParamValue('progressMonitor',com.mikofski.jgit4matlab.MATLABProgressMonitor
 p.addParamValue('gitDir',pwd,@(x)validateattributes(x,{'char'},{'row'}))
 p.parse(varargin{:})
 gitDir = p.Results.gitDir;
-gitAPI = JGit.getGitAPI(gitDir);
+gitAPI = JGIT4MATLAB.JGit.getGitAPI(gitDir);
 pullCMD = gitAPI.pull;
 %% repository
 repo = gitAPI.getRepository;

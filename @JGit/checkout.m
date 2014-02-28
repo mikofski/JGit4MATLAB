@@ -63,7 +63,7 @@ p.addParamValue('upstreamMode','',@(x)validateattributes(x,{'char'},{'row'}))
 p.addParamValue('gitDir',pwd,@(x)validateattributes(x,{'char'},{'row'}))
 p.parse(name,varargin{:})
 gitDir = p.Results.gitDir;
-gitAPI = JGit.getGitAPI(gitDir);
+gitAPI = JGIT4MATLAB.JGit.getGitAPI(gitDir);
 checkoutCMD = gitAPI.checkout;
 %% set name
 if ~strcmp(pathCheckout,p.Results.name)

@@ -5,7 +5,7 @@ function jgit(varargin)
 %% initialize and/or return JGit constants
 if nargin==0
     try
-        JGit %#ok<NOPRT>
+        JGIT4MATLAB.JGit %#ok<NOPRT>
     catch ME
         rethrow(ME)
     end
@@ -30,12 +30,12 @@ if any(strcmp(cmd,{'help','-h','--help'}))
 end
 %% version
 if any(strcmp(cmd,{'version','-v','--version'}))
-    JGit.VERSION
+    JGIT4MATLAB.JGit.VERSION
     return
 end
 %% update JGit jar-file
 if any(strcmp(cmd,{'update','-u','--update'}))
-    JGit.downloadJGitJar
+    JGIT4MATLAB.JGit.downloadJGitJar
     return
 end
 %% split multicommand short options & remove any equal sign from long options
@@ -115,7 +115,7 @@ switch cmd
             cmd,'>> jgit help\n','jgit help.')
 end
 try
-    JGit.(cmd)(parsed_argopts{:})
+    JGIT4MATLAB.JGit.(cmd)(parsed_argopts{:})
 catch ME
     rethrow(ME)
 end

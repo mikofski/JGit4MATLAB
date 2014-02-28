@@ -60,7 +60,7 @@ p.addParamValue('oldNames','',@(x)validateNames(x))
 p.addParamValue('gitDir',pwd,@(x)validateattributes(x,{'char'},{'row'}))
 p.parse(cmd,newName,varargin{:})
 gitDir = p.Results.gitDir;
-gitAPI = JGit.getGitAPI(gitDir);
+gitAPI = JGIT4MATLAB.JGit.getGitAPI(gitDir);
 %% set command
 switch lower(p.Results.cmd)
     case 'create'

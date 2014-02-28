@@ -27,7 +27,7 @@ p.addParamValue('update',false,@(x)validateattributes(x,{'logical'},{'scalar'}))
 p.addParamValue('gitDir',pwd,@(x)validateattributes(x,{'char'},{'row'}))
 p.parse(files,varargin{:})
 gitDir = p.Results.gitDir;
-gitAPI = JGit.getGitAPI(gitDir);
+gitAPI = JGIT4MATLAB.JGit.getGitAPI(gitDir);
 addCMD = gitAPI.add;
 %% add files
 if iscellstr(p.Results.files)

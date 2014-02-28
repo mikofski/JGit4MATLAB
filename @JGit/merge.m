@@ -61,7 +61,7 @@ p.addParamValue('strategy','',@(x)validateattributes(x,{'char'},{'row'}))
 p.addParamValue('gitDir',pwd,@(x)validateattributes(x,{'char'},{'row'}))
 p.parse(include,varargin{:})
 gitDir = p.Results.gitDir;
-gitAPI = JGit.getGitAPI(gitDir);
+gitAPI = JGIT4MATLAB.JGit.getGitAPI(gitDir);
 mergeCMD = gitAPI.merge;
 %% repository
 repo = gitAPI.getRepository;

@@ -42,7 +42,7 @@ p.addParamValue('remote','',@(x)validateattributes(x,{'char'},{'row'}))
 p.addParamValue('gitDir',pwd,@(x)validateattributes(x,{'char'},{'row'}))
 p.parse(varargin{:})
 gitDir = p.Results.gitDir;
-gitAPI = JGit.getGitAPI(gitDir);
+gitAPI = JGIT4MATLAB.JGit.getGitAPI(gitDir);
 pushCMD = gitAPI.push;
 %% repository
 % repo = gitAPI.getRepository;

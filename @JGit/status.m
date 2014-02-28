@@ -25,7 +25,7 @@ end
 if nargin<3
     amend = false;
 end
-gitAPI = JGit.getGitAPI(gitDir);
+gitAPI = JGIT4MATLAB.JGit.getGitAPI(gitDir);
 %% call
 statusCall = gitAPI.status.call;
 %% display status

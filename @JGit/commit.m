@@ -36,7 +36,7 @@ p.addParamValue('only',{},@(x)validatefiles(x))
 p.addParamValue('gitDir',pwd,@(x)validateattributes(x,{'char'},{'row'}))
 p.parse(varargin{:})
 gitDir = p.Results.gitDir;
-gitAPI = JGit.getGitAPI(gitDir);
+gitAPI = JGIT4MATLAB.JGit.getGitAPI(gitDir);
 commitCMD = gitAPI.commit;
 %% repository
 repo = gitAPI.getRepository;
@@ -106,7 +106,7 @@ else
     if added.isEmpty && changed.isEmpty && removed.isEmpty && ... no staged files
             (((~modified.isEmpty || ~missing.isEmpty) && ~p.Results.all && ~any(onlyModified)) || ... but modified files and ~setAll && ~any(onlyModified)
             (modified.isEmpty && missing.isEmpty && ~untracked.isEmpty)) % or no modified files but untracked
-        JGit.status
+        JGIT4MATLAB.JGit.status
         return
     end
 end
@@ -122,7 +122,7 @@ else
         end
         fprintf(fid,['\n# Please enter the commit message for your changes. Lines starting\n', ...
             '# with ''#'' will be ignored, and an empty message aborts the commit.\n']);
-        JGit.status(gitDir,fid,p.Results.amend)
+        JGIT4MATLAB.JGit.status(gitDir,fid,p.Results.amend)
         fclose(fid);
     catch ME
         fclose(fid);
@@ -130,7 +130,7 @@ else
     end
     editor = getenv('EDITOR');
     if isempty(editor)
-        editor = JGit.EDITOR;
+        editor = JGIT4MATLAB.JGit.EDITOR;
     end
     status = system([editor,' ',COMMIT_MSG]);
     if ~status
@@ -163,7 +163,7 @@ branch = char(gitAPI.getRepository.getBranch);
 abbrevSHA = char(r.abbreviate(7).name);
 shortMsg = char(r.getShortMessage);
 fprintf('[%s %s] %s\n',branch,abbrevSHA,shortMsg)
-JGit.diff('previous','HEAD~1','showNameAndStatusOnly',true)
+JGIT4MATLAB.JGit.diff('previous','HEAD~1','showNameAndStatusOnly',true)
 end
 
 function tf = validatefiles(files)
