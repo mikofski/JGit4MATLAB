@@ -7,6 +7,8 @@ classdef JGitApp < handle
         DIRNAME = mfilename('fullpath')
         CACHEFILE = fullfile(fileparts(JGIT4MATLAB.JGitApp.DIRNAME),'cache.mat')
         CACHE = matfile(JGIT4MATLAB.JGitApp.CACHEFILE,'Writable',true)
+        ICONSFILE = fullfile(fileparts(JGIT4MATLAB.JGitApp.DIRNAME),'icons.mat')
+        ICONS = matfile(JGIT4MATLAB.JGitApp.ICONSFILE,'Writable',true)
     end
     properties
         Debug = false
@@ -17,6 +19,10 @@ classdef JGitApp < handle
         InitRepoMenu
         ClearRepoCacheMenu
         RepoPopup
+        BranchPopup
+        CommitEdit
+        SearchButton
+        RemotePopup
         GraphPanel
     end
     methods
@@ -27,8 +33,10 @@ classdef JGitApp < handle
                 repos = app.CACHE.repos;
                 app.log('cache loaded')
             end
+            search_ico = app.ICONS.search_ico;
             app.Figure = figure('MenuBar','None','NumberTitle','off',...
-                'Name','JGit','CloseRequestFcn',@app.closeApp);
+                'Name','JGit','CloseRequestFcn',@app.closeApp,...
+                'ResizeFcn',@app.resizeApp);
             app.RepoMenu = uimenu(app.Figure,'Label','Repositories');
             app.OpenRepoMenu = uimenu(app.RepoMenu,'Label','Open',...
                 'Callback',@app.openRepo);
@@ -40,12 +48,29 @@ classdef JGitApp < handle
                 'Callback',@app.clearRepoCache);
             app.RepoPopup = uicontrol(app.Figure,'Style','popupmenu',...
                 'String','select repository','FontAngle','italic',...
-                'Units','normalized','Position',[0.0025,0.95,0.2,0.05],...
+                'Units','normalized','Position',[0,0.95,0.2,0.05],...
                 'Callback',@app.openRepo);
+            app.BranchPopup = uicontrol(app.Figure,'Style','popupmenu',...
+                'String','all branches','FontAngle','italic',...
+                'Units','normalized','Position',[0.2,0.95,0.2,0.05],...
+                'Callback',@app.selectBranch);
+            app.CommitEdit = uicontrol(app.Figure,'Style','edit',...
+                'String','SHA, author, date, message','FontAngle','italic',...
+                'Units','pixels','Position',[226,400,203,21],...
+                'Callback',@app.searchRepo);
+            app.SearchButton = uicontrol(app.Figure,'Style','pushbutton',...
+                'CData',search_ico,'FontAngle','italic',...
+                'Units','pixels','Position',[430,400,21,21],...
+                'Callback',@app.searchRepo);
+            app.RemotePopup = uicontrol(app.Figure,'Style','popupmenu',...
+                'String','no remote config','FontAngle','italic',...
+                'Units','normalized','Position',[0.8,0.95,0.2,0.05],...
+                'Callback',@app.selectRemote);
             if ~isempty(repos)
                 set(app.RepoPopup,'String',repos);
                 app.log('using repo cache')
             end
+            
 %             app.RepoList = uipanel(app.Figure,'Position',[0,0,0.2,1],...
 %                 'BackgroundColor','white','BorderType','line',...
 %                 'Title','Repositories');
@@ -66,6 +91,13 @@ classdef JGitApp < handle
                 app.Debug = debug;
             end
             app.log('debugging')
+        end
+        function resizeApp(app,~,~)
+            set(app.Figure,'Units','pixels')
+            pos = get(app.Figure,'Position');
+            pos = [0.4*pos(3),pos(4)-21,0.4*pos(3)-21,21];
+            set(app.CommitEdit,'Position',pos)
+            set(app.SearchButton,'Position',[2*pos(1)-21,pos(2),21,21])
         end
         function disp(app)
             % test if handle is dead
