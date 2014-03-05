@@ -23,6 +23,7 @@ classdef JGitApp < handle
         CommitEdit
         SearchButton
         RemotePopup
+        LogTable
         GraphPanel
     end
     methods
@@ -66,20 +67,14 @@ classdef JGitApp < handle
                 'String','no remote config','FontAngle','italic',...
                 'Units','normalized','Position',[0.8,0.95,0.2,0.05],...
                 'Callback',@app.selectRemote);
+            cnames = {'Message','Author','Date'};
+            app.LogTable = uitable(app.Figure,'ColumnName',cnames,...
+                'RowName',{'SHA'},'Units','pixels',...
+                'ColumnWidth',{194,'auto','auto'},'Position',[169,211,392,189]);
             if ~isempty(repos)
                 set(app.RepoPopup,'String',repos);
                 app.log('using repo cache')
             end
-            
-%             app.RepoList = uipanel(app.Figure,'Position',[0,0,0.2,1],...
-%                 'BackgroundColor','white','BorderType','line',...
-%                 'Title','Repositories');
-%             app.GraphPanel = uipanel(app.Figure,'Position',[0.2,0,0.8,0.4],...
-%                 'BackgroundColor','white','BorderType','line',...
-%                 'Title','Graph');
-%             uicontrol(app.Figure,'Position',[0,0,20,20],...
-%                 'Style','pushbutton','String','Create New Repository',...
-%                 'Callback',@app.initRepo);
         end
         function set.Debug(app,debug)
             if nargin>0
@@ -94,10 +89,17 @@ classdef JGitApp < handle
         end
         function resizeApp(app,~,~)
             set(app.Figure,'Units','pixels')
-            pos = get(app.Figure,'Position');
-            pos = [0.4*pos(3),pos(4)-21,0.4*pos(3)-21,21];
-            set(app.CommitEdit,'Position',pos)
-            set(app.SearchButton,'Position',[2*pos(1)-21,pos(2),21,21])
+            pos = get(app.Figure,'Position')
+            commit_edit_pos = [0.4*pos(3),pos(4)-21,0.4*pos(3)-21,21];
+            set(app.CommitEdit,'Position',commit_edit_pos)
+            search_btn_pos = [2*commit_edit_pos(1)-21,commit_edit_pos(2),21,21];
+            set(app.SearchButton,'Position',search_btn_pos)
+            log_table_cw = get(app.LogTable,'ColumnWidth')
+            log_table_ext = get(app.LogTable,'Extent')
+            log_table_pos = [0.3*pos(3),0.5*pos(4),0.7*pos(3),0.5*pos(4)-21]
+            msg_trim = max(0,log_table_cw{1}+(log_table_pos(3)-log_table_ext(3)));
+            set(app.LogTable,'Units','pixels','Position',log_table_pos,...
+                'ColumnWidth',{msg_trim,'auto','auto'})
         end
         function disp(app)
             % test if handle is dead
