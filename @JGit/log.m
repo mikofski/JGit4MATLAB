@@ -88,7 +88,7 @@ elseif ~isempty(p.Results.not)
 end
 %% all
 if p.Results.all
-    logCMD.all
+    logCMD.all;
 end
 %% no revision range
 % this is the default - mark traversal start at HEAD

@@ -167,7 +167,7 @@ classdef JGitApp < handle
             end
             app.log('opening repository: %s', repo_name)
             % get log data
-            revwalker = JGIT4MATLAB.JGit.log('all',true,'maxCount',10);
+            revwalker = JGIT4MATLAB.JGit.log('gitDir',folder_name,'all',true);
             [name,email] = JGIT4MATLAB.JGit.getUserInfo;
             log_data = {'working copy',...
                 sprintf('%s <%s>',char(name),char(email)),date};

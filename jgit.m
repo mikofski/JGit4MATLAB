@@ -115,7 +115,7 @@ switch cmd
             cmd,'>> jgit help\n','jgit help.')
 end
 try
-    JGIT4MATLAB.JGit.(cmd)(parsed_argopts{:})
+    JGIT4MATLAB.JGit.(cmd)(parsed_argopts{:});
 catch ME
     rethrow(ME)
 end
