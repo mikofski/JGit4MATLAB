@@ -60,7 +60,7 @@ classdef JGit < handle
         diff(varargin)
         fetch(varargin)
         init(varargin)
-        log(varargin)
+        r = log(varargin)
         r = merge(include,varargin)
         r = pull(varargin)
         push(varargin)

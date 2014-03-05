@@ -89,14 +89,14 @@ classdef JGitApp < handle
         end
         function resizeApp(app,~,~)
             set(app.Figure,'Units','pixels')
-            pos = get(app.Figure,'Position')
+            pos = get(app.Figure,'Position');
             commit_edit_pos = [0.4*pos(3),pos(4)-21,0.4*pos(3)-21,21];
             set(app.CommitEdit,'Position',commit_edit_pos)
             search_btn_pos = [2*commit_edit_pos(1)-21,commit_edit_pos(2),21,21];
             set(app.SearchButton,'Position',search_btn_pos)
-            log_table_cw = get(app.LogTable,'ColumnWidth')
-            log_table_ext = get(app.LogTable,'Extent')
-            log_table_pos = [0.3*pos(3),0.5*pos(4),0.7*pos(3),0.5*pos(4)-21]
+            log_table_cw = get(app.LogTable,'ColumnWidth');
+            log_table_ext = get(app.LogTable,'Extent');
+            log_table_pos = [0.3*pos(3),0.5*pos(4),0.7*pos(3),0.5*pos(4)-21];
             msg_trim = max(0,log_table_cw{1}+(log_table_pos(3)-log_table_ext(3)));
             set(app.LogTable,'Units','pixels','Position',log_table_pos,...
                 'ColumnWidth',{msg_trim,'auto','auto'})
@@ -166,6 +166,25 @@ classdef JGitApp < handle
                 error('wtf?')
             end
             app.log('opening repository: %s', repo_name)
+            % get log data
+            revwalker = JGIT4MATLAB.JGit.log('all',true,'maxCount',10);
+            [name,email] = JGIT4MATLAB.JGit.getUserInfo;
+            log_data = {'working copy',...
+                sprintf('%s <%s>',char(name),char(email)),date};
+            log_rows = {'000000'};
+            commit = revwalker.next;
+            while ~isempty(commit)
+                sha = char(commit.getName.substring(0,6));
+                authorID = commit.getAuthorIdent;
+                author = sprintf('%s <%s>',char(authorID.getName),...
+                    char(authorID.getEmailAddress));
+                commit_date = char(authorID.getWhen);
+                msg = strtrim(char(commit.getShortMessage));
+                log_data = [log_data;{msg,author,commit_date}]; %#ok<AGROW>
+                log_rows = [log_rows;{sha}]; %#ok<AGROW>
+                commit = revwalker.next;
+            end
+            set(app.LogTable,'Data',log_data,'RowName',log_rows)
         end
         function log(app,fmtstr,varargin)
             if app.Debug

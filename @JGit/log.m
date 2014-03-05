@@ -1,4 +1,4 @@
-function log(varargin)
+function revwalker = log(varargin)
 %JGIT.LOG Show the commit log.
 %   JGIT.LOG(PARAMETER,VALUE,...) uses any combination of the following
 %   PARAMETER, VALUE pairs.
@@ -8,7 +8,7 @@ function log(varargin)
 %   'until' <char> [] Show log of older commits until this commit.
 %   'path' <char|cellstr> [] Show log of files on specified paths.
 %   'not' <char> [] Same as git --not start or ^start.
-%   'start' <char> [] Mark start of traversal, same a until start.
+%   'add' <char> [] Mark start of traversal, same a until start.
 %   'all' <logitcal> Add all refs as commits to start the graph traversal from.
 %   'gitDir' <char> [PWD] Specify the folder in which Git Repo resides.
 %
@@ -95,6 +95,7 @@ end
 % end
 %% call
 revwalker = logCMD.call;
+if nargout>0,return,end
 %% display log
 commit = revwalker.next;
 while ~isempty(commit)

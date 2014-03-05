@@ -12,3 +12,5 @@ version
 .settings/
 .project
 bin/
+@JGitApp/cache.mat
+
