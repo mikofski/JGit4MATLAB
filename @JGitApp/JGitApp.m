@@ -30,8 +30,20 @@ classdef JGitApp < handle
         function app = JGitApp(debug)
             if nargin>0,app.Debug = debug;end
             repos = {};
-            if strcmp('repos',who(app.CACHE))
-                repos = app.CACHE.repos;
+            if exist(app.CACHEFILE,'file')==2
+                try
+                    repos = app.CACHE.repos;
+                    repo_dirs = app.CACHE.repo_dirs;
+                catch ME
+                    if strcmp(ME.identifier,'MATLAB:MatFile:VariableNotInFile')
+                        app.log('cache %s is corrupt',app.CACHEFILE)
+                        app.clearRepoCache
+                    else
+                        rethrow(ME)
+                    end
+                end
+            end
+            if ~isempty(repos)
                 app.log('cache loaded')
             end
             search_ico = app.ICONS.search_ico;
@@ -49,7 +61,7 @@ classdef JGitApp < handle
                 'Callback',@app.clearRepoCache);
             app.RepoPopup = uicontrol(app.Figure,'Style','popupmenu',...
                 'String','select repository','FontAngle','italic',...
-                'Units','normalized','Position',[0,0.95,0.2,0.05],...
+                'UserData',{},'Units','normalized','Position',[0,0.95,0.2,0.05],...
                 'Callback',@app.openRepo);
             app.BranchPopup = uicontrol(app.Figure,'Style','popupmenu',...
                 'String','all branches','FontAngle','italic',...
@@ -69,10 +81,10 @@ classdef JGitApp < handle
                 'Callback',@app.selectRemote);
             cnames = {'Message','Author','Date'};
             app.LogTable = uitable(app.Figure,'ColumnName',cnames,...
-                'RowName',{'SHA'},'Units','pixels',...
-                'ColumnWidth',{194,'auto','auto'},'Position',[169,211,392,189]);
+                'RowName',{'SHA'},'Units','pixels','Position',[169,211,392,189],...
+                'ColumnWidth',{194,'auto','auto'});
             if ~isempty(repos)
-                set(app.RepoPopup,'String',repos);
+                set(app.RepoPopup,'String',repos,'UserData',repo_dirs);
                 app.log('using repo cache')
             end
         end
@@ -123,21 +135,27 @@ classdef JGitApp < handle
                 app.log('cache deleted')
             end
             if iscellstr(get(app.RepoPopup,'String'))
-                set(app.RepoPopup,'String','select repository','FontAngle','italic')
+                set(app.RepoPopup,'String','select repository',...
+                    'UserData',{},'FontAngle','italic')
                 app.log('repo popupmemu reset')
             end
         end
         function saveRepoCache(app,~,~)
             repos = get(app.RepoPopup,'String');
+            repo_dirs = get(app.RepoPopup,'UserData');
             if iscellstr(repos)
                 % only save if there data to save
                 app.CACHE.repos = repos;
+                app.CACHE.repo_dirs = repo_dirs;
                 app.log('cache saved')
             end
         end
         function openRepo(app,hObject,~)
             % there is no callback eventdata
+            popupRepos = get(app.RepoPopup,'String');
+            popupRepoDirs = get(app.RepoPopup,'UserData');
             if hObject==app.OpenRepoMenu
+                % called from Repository Menu
                 app.log('repo menu')
                 start_path = pwd;
                 dialog_title = 'Select Repository';
@@ -147,26 +165,28 @@ classdef JGitApp < handle
                     return
                 end
                 [~,repo_name,~] = fileparts(folder_name);
-                popupRepos = get(app.RepoPopup,'String');
                 if ~iscellstr(popupRepos)
-                    set(app.RepoPopup,'String',{repo_name},'FontAngle','normal')
+                    set(app.RepoPopup,'String',{repo_name},...
+                        'UserData',{folder_name},'FontAngle','normal')
                 else
-                    set(app.RepoPopup,'String',[popupRepos,{repo_name}])
+                    set(app.RepoPopup,'String',[popupRepos,{repo_name}],...
+                        'UserData',[popupRepoDirs,{folder_name}])
                 end
                 app.log('add %s to popup menu',repo_name)
             elseif hObject==app.RepoPopup
-                popupRepos = get(app.RepoPopup,'String');
+                % called from Repository Popup
                 if ~iscellstr(popupRepos)
                     return
                 end
                 popupReposIdx = get(app.RepoPopup,'Value');
-                folder_name = popupRepos{popupReposIdx};
-                [~,repo_name,~] = fileparts(folder_name);
+                folder_name = popupRepoDirs{popupReposIdx};
+                repo_name = popupRepos{popupReposIdx};
             else
                 error('wtf?')
             end
             app.log('opening repository: %s', repo_name)
             % get log data
+            app.log('git dir is: %s', folder_name)
             revwalker = JGIT4MATLAB.JGit.log('gitDir',folder_name,'all',true);
             [name,email] = JGIT4MATLAB.JGit.getUserInfo;
             log_data = {'working copy',...

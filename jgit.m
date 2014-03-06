@@ -5,7 +5,7 @@ function jgit(varargin)
 %% initialize and/or return JGit constants
 if nargin==0
     try
-        JGIT4MATLAB.JGit %#ok<NOPRT>
+        JGIT4MATLAB.JGit
     catch ME
         rethrow(ME)
     end
