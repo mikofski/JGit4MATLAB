@@ -28,6 +28,7 @@ classdef JGitApp < handle
         SearchButton
         RemotePopup
         LogTable
+        DiffText
     end
     methods
         function app = JGitApp(debug)
@@ -92,6 +93,8 @@ classdef JGitApp < handle
             app.LogTable = uitable(app.Figure,'ColumnName',cnames,...
                 'RowName',{'SHA'},'Units','pixels','Position',[0,211,560,189],...
                 'ColumnWidth',{194,'auto','auto'});
+            app.DiffText = uicontrol(app.Figure,'String','no changes',...
+                'Position',[0,0,420,210]);
             if ~isempty(repos)
                 set(app.RepoPopup,'String',repos,'UserData',repo_dirs,...
                     'Value',repo_val);
@@ -123,6 +126,8 @@ classdef JGitApp < handle
             msg_trim = max(0,log_table_cw{1}+(log_table_pos(3)-log_table_ext(3)));
             set(app.LogTable,'Units','pixels','Position',log_table_pos,...
                 'ColumnWidth',{msg_trim,'auto','auto'})
+            difftxt_pos =  [0,0,0.75*pos(3),0.5*pos(4)];
+            set(app.DiffText,'Units','pixels','Position',difftxt_pos)
         end
         function disp(app)
             % test if handle is dead
