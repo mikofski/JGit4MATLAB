@@ -46,7 +46,7 @@ classdef JGitApp < handle
             if ~isempty(repos)
                 app.log('cache loaded')
             end
-            search_ico = app.ICONS.search_ico;
+            search_ico = circshift(app.ICONS.search_ico,[1,1]);
             app.Figure = figure('MenuBar','None','NumberTitle','off',...
                 'Name','JGit','CloseRequestFcn',@app.closeApp,...
                 'ResizeFcn',@app.resizeApp);
@@ -81,7 +81,7 @@ classdef JGitApp < handle
                 'Callback',@app.selectRemote);
             cnames = {'Message','Author','Date'};
             app.LogTable = uitable(app.Figure,'ColumnName',cnames,...
-                'RowName',{'SHA'},'Units','pixels','Position',[169,211,392,189],...
+                'RowName',{'SHA'},'Units','pixels','Position',[0,211,560,189],...
                 'ColumnWidth',{194,'auto','auto'});
             if ~isempty(repos)
                 set(app.RepoPopup,'String',repos,'UserData',repo_dirs);
@@ -108,7 +108,7 @@ classdef JGitApp < handle
             set(app.SearchButton,'Position',search_btn_pos)
             log_table_cw = get(app.LogTable,'ColumnWidth');
             log_table_ext = get(app.LogTable,'Extent');
-            log_table_pos = [0.3*pos(3),0.5*pos(4),0.7*pos(3),0.5*pos(4)-21];
+            log_table_pos = [0,0.5*pos(4),pos(3),0.5*pos(4)-21];
             msg_trim = max(0,log_table_cw{1}+(log_table_pos(3)-log_table_ext(3)));
             set(app.LogTable,'Units','pixels','Position',log_table_pos,...
                 'ColumnWidth',{msg_trim,'auto','auto'})
