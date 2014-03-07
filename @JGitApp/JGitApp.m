@@ -18,13 +18,16 @@ classdef JGitApp < handle
         CloneRepoMenu
         InitRepoMenu
         ClearRepoCacheMenu
+        BranchMenu
+        CommitMenu
+        RemotesMenu
+        HelpMenu
         RepoPopup
         BranchPopup
         CommitEdit
         SearchButton
         RemotePopup
         LogTable
-        GraphPanel
     end
     methods
         function app = JGitApp(debug)
@@ -34,9 +37,11 @@ classdef JGitApp < handle
                 try
                     repos = app.CACHE.repos;
                     repo_dirs = app.CACHE.repo_dirs;
+                    repo_val = app.CACHE.repo_val;
                 catch ME
                     if strcmp(ME.identifier,'MATLAB:MatFile:VariableNotInFile')
                         app.log('cache %s is corrupt',app.CACHEFILE)
+                        if ~isempty(repos),repos={};end
                         app.clearRepoCache
                     else
                         rethrow(ME)
@@ -46,7 +51,7 @@ classdef JGitApp < handle
             if ~isempty(repos)
                 app.log('cache loaded')
             end
-            search_ico = circshift(app.ICONS.search_ico,[1,1]);
+            search_ico = app.ICONS.search_ico;
             app.Figure = figure('MenuBar','None','NumberTitle','off',...
                 'Name','JGit','CloseRequestFcn',@app.closeApp,...
                 'ResizeFcn',@app.resizeApp);
@@ -59,6 +64,10 @@ classdef JGitApp < handle
                 'Callback',@app.initRepo);
             app.ClearRepoCacheMenu = uimenu(app.RepoMenu,'Label','Clear Cache',...
                 'Callback',@app.clearRepoCache);
+            app.BranchMenu = uimenu(app.Figure,'Label','Branches');
+            app.CommitMenu = uimenu(app.Figure,'Label','Commits');
+            app.RemotesMenu = uimenu(app.Figure,'Label','Remotes');
+            app.HelpMenu = uimenu(app.Figure,'Label','Help');
             app.RepoPopup = uicontrol(app.Figure,'Style','popupmenu',...
                 'String','select repository','FontAngle','italic',...
                 'UserData',{},'Units','normalized','Position',[0,0.95,0.2,0.05],...
@@ -84,7 +93,9 @@ classdef JGitApp < handle
                 'RowName',{'SHA'},'Units','pixels','Position',[0,211,560,189],...
                 'ColumnWidth',{194,'auto','auto'});
             if ~isempty(repos)
-                set(app.RepoPopup,'String',repos,'UserData',repo_dirs);
+                set(app.RepoPopup,'String',repos,'UserData',repo_dirs,...
+                    'Value',repo_val);
+                app.openRepo(app.RepoPopup)
                 app.log('using repo cache')
             end
         end
@@ -143,10 +154,12 @@ classdef JGitApp < handle
         function saveRepoCache(app,~,~)
             repos = get(app.RepoPopup,'String');
             repo_dirs = get(app.RepoPopup,'UserData');
+            repo_val = get(app.RepoPopup,'Value');
             if iscellstr(repos)
                 % only save if there data to save
                 app.CACHE.repos = repos;
                 app.CACHE.repo_dirs = repo_dirs;
+                app.CACHE.repo_val = repo_val; % save current repo
                 app.log('cache saved')
             end
         end
