@@ -13,6 +13,7 @@ classdef JGitApp < handle
     properties
         Debug = false % Show logging debug info.
         Figure % Handle of app figure.
+        RepoDir
         RepoMenu % Handle of repository menu control.
         OpenRepoMenu % Handle of "Open Repository" submenu control.
         CloneRepoMenu % Handle of "Clone Repository" submenu control.
@@ -91,8 +92,9 @@ classdef JGitApp < handle
                 'Callback',@app.selectRemote);
             cnames = {'Message','Author','Date'};
             app.LogTable = uitable(app.Figure,'ColumnName',cnames,...
-                'RowName',{'SHA'},'Units','pixels','Position',[0,211,560,189],...
-                'ColumnWidth',{194,'auto','auto'});
+                'RowName',{'SHA'},'CellSelectionCallback',@app.selectCommit,...
+                'RearrangeableColumns','off','Units','pixels',...
+                'Position',[0,211,560,189],'ColumnWidth',{194,'auto','auto'});
             app.DiffEdit = uicontrol(app.Figure,'Style','edit',...
                 'String','no changes','Enable','inactive','Min',-1,'Max',1,...
                 'HorizontalAlignment','left','FontName','Courier',...
@@ -100,8 +102,11 @@ classdef JGitApp < handle
             if ~isempty(repos)
                 set(app.RepoPopup,'String',repos,'UserData',repo_dirs,...
                     'Value',repo_val);
+                app.RepoDir = repo_dirs{repo_val};
                 app.openRepo(app.RepoPopup)
                 app.log('using repo cache')
+            else
+                app.RepoDir = '';
             end
         end
         function set.Debug(app,debug)
@@ -157,6 +162,7 @@ classdef JGitApp < handle
                     'UserData',{},'FontAngle','italic')
                 app.log('repo popupmemu reset')
             end
+            app.RepoDir = '';
         end
         function saveRepoCache(app,~,~)
             repos = get(app.RepoPopup,'String');
@@ -227,6 +233,35 @@ classdef JGitApp < handle
             set(app.LogTable,'Data',log_data,'RowName',log_rows)
             % get diff
             diff_file = JGIT4MATLAB.JGit.diff('gitDir',folder_name);
+            fid = fopen(diff_file,'rt');
+            diff_txt = {};
+            try
+                tline = fgetl(fid);
+                while tline>0
+                    diff_txt = [diff_txt;tline]; %#ok<AGROW>
+                    tline = fgetl(fid);
+                end
+            catch ME
+                fclose(fid);
+                rethrow(ME)
+            end
+            fclose(fid);
+            set(app.DiffEdit,'String',diff_txt)
+            % set repo dir
+            app.RepoDir = folder_name;
+        end
+        function selectCommit(app,~,eventdata)
+            commits = get(app.LogTable,'RowName');
+            commit = eventdata.Indices(1);
+            if commit==1
+                diff_file = JGIT4MATLAB.JGit.diff('gitDir',app.RepoDir);
+            else
+                updated = commits{commit};
+                previous = commits{commit+1};
+                % get diff
+                diff_file = JGIT4MATLAB.JGit.diff('gitDir',app.RepoDir,...
+                    'previous',previous,'updated',updated);
+            end
             fid = fopen(diff_file,'rt');
             diff_txt = {};
             try
