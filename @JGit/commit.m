@@ -163,7 +163,7 @@ branch = char(gitAPI.getRepository.getBranch);
 abbrevSHA = char(r.abbreviate(7).name);
 shortMsg = char(r.getShortMessage);
 fprintf('[%s %s] %s\n',branch,abbrevSHA,shortMsg)
-JGIT4MATLAB.JGit.diff('previous','HEAD~1','showNameAndStatusOnly',true)
+JGIT4MATLAB.JGit.diff('previous','HEAD~1','showNameAndStatusOnly',true);
 end
 
 function tf = validatefiles(files)
