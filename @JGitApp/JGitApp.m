@@ -19,17 +19,17 @@ classdef JGitApp < handle
         CloneRepoMenu % Handle of "Clone Repository" submenu control.
         InitRepoMenu % Handle of "New Repository" submenu control.
         ClearRepoCacheMenu % Handle of "Clear Cache" submenu control.
-        BranchMenu % Handle of branch menu control.
-        CommitMenu % Handle of commit menu control.
-        RemotesMenu % Handle of remotes menu control.
-        HelpMenu
-        RepoPopup
-        BranchPopup
-        CommitEdit
-        SearchButton
-        RemotePopup
-        LogTable
-        DiffEdit
+        BranchMenu % Handle of "Branch" menu control.
+        CommitMenu % Handle of "Commit" menu control.
+        RemotesMenu % Handle of "Remote" menu control.
+        HelpMenu % Handle for "Help" menu control.
+        RepoPopup % Handle for "Repositories" pop-up menu control.
+        BranchPopup % Handle for "Branch" pop-up menu control.
+        CommitEdit % Handle to "Commit" edit control. 
+        SearchButton % Handle to "Search" button control.
+        RemotePopup % Handle to "Remote" pop-up menu control.
+        LogTable % Handle to "Log" table control.
+        DiffEdit% Handle to "Diff" edit control.
         FilesListbox % List of modified, added and untracked files.
     end
     methods
@@ -192,17 +192,28 @@ classdef JGitApp < handle
                 start_path = pwd;
                 dialog_title = 'Select Repository';
                 folder_name = uigetdir(start_path,dialog_title);
+                % check if folder is actually a git repository
                 if ~app.isGitDir(folder_name)
                     errordlg('Not a Git repository','JGit','modal')
                     return
                 end
-                [~,repo_name,~] = fileparts(folder_name);
+                [~,repo_name,~] = fileparts(folder_name); % get repo name
+                % check if first repo
                 if ~iscellstr(popupRepos)
                     set(app.RepoPopup,'String',{repo_name},...
                         'UserData',{folder_name},'FontAngle','normal')
                 else
-                    set(app.RepoPopup,'String',[popupRepos;{repo_name}],...
-                        'UserData',[popupRepoDirs,{folder_name}])
+                    % append repo to list or not if already cached
+                    repo_idx = strcmp(repo_name,popupRepos); % repo index
+                    nRepos = numel(popupRepos); % number of repos
+                    if ~any(repo_idx)
+                        set(app.RepoPopup,'String',[popupRepos;{repo_name}],...
+                            'UserData',[popupRepoDirs,{folder_name}],...
+                            'Value',nRepos)
+                    else
+                        nRepos = 1:nRepos; % reuse to find index
+                        set(app.RepoPopup,'Value',nRepos(repo_idx))
+                    end
                 end
                 app.log('add %s to popup menu',repo_name)
             elseif hObject==app.RepoPopup
@@ -258,6 +269,9 @@ classdef JGitApp < handle
             % set files
             files = app.getFilesStatus;
             set(app.FilesListbox,'String',files)
+        end
+        function cloneRepo(app,hObject,eventdata)
+            
         end
         function selectCommit(app,~,eventdata)
             commits = get(app.LogTable,'RowName');
