@@ -201,7 +201,7 @@ classdef JGitApp < handle
                     set(app.RepoPopup,'String',{repo_name},...
                         'UserData',{folder_name},'FontAngle','normal')
                 else
-                    set(app.RepoPopup,'String',[popupRepos,{repo_name}],...
+                    set(app.RepoPopup,'String',[popupRepos;{repo_name}],...
                         'UserData',[popupRepoDirs,{folder_name}])
                 end
                 app.log('add %s to popup menu',repo_name)
@@ -261,6 +261,9 @@ classdef JGitApp < handle
         end
         function selectCommit(app,~,eventdata)
             commits = get(app.LogTable,'RowName');
+            if isempty(eventdata.Indices)
+                return
+            end
             commit = eventdata.Indices(1);
             if commit==1
                 diff_file = JGIT4MATLAB.JGit.diff('gitDir',app.RepoDir);
