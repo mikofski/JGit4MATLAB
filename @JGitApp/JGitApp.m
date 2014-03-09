@@ -30,6 +30,7 @@ classdef JGitApp < handle
         RemotePopup
         LogTable
         DiffEdit
+        FilesListbox % List of modified, added and untracked files.
     end
     methods
         function app = JGitApp(debug)
@@ -99,6 +100,9 @@ classdef JGitApp < handle
                 'String','no changes','Enable','inactive','Min',-1,'Max',1,...
                 'HorizontalAlignment','left','FontName','Courier',...
                 'Position',[0,0,420,210]);
+            app.FilesListbox = uicontrol(app.Figure,'Style','listbox',...
+                'Position',[420,0,140,210],'Min',1,'Max',-1,'String',{''});
+            % TODO: separate into staged and unstaged!
             if ~isempty(repos)
                 set(app.RepoPopup,'String',repos,'UserData',repo_dirs,...
                     'Value',repo_val);
@@ -135,6 +139,8 @@ classdef JGitApp < handle
                 'ColumnWidth',{msg_trim,'auto','auto'})
             difftxt_pos =  [0,0,0.75*pos(3),0.5*pos(4)];
             set(app.DiffEdit,'Units','pixels','Position',difftxt_pos)
+            filelist_pos =  [difftxt_pos(3),0,pos(3)-difftxt_pos(3),difftxt_pos(4)];
+            set(app.FilesListbox,'Units','pixels','Position',filelist_pos)
         end
         function disp(app)
             % test if handle is dead
@@ -249,6 +255,9 @@ classdef JGitApp < handle
             set(app.DiffEdit,'String',diff_txt)
             % set repo dir
             app.RepoDir = folder_name;
+            % set files
+            files = app.getFilesStatus;
+            set(app.FilesListbox,'String',files)
         end
         function selectCommit(app,~,eventdata)
             commits = get(app.LogTable,'RowName');
@@ -276,12 +285,55 @@ classdef JGitApp < handle
             end
             fclose(fid);
             set(app.DiffEdit,'String',diff_txt)
+            % set files
+            % TODO: get output from diff --name-status
         end
         function log(app,fmtstr,varargin)
             if app.Debug
                 s = sprintf('[JGitApp] %s\n',fmtstr);
                 fprintf(s,varargin{:});
             end
+        end
+        function files = getFilesStatus(app)
+            files = {};
+            gitAPI = JGIT4MATLAB.JGit.getGitAPI(app.RepoDir);
+            %% call
+            statusCall = gitAPI.status.call;
+            %conflicting = statusCall.getConflicting;
+            added = statusCall.getAdded;
+            if ~added.isEmpty
+                iter = added.iterator;
+                for n = 1:added.size
+                    str = ['A ',iter.next];
+                    files = [files,{str}]; %#ok<AGROW>
+                end
+            end
+            changed = statusCall.getChanged;
+            if ~changed.isEmpty
+                iter = changed.iterator;
+                for n = 1:changed.size
+                    str = ['M ',iter.next];
+                    files = [files,{str}]; %#ok<AGROW>
+                end
+            end
+            removed = statusCall.getRemoved;
+            if ~removed.isEmpty
+                iter = removed.iterator;
+                for n = 1:removed.size
+                    str = ['R ',iter.next];
+                    files = [files,{str}]; %#ok<AGROW>
+                end
+            end
+            modified = statusCall.getModified;
+            if ~modified.isEmpty
+                iter = modified.iterator;
+                for n = 1:modified.size
+                    str = ['M ',iter.next];
+                    files = [files,{str}]; %#ok<AGROW>
+                end
+            end
+            %missing = statusCall.getMissing;
+            %untracked = statusCall.getUntracked;
         end
     end
     methods (Static)
