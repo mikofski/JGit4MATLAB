@@ -11,16 +11,16 @@ classdef JGitApp < handle
         ICONS = matfile(JGIT4MATLAB.JGitApp.ICONSFILE,'Writable',true)
     end
     properties
-        Debug = false
-        Figure
-        RepoMenu
-        OpenRepoMenu
-        CloneRepoMenu
-        InitRepoMenu
-        ClearRepoCacheMenu
-        BranchMenu
-        CommitMenu
-        RemotesMenu
+        Debug = false % Show logging debug info.
+        Figure % Handle of app figure.
+        RepoMenu % Handle of repository menu control.
+        OpenRepoMenu % Handle of "Open Repository" submenu control.
+        CloneRepoMenu % Handle of "Clone Repository" submenu control.
+        InitRepoMenu % Handle of "New Repository" submenu control.
+        ClearRepoCacheMenu % Handle of "Clear Cache" submenu control.
+        BranchMenu % Handle of branch menu control.
+        CommitMenu % Handle of commit menu control.
+        RemotesMenu % Handle of remotes menu control.
         HelpMenu
         RepoPopup
         BranchPopup
@@ -28,7 +28,7 @@ classdef JGitApp < handle
         SearchButton
         RemotePopup
         LogTable
-        DiffText
+        DiffEdit
     end
     methods
         function app = JGitApp(debug)
@@ -93,7 +93,9 @@ classdef JGitApp < handle
             app.LogTable = uitable(app.Figure,'ColumnName',cnames,...
                 'RowName',{'SHA'},'Units','pixels','Position',[0,211,560,189],...
                 'ColumnWidth',{194,'auto','auto'});
-            app.DiffText = uicontrol(app.Figure,'String','no changes',...
+            app.DiffEdit = uicontrol(app.Figure,'Style','edit',...
+                'String','no changes','Enable','inactive','Min',-1,'Max',1,...
+                'HorizontalAlignment','left','FontName','Courier',...
                 'Position',[0,0,420,210]);
             if ~isempty(repos)
                 set(app.RepoPopup,'String',repos,'UserData',repo_dirs,...
@@ -127,7 +129,7 @@ classdef JGitApp < handle
             set(app.LogTable,'Units','pixels','Position',log_table_pos,...
                 'ColumnWidth',{msg_trim,'auto','auto'})
             difftxt_pos =  [0,0,0.75*pos(3),0.5*pos(4)];
-            set(app.DiffText,'Units','pixels','Position',difftxt_pos)
+            set(app.DiffEdit,'Units','pixels','Position',difftxt_pos)
         end
         function disp(app)
             % test if handle is dead
@@ -203,7 +205,7 @@ classdef JGitApp < handle
                 error('wtf?')
             end
             app.log('opening repository: %s', repo_name)
-            % get log data
+            % get jgit log data
             app.log('git dir is: %s', folder_name)
             revwalker = JGIT4MATLAB.JGit.log('gitDir',folder_name,'all',true);
             [name,email] = JGIT4MATLAB.JGit.getUserInfo;
@@ -223,6 +225,22 @@ classdef JGitApp < handle
                 commit = revwalker.next;
             end
             set(app.LogTable,'Data',log_data,'RowName',log_rows)
+            % get diff
+            diff_file = JGIT4MATLAB.JGit.diff('gitDir',folder_name);
+            fid = fopen(diff_file,'rt');
+            diff_txt = {};
+            try
+                tline = fgetl(fid);
+                while tline>0
+                    diff_txt = [diff_txt;tline]; %#ok<AGROW>
+                    tline = fgetl(fid);
+                end
+            catch ME
+                fclose(fid);
+                rethrow(ME)
+            end
+            fclose(fid);
+            set(app.DiffEdit,'String',diff_txt)
         end
         function log(app,fmtstr,varargin)
             if app.Debug

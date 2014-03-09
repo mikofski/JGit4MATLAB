@@ -1,4 +1,4 @@
-function diff(varargin)
+function DIFF_FILE = diff(varargin)
 %JGIT.DIFF Show changes between commits, commit and working tree, etc.
 %   JGIT.DIFF opens the MATLAB editor and, if DIFFTOOL is set as true, the
 %   MATLAB Visual Comparison Tool.
@@ -150,7 +150,7 @@ if ~diffs.isEmpty
             fprintf('%-10s %15s (%6s) --> %15s (%6s)\n', ...
                 changeType,oldPath,oldMode,newPath,newMode)
         end
-    else
+    elseif nargout==0
         edit(DIFF_FILE);
     end
 end

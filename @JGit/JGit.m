@@ -57,7 +57,7 @@ classdef JGit < handle
         r = checkout(name,varargin)
         clone(uri,varargin)
         commit(varargin)
-        diff(varargin)
+        diff_file = diff(varargin)
         fetch(varargin)
         init(varargin)
         r = log(varargin)
