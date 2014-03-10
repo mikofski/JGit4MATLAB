@@ -271,7 +271,65 @@ classdef JGitApp < handle
             set(app.FilesListbox,'String',files)
         end
         function cloneRepo(app,hObject,eventdata)
-            
+            % repo names and dirs
+            popupRepos = get(app.RepoPopup,'String');
+            popupRepoDirs = get(app.RepoPopup,'UserData');
+            % choose destination dir
+            start_path = pwd;
+            dialog_title = 'Select Destination Directory';
+            folder_name = uigetdir(start_path,dialog_title);
+            % get URL for repo and foldername
+            prompt = {'Source URL','Repo Name'};
+            dlg_title = 'Specify Repository Source URL and Name';
+            answer = inputdlg(prompt,dlg_title,1);
+            % cancelled
+            if isempty(answer)
+                app.log('clone cancelled')
+                return
+            end
+            [URL, repo_name] = answer{:};
+            % use same repo name as remote
+            if isempty(repo_name)
+                [~,repo_name,~] = fileparts(URL);
+            elseif any(strcmp(repo_name,popupRepos))
+                warndlg('Repo Name already exists','JGit','modal')
+                return
+            end
+            % check if folder is already a git repository
+            folder_name = fullfile(folder_name, repo_name);
+            if app.isGitDir(folder_name)
+                errordlg('Folder is already Git repository','JGit','modal')
+                return
+            end
+            % clone
+            app.log('Clone URL: %s into dir: %s',URL,folder_name)
+            try
+                JGIT4MATLAB.JGit.clone(URL,'directory',folder_name)
+            catch ME
+                errordlg(ME.message,'JGit','modal')
+                app.log('Error: %s',ME.identifier)
+                return
+            end
+            % open repo
+            % TODO: refactor redundant code
+            % check if first repo
+            if ~iscellstr(popupRepos)
+                set(app.RepoPopup,'String',{repo_name},...
+                    'UserData',{folder_name},'FontAngle','normal')
+            else
+                % append repo to list or not if already cached
+                repo_idx = strcmp(repo_name,popupRepos); % repo index
+                nRepos = numel(popupRepos); % number of repos
+                if ~any(repo_idx)
+                    set(app.RepoPopup,'String',[popupRepos;{repo_name}],...
+                        'UserData',[popupRepoDirs,{folder_name}],...
+                        'Value',nRepos)
+                else
+                    nRepos = 1:nRepos; % reuse to find index
+                    set(app.RepoPopup,'Value',nRepos(repo_idx))
+                end
+            end
+            app.log('add %s to popup menu',repo_name)
         end
         function selectCommit(app,~,eventdata)
             commits = get(app.LogTable,'RowName');
