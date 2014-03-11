@@ -147,7 +147,7 @@ if ~diffs.isEmpty
             oldMode = char(diffs.get(n-1).getOldMode);
             newPath = char(diffs.get(n-1).getNewPath);
             newMode = char(diffs.get(n-1).getNewMode);
-            fprintf('%-10s %15s (%6s) --> %15s (%6s)\n', ...
+            fprintf('%-10s %s (%s) --> %s (%s)\n', ...
                 changeType,oldPath,oldMode,newPath,newMode)
         end
     elseif nargout==0
