@@ -32,10 +32,12 @@ classdef JGitApp < handle
         DiffEdit% Handle to "Diff" edit control.
         FilesListbox % List of modified, added and untracked files.
     end
-    % to get system and user config files, use:
+    % NOTE: to get system and user config files, use:
+    % <a href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/util/SystemReader.html">org.eclipse.jgit.util.SystemReader</a>
+    % sysread = org.eclipse.jgit.util.SystemReader.getInstance
     % gitconfig = sysread.openSystemConfig([],org.eclipse.jgit.util.FS.DETECTED)
     % .gitconfig = sysread.openUserConfig([],org.eclipse.jgit.util.FS.DETECTED)
-    % note: [] is equivalent to Java Null
+    % NOTE: [] is equivalent to Java Null
     methods
         function app = JGitApp(debug)
             if nargin>0,app.Debug = debug;end

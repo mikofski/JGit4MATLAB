@@ -49,6 +49,12 @@ classdef JGit < handle
         GITCONFIG = '.gitconfig' % global git config file found in USERHOME
         JSCH_USERINFO = '.jsch-userinfo' % global Jsch userinfo file with SSH passphrase
     end
+    % NOTE: to get system and user config files, use:
+    % <a href="http://download.eclipse.org/jgit/docs/latest/apidocs/org/eclipse/jgit/util/SystemReader.html">org.eclipse.jgit.util.SystemReader</a>
+    % sysread = org.eclipse.jgit.util.SystemReader.getInstance
+    % gitconfig = sysread.openSystemConfig([],org.eclipse.jgit.util.FS.DETECTED)
+    % .gitconfig = sysread.openUserConfig([],org.eclipse.jgit.util.FS.DETECTED)
+    % NOTE: [] is equivalent to Java Null
     %% static methods
     methods (Static)
         %% common methods
