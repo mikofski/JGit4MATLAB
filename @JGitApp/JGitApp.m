@@ -209,7 +209,7 @@ classdef JGitApp < handle
                     if ~any(repo_idx)
                         set(app.RepoPopup,'String',[popupRepos;{repo_name}],...
                             'UserData',[popupRepoDirs,{folder_name}],...
-                            'Value',nRepos)
+                            'Value',nRepos+1)
                     else
                         nRepos = 1:nRepos; % reuse to find index
                         set(app.RepoPopup,'Value',nRepos(repo_idx))
@@ -323,12 +323,13 @@ classdef JGitApp < handle
                 if ~any(repo_idx)
                     set(app.RepoPopup,'String',[popupRepos;{repo_name}],...
                         'UserData',[popupRepoDirs,{folder_name}],...
-                        'Value',nRepos)
+                        'Value',nRepos+1)
                 else
                     nRepos = 1:nRepos; % reuse to find index
                     set(app.RepoPopup,'Value',nRepos(repo_idx))
                 end
             end
+            app.openRepo(app.RepoPopup)
             app.log('add %s to popup menu',repo_name)
         end
         function selectCommit(app,~,eventdata)
