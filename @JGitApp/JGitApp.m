@@ -32,6 +32,10 @@ classdef JGitApp < handle
         DiffEdit% Handle to "Diff" edit control.
         FilesListbox % List of modified, added and untracked files.
     end
+    % to get system and user config files, use:
+    % gitconfig = sysread.openSystemConfig([],org.eclipse.jgit.util.FS.DETECTED)
+    % .gitconfig = sysread.openUserConfig([],org.eclipse.jgit.util.FS.DETECTED)
+    % note: [] is equivalent to Java Null
     methods
         function app = JGitApp(debug)
             if nargin>0,app.Debug = debug;end
@@ -192,6 +196,9 @@ classdef JGitApp < handle
                 start_path = pwd;
                 dialog_title = 'Select Repository';
                 folder_name = uigetdir(start_path,dialog_title);
+                if isscalar(folder_name) && folder_name==0
+                    return
+                end
                 % check if folder is actually a git repository
                 if ~app.isGitDir(folder_name)
                     errordlg('Not a Git repository','JGit','modal')
@@ -278,6 +285,9 @@ classdef JGitApp < handle
             start_path = pwd;
             dialog_title = 'Select Destination Directory';
             folder_name = uigetdir(start_path,dialog_title);
+            if isscalar(folder_name) && folder_name==0
+                return
+            end
             % get URL for repo and foldername
             prompt = {'Source URL','Repo Name'};
             dlg_title = 'Specify Repository Source URL and Name';
