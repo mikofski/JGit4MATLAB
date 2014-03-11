@@ -25,7 +25,7 @@ classdef JGitApp < handle
         HelpMenu % Handle for "Help" menu control.
         RepoPopup % Handle for "Repositories" pop-up menu control.
         BranchPopup % Handle for "Branch" pop-up menu control.
-        CommitEdit % Handle to "Commit" edit control. 
+        CommitEdit % Handle to "Commit" edit control.
         SearchButton % Handle to "Search" button control.
         RemotePopup % Handle to "Remote" pop-up menu control.
         LogTable % Handle to "Log" table control.
@@ -198,6 +198,7 @@ classdef JGitApp < handle
                 start_path = pwd;
                 dialog_title = 'Select Repository';
                 folder_name = uigetdir(start_path,dialog_title);
+                % user cancelled
                 if isscalar(folder_name) && folder_name==0
                     return
                 end
@@ -239,22 +240,37 @@ classdef JGitApp < handle
             app.log('opening repository: %s', repo_name)
             % get jgit log data
             app.log('git dir is: %s', folder_name)
-            revwalker = JGIT4MATLAB.JGit.log('gitDir',folder_name,'all',true);
+            try
+                revwalker = JGIT4MATLAB.JGit.log('gitDir',folder_name,'all',true);
+            catch ME
+                if strcmp(ME.identifier,'MATLAB:Java:GenericException') && ...
+                        strcmp(regexp(ME.message,'org.eclipse.jgit.api.errors.NoHeadException','match'),...
+                        'org.eclipse.jgit.api.errors.NoHeadException')
+                    revwalker = [];
+                else
+                    errordlg(ME.message,'JGit','modal')
+                    app.log('Error: %s',ME.identifier)
+                    return
+                end
+            end
             [name,email] = JGIT4MATLAB.JGit.getUserInfo;
             log_data = {'working copy',...
                 sprintf('%s <%s>',char(name),char(email)),date};
             log_rows = {'000000'};
-            commit = revwalker.next;
-            while ~isempty(commit)
-                sha = char(commit.getName.substring(0,6));
-                authorID = commit.getAuthorIdent;
-                author = sprintf('%s <%s>',char(authorID.getName),...
-                    char(authorID.getEmailAddress));
-                commit_date = char(authorID.getWhen);
-                msg = strtrim(char(commit.getShortMessage));
-                log_data = [log_data;{msg,author,commit_date}]; %#ok<AGROW>
-                log_rows = [log_rows;{sha}]; %#ok<AGROW>
+            if ~isempty(revwalker)
                 commit = revwalker.next;
+                while ~isempty(commit)
+                    % NOTE: char(commit.abbreviate(6).name)
+                    sha = char(commit.getName.substring(0,6));
+                    authorID = commit.getAuthorIdent;
+                    author = sprintf('%s <%s>',char(authorID.getName),...
+                        char(authorID.getEmailAddress));
+                    commit_date = char(authorID.getWhen);
+                    msg = strtrim(char(commit.getShortMessage));
+                    log_data = [log_data;{msg,author,commit_date}]; %#ok<AGROW>
+                    log_rows = [log_rows;{sha}]; %#ok<AGROW>
+                    commit = revwalker.next;
+                end
             end
             set(app.LogTable,'Data',log_data,'RowName',log_rows)
             % get diff
@@ -279,7 +295,9 @@ classdef JGitApp < handle
             files = app.getFilesStatus;
             set(app.FilesListbox,'String',files)
         end
-        function cloneRepo(app,hObject,eventdata)
+        function cloneRepo(app,~,~)
+            % CLONEREPO Callback from repository menu to clone a repo.
+            % there is no hObject or eventdata
             % repo names and dirs
             popupRepos = get(app.RepoPopup,'String');
             popupRepoDirs = get(app.RepoPopup,'UserData');
@@ -287,6 +305,7 @@ classdef JGitApp < handle
             start_path = pwd;
             dialog_title = 'Select Destination Directory';
             folder_name = uigetdir(start_path,dialog_title);
+            % user cancelled
             if isscalar(folder_name) && folder_name==0
                 return
             end
@@ -304,7 +323,7 @@ classdef JGitApp < handle
             if isempty(repo_name)
                 [~,repo_name,~] = fileparts(URL);
             elseif any(strcmp(repo_name,popupRepos))
-                warndlg('Repo Name already exists','JGit','modal')
+                errordlg('Repo Name already exists','JGit','modal')
                 return
             end
             % check if folder is already a git repository
@@ -344,6 +363,70 @@ classdef JGitApp < handle
             app.openRepo(app.RepoPopup)
             app.log('add %s to popup menu',repo_name)
         end
+        function initRepo(app,~,~)
+            %INITREPO Callback from repository menu to create new a repo.
+            % there is no hObject or eventdata
+            % TODO: refactor redundant code
+            % repo names and dirs
+            popupRepos = get(app.RepoPopup,'String');
+            popupRepoDirs = get(app.RepoPopup,'UserData');
+            % choose destination dir
+            start_path = pwd;
+            dialog_title = 'Select Destination Directory';
+            folder_name = uigetdir(start_path,dialog_title);
+            % user cancelled
+            if isscalar(folder_name) && folder_name==0
+                return
+            end
+            % get name for repo
+            prompt = {'Repo Name'};
+            dlg_title = 'Specify Repository Name';
+            answer = inputdlg(prompt,dlg_title,1);
+            % use currently selected dir
+            if isempty(answer)
+                app.log('use pwd')
+                [~,repo_name,~] = fileparts(folder_name);
+            else
+                [repo_name] = answer{:};
+                app.log('use %s',repo_name)
+                folder_name = fullfile(folder_name, repo_name);
+            end
+            % check if folder is already a git repository
+            if app.isGitDir(folder_name)
+                errordlg('Folder is already Git repository','JGit','modal')
+                return
+            end
+            % init repo
+            app.log('Init repo: %s into dir: %s',repo_name,folder_name)
+            try
+                JGIT4MATLAB.JGit.init('directory',folder_name)
+            catch ME
+                errordlg(ME.message,'JGit','modal')
+                app.log('Error: %s',ME.identifier)
+                return
+            end
+            % open repo
+            % TODO: refactor redundant code
+            % check if first repo
+            if ~iscellstr(popupRepos)
+                set(app.RepoPopup,'String',{repo_name},...
+                    'UserData',{folder_name},'FontAngle','normal')
+            else
+                % append repo to list or not if already cached
+                repo_idx = strcmp(repo_name,popupRepos); % repo index
+                nRepos = numel(popupRepos); % number of repos
+                if ~any(repo_idx)
+                    set(app.RepoPopup,'String',[popupRepos;{repo_name}],...
+                        'UserData',[popupRepoDirs,{folder_name}],...
+                        'Value',nRepos+1)
+                else
+                    nRepos = 1:nRepos; % reuse to find index
+                    set(app.RepoPopup,'Value',nRepos(repo_idx))
+                end
+            end
+            app.openRepo(app.RepoPopup)
+            app.log('add %s to popup menu',repo_name)
+        end
         function selectCommit(app,~,eventdata)
             commits = get(app.LogTable,'RowName');
             if isempty(eventdata.Indices)
@@ -352,6 +435,9 @@ classdef JGitApp < handle
             commit = eventdata.Indices(1);
             if commit==1
                 diff_file = JGIT4MATLAB.JGit.diff('gitDir',app.RepoDir);
+            elseif commit==numel(commits)
+                diff_file = '';
+                diff_txt = '';
             else
                 updated = commits{commit};
                 previous = commits{commit+1};
@@ -359,19 +445,21 @@ classdef JGitApp < handle
                 diff_file = JGIT4MATLAB.JGit.diff('gitDir',app.RepoDir,...
                     'previous',previous,'updated',updated);
             end
-            fid = fopen(diff_file,'rt');
-            diff_txt = {};
-            try
-                tline = fgetl(fid);
-                while tline>0
-                    diff_txt = [diff_txt;tline]; %#ok<AGROW>
+            if ~isempty(diff_file)
+                fid = fopen(diff_file,'rt');
+                diff_txt = {};
+                try
                     tline = fgetl(fid);
+                    while tline>0
+                        diff_txt = [diff_txt;tline]; %#ok<AGROW>
+                        tline = fgetl(fid);
+                    end
+                catch ME
+                    fclose(fid);
+                    rethrow(ME)
                 end
-            catch ME
                 fclose(fid);
-                rethrow(ME)
             end
-            fclose(fid);
             set(app.DiffEdit,'String',diff_txt)
             % set files
             % TODO: get output from diff --name-status
