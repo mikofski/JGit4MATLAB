@@ -135,6 +135,15 @@ classdef JGit < handle
             %
             %   Copyright (c) 2013 Mark Mikofski
             
+            %% check matlab version
+            % TODO: copy classpath for older MATLAB versions
+            p1 = '(?<major>\d+).(?<minor>\d+).(?<release>\d+).(?<build>\d+)';
+            p2 = '\((?<name>R\d{4}[ab])\)';
+            tks = regexp(version,[p1,' ',p2],'names');
+            if str2double(tks.major)<8
+                error('jgit:validateJavaClassPath:tooOldVersion', ...
+                    'JGIT4MATLAB works on R2012b or newer. Sorry.')
+            end
             %% check JGit package jar-file in @JGit folder
             valid = true;
             githome =  fileparts(mfilename('fullpath'));
