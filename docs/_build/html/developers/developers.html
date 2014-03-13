@@ -1,4 +1,3 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -24,6 +23,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../_static/egit2_128.ico"/>
     <link rel="top" title="JGit4MATLAB 0.6 (Falcon) documentation" href="../index.html" />
     <link rel="next" title="JGit" href="JGit/jgit.html" />
     <link rel="prev" title="Checkout" href="../usage/checkout.html" /> 
@@ -55,6 +55,8 @@
             
   <div class="section" id="developers">
 <h1>Developers<a class="headerlink" href="#developers" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference internal" href="JGit/jgit.html#module-JGit4MATLAB" title="JGit4MATLAB"><tt class="xref mat mat-mod docutils literal"><span class="pre">JGit4MATLAB</span></tt></a> is a BSD open source project for MATLAB hosted on Github.</p>
+<p><a class="reference external" href="https://github.com/mikofski/JGit4MATLAB">https://github.com/mikofski/JGit4MATLAB</a></p>
 <p><a class="reference internal" href="JGit/jgit.html#module-JGit4MATLAB" title="JGit4MATLAB"><tt class="xref mat mat-mod docutils literal"><span class="pre">JGit4MATLAB</span></tt></a> is composed of a single class, <a class="reference internal" href="JGit/jgit.html#JGit4MATLAB.JGit" title="JGit4MATLAB.JGit"><tt class="xref mat mat-class docutils literal"><span class="pre">JGit</span></tt></a>,
 and a collection of private functions called from <tt class="xref mat mat-func docutils literal"><span class="pre">jgit()</span></tt>.</p>
 <p>The <a class="reference internal" href="JGit/jgit.html#JGit4MATLAB.JGit" title="JGit4MATLAB.JGit"><tt class="xref mat mat-class docutils literal"><span class="pre">JGit</span></tt></a> class is a thin wrapper around the <a class="reference external" href="http://download.eclipse.org/jgit/docs/latest/apidocs/">JGit Git API</a>. It&#8217;s sole purpose is
@@ -102,16 +104,17 @@ called <tt class="docutils literal"><span class="pre">argopts</span></tt>, and r
 suitable for the corresponding method in <tt class="xref mat mat-class docutils literal"><span class="pre">JGit</span></tt>.</p>
 <p>Each parsing function has a dictionary of Git command line options. For
 example, the dictionary for <tt class="docutils literal"><span class="pre">parseCheckout.m</span></tt> is as follows:</p>
-<div class="highlight-python"><pre>%% options
+<div class="highlight-python"><div class="highlight"><pre>%% options
 dictionary = { ...
-    'force',{'-f','--force'},true; ...
-    'newBranch',{'-b'},true; ...
-    'forceNew',{'-B'},true; ...
-    'ours',{'--ours'},true; ...
-    'theirs',{'--theirs'},true; ...
-    'set_upstream',{'--set-upstream'},true; ...
-    'track',{'-t','--track'},true; ...
-    'no_track',{'--no-track'},true};</pre>
+    &#39;force&#39;,{&#39;-f&#39;,&#39;--force&#39;},true; ...
+    &#39;newBranch&#39;,{&#39;-b&#39;},true; ...
+    &#39;forceNew&#39;,{&#39;-B&#39;},true; ...
+    &#39;ours&#39;,{&#39;--ours&#39;},true; ...
+    &#39;theirs&#39;,{&#39;--theirs&#39;},true; ...
+    &#39;set_upstream&#39;,{&#39;--set-upstream&#39;},true; ...
+    &#39;track&#39;,{&#39;-t&#39;,&#39;--track&#39;},true; ...
+    &#39;no_track&#39;,{&#39;--no-track&#39;},true};
+</pre></div>
 </div>
 <p>The size of the dictionary is N x 3 for N options. The first column is a unique
 name the option will be called only within the parsing function, the 2nd column
@@ -164,6 +167,9 @@ Unittest framework</a>.</p>
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/egit2.png" alt="Logo"/>
+            </a></p>
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Developers</a><ul>
@@ -223,7 +229,7 @@ Unittest framework</a>.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Mark Mikofski.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.1.
     </div>
   </body>
 </html>
