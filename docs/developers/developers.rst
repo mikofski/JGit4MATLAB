@@ -2,6 +2,10 @@
 
 Developers
 ==========
+:mod:`JGit4MATLAB` is a BSD open source project for MATLAB hosted on Github.
+
+https://github.com/mikofski/JGit4MATLAB
+
 :mod:`JGit4MATLAB` is composed of a single class, :class:`~JGit4MATLAB.JGit`,
 and a collection of private functions called from :func:`jgit`.
 

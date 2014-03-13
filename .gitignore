@@ -13,4 +13,5 @@ version
 .project
 bin/
 @JGitApp/cache.mat
+!docs/egit2.png
 
