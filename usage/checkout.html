@@ -1,4 +1,3 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -24,6 +23,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../_static/egit2_128.ico"/>
     <link rel="top" title="JGit4MATLAB 0.6 (Falcon) documentation" href="../index.html" />
     <link rel="next" title="Developers" href="../developers/developers.html" />
     <link rel="prev" title="Branch" href="branch.html" /> 
@@ -56,32 +56,38 @@
   <div class="section" id="checkout">
 <span id="id1"></span><h1>Checkout<a class="headerlink" href="#checkout" title="Permalink to this headline">¶</a></h1>
 <p>Checkout a branch or paths to the working tree</p>
-<div class="highlight-python"><pre>jgit checkout [-f|--force] [&lt;branch&gt;]
+<div class="highlight-python"><div class="highlight"><pre>jgit checkout [-f|--force] [&lt;branch&gt;]
 jgit checkout [-f|--force] [&lt;commit&gt;]
 jgit checkout [--set-upstream|-t|--track|--no-track] [-f|--force] [[-b|-B] &lt;new_branch&gt;] [&lt;start_point&gt;]
 jgit checkout [-f|--force|--ours|--theirs|-m] [&lt;tree-ish&gt;] [--] &lt;paths&gt;...
-jgit checkout [&lt;tree-ish&gt;] [--] [&lt;paths&gt;...]</pre>
+jgit checkout [&lt;tree-ish&gt;] [--] [&lt;paths&gt;...]
+</pre></div>
 </div>
 <p>Reference: <a class="reference external" href="http://git-scm.com/docs/git-checkout">git-checkout</a></p>
 <div class="section" id="alias">
 <h2>Alias<a class="headerlink" href="#alias" title="Permalink to this headline">¶</a></h2>
 <p>co</p>
-<div class="highlight-python"><pre>jgit co -b newfeature</pre>
+<div class="highlight-python"><div class="highlight"><pre>jgit co -b newfeature
+</pre></div>
 </div>
 </div>
 <div class="section" id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
 <p>Checkout branch.</p>
-<div class="highlight-python"><pre>jgit checkout master</pre>
+<div class="highlight-python"><div class="highlight"><pre>jgit checkout master
+</pre></div>
 </div>
 <p>Checkout commit. NOTE: This will put you in a detached state.</p>
-<div class="highlight-python"><pre>jgit checkout 971ae60</pre>
+<div class="highlight-python"><div class="highlight"><pre>jgit checkout 971ae60
+</pre></div>
 </div>
 <p>Checkout upstream branch as local.</p>
-<div class="highlight-python"><pre>jgit checkout -b feature origin/feature</pre>
+<div class="highlight-python"><div class="highlight"><pre>jgit checkout -b feature origin/feature
+</pre></div>
 </div>
 <p>Revert changes in unstaged file.</p>
-<div class="highlight-python"><pre>jgit checkout -- file</pre>
+<div class="highlight-python"><div class="highlight"><pre>jgit checkout -- file
+</pre></div>
 </div>
 </div>
 </div>
@@ -92,6 +98,9 @@ jgit checkout [&lt;tree-ish&gt;] [--] [&lt;paths&gt;...]</pre>
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/egit2.png" alt="Logo"/>
+            </a></p>
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Checkout</a><ul>
@@ -149,7 +158,7 @@ jgit checkout [&lt;tree-ish&gt;] [--] [&lt;paths&gt;...]</pre>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Mark Mikofski.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.1.
     </div>
   </body>
 </html>
