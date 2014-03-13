@@ -3,7 +3,6 @@ jsch-0.1.50.jar
 *.orig
 *.zip
 !tests/testRepo.zip
-*.png
 version
 @JGit/older-versions
 *.sublime-project
@@ -13,5 +12,4 @@ version
 .project
 bin/
 @JGitApp/cache.mat
-!docs/egit2.png
 
